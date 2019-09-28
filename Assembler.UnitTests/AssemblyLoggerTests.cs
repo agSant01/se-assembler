@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace Assembler.UnitTests
 {
@@ -33,7 +34,7 @@ namespace Assembler.UnitTests
         }
 
         [TestMethod]
-        public void CompilationLogger_AddStatus_RegisterATestMessage()
+        public void CompilationLogger_StatusUpdate_RegisterATestMessage()
         {
             string txt = "Started Parsing.";
             this.logger.StatusUpdate(txt);
@@ -55,7 +56,7 @@ namespace Assembler.UnitTests
         }
 
         [TestMethod]
-        public void CompilationLogger_AddWarning_RegisterAWarnignMessage()
+        public void CompilationLogger_Warning_RegisterAWarnignMessage()
         {
             string msg = "Memory Overwrite";
             string adrs = "0x45";
@@ -75,6 +76,71 @@ namespace Assembler.UnitTests
                 Console.WriteLine(d);
             }
 
+        }
+
+        [TestMethod]
+        public void CompilationLogger_UseEnumerator_AddingToTheQueueAfterFinishing()
+        {
+            string msg = "Memory Overwrite";
+            string adrs = "0x45";
+            string old = "3524";
+            string line = "54";
+            string txt = "Started Parsing.";
+
+            logger.Warning(msg, line, adrs, old);
+
+            logger.Warning(msg, line, adrs, old);
+
+
+            List<string> list = new List<string>();
+
+            while (logger.MoveNext())
+            {
+                list.Add(logger.Current);
+            }
+
+            this.logger.StatusUpdate(txt);
+
+            while (logger.MoveNext())
+            {
+                list.Add(logger.Current);
+            }
+
+            foreach (string item in list)
+            {
+                Console.WriteLine(item);
+            }
+
+            Assert.AreEqual(7, list.Count);
+        }
+
+        [TestMethod]
+        public void CompilationLogger_UseEnumerator_AddingToTheQueue()
+        {
+            string msg = "Memory Overwrite";
+            string adrs = "0x45";
+            string old = "3524";
+            string line = "54";
+
+            logger.Warning(msg, line, adrs, old);
+
+            logger.Warning(msg, line, adrs, old);
+
+
+            List<string> list = new List<string>();
+
+            while (logger.MoveNext())
+            {
+                list.Add(logger.Current);
+            }
+
+            Assert.AreEqual(3, list.Count);
+
+
+            foreach (string item in list)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }

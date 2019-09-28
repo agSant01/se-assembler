@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assembler
 {
-    public interface IWritable : IEnumerable<string>
+    public interface IWritable : IEnumerator<string>
     {
         string[] GetLines();
     }

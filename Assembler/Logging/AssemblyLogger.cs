@@ -8,35 +8,39 @@ namespace Assembler
     {
         private readonly Queue<LogItem> logs;
         private readonly DateTime startTime;
+        private IEnumerator<LogItem> logIterator;
 
         public AssemblyLogger()
         {
-            this.logs = new Queue<LogItem>();
-            this.startTime = DateTime.Now;
+            logs = new Queue<LogItem>();
+            startTime = DateTime.Now;
             Random r = new Random();
-            StatusUpdate($"Started Assembly Log #{r.Next(100, 999)}_{r.Next(1000,9999)} at {this.startTime.ToString()}");
+            StatusUpdate($"Started Assembly Log #{r.Next(100, 999)}_{r.Next(1000, 9999)} at {this.startTime.ToString()}");
         }
 
         public void StatusUpdate(string message)
         {
             this.logs.Enqueue(new LogItem(message));
+            Reset();
         }
 
         public void Warning(string message, string line, string address, string previousContent)
         {
             this.logs.Enqueue(new LogItem(message, address, line, previousContent));
+            Reset();
         }
 
         public void Error(string message, string line, string cause)
         {
             this.logs.Enqueue(new LogItem(message, line, cause));
+            Reset();
         }
 
         public string[] GetLines()
         {
             Queue<string> rtn = new Queue<string>();
 
-            foreach (LogItem item in this.logs)
+            foreach (LogItem item in logs)
             {
                 rtn.Enqueue(item.ToString());
             }
@@ -44,28 +48,23 @@ namespace Assembler
             return rtn.ToArray();
         }
 
-        public IEnumerator<string> GetEnumerator()
-        {
-            Queue<string> rtn = new Queue<string>();
-
-            foreach (LogItem item in this.logs)
+        public string Current {
+            get
             {
-                rtn.Enqueue(item.ToString());
+                if (logIterator == null) Reset();
+                return logIterator.Current.ToString();
             }
-
-            return rtn.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            Queue<string> rtn = new Queue<string>();
+        object IEnumerator.Current => Current;
 
-            foreach (LogItem item in this.logs)
-            {
-                rtn.Enqueue(item.ToString());
-            }
-
-            return rtn.GetEnumerator();
+        public bool MoveNext() {
+            if (logIterator == null) Reset();
+            return logIterator.MoveNext();
         }
+
+        public void Reset() => logIterator = logs.GetEnumerator();
+
+        public void Dispose() => logIterator = null;
     }
 }
