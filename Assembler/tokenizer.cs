@@ -1,23 +1,21 @@
 ﻿using System;
 
+//Will receive the lines from a File and turn them into respective Tokens
 public class Tokenizer
 {
     private OperationCodes codes;
-	public Tokenizer(string[] line)
+	public Tokenizer()
 	{
         
 	}
 
 
 
-    public string[] extract_Tokens()
+    public string[] extract_Tokens(string line)
     {
         string[] tokens = { };
         return tokens;
     }
 
-    public bool is_Proper_Syntax(string[] line)
-    {
-        return false;
-    }
+   
 }

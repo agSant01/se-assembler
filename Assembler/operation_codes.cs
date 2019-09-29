@@ -3,6 +3,8 @@ using System.Collections;
 
 public class OperationCodes
 {
+    //To be used when converting the text into object code
+    //the table will store a value in integer type but that value must be converted to binary
     private Hashtable lookup_table;
 	public OperationCodes()
 	{
@@ -10,7 +12,8 @@ public class OperationCodes
         this.setup_table();
 	}
 
-    public int[] machine_language(string token)
+    //receives the tokens and translates to object code
+    public int[] object_code(string token)
     {
         int[] bits = { };
 
@@ -20,7 +23,7 @@ public class OperationCodes
     private void setup_table()
     {
         
-        //this.lookup_table.Add("JMP", 20);
+        //Add all the operations and their respective representation in DECIMAL
 
         this.lookup_table.Add("LOAD", 0);
         this.lookup_table.Add("LOADIMP", 1);

@@ -4,15 +4,18 @@ using System.Text.RegularExpressions;
 
 public class Parser{
 
+    private Tokenizer tokenizer;
     private string[] lines;
     private SyntaxAnalyzer syntax_analyzer;
     private OperationCodes codes;
     public Parser(string[] lines)
     {
+        codes = new OperationCodes();
+        tokenizer = new Tokenizer();
 
     }
 
-
+    //Generate the tokens from the lines provided
     public string[] tokens()
     {
         string[] tokens_from_string= { };
@@ -20,11 +23,12 @@ public class Parser{
     }
 
 
-    public int[] machine_code()
+    public string[] object_code()
     {
-        int[] bits = { };
-        return bits;
+        string[] code= { };
+        
+        return code;
     }
 
-
+    
 }
