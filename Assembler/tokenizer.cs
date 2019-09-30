@@ -4,6 +4,7 @@
 public class Tokenizer
 {
     private OperationCodes codes;
+    
 	public Tokenizer()
 	{
         codes = new OperationCodes();
