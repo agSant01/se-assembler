@@ -1,49 +1,114 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
 
 namespace Assembler
 {
+    /// <summary>
+    /// This File Manager class has three methods.
+    /// Reading and Writing to a file and a Logger File
+    /// </summary>
     public class FileManager
     {
-        //public FileManager()
-        //{
-           
-        //    string filePath = @"C:\Users\sgrib\Desktop\example.txt";
-
-        //    List<string> fileLines = File.ReadAllLines(filePath).ToList();
-
-        //    foreach (var line in fileLines)
-        //    {
-        //        Console.WriteLine(line);
-        //    }
-        //}
-
-        public void ToReadFile(string fileName)
+        private static FileManager _instance = new FileManager();
+        public static FileManager Instance
         {
-            List<string> fileLines = File.ReadAllLines(fileName).ToList();
-            foreach (var line in fileLines)
+            get
             {
-                string filePath = @"C:\Users\sgrib\Desktop\example.txt";
-                File.WriteAllText(filePath, line);
+                if (_instance == null)
+                    _instance = new FileManager();
+                return _instance;
             }
-            
         }
 
-        public void ToWriteFile(string text)
+        private FileManager()
         {
-            string filePath = @"C:\Users\sgrib\Desktop\example.txt";
-            File.WriteAllText(filePath, text);
+
         }
 
-        public void LoggerFile(string fileName, string message)
+        /// <summary>
+        /// Reads all text from a file and returns text seperated in lines.
+        /// </summary>
+        /// <param name="fileName">Name of file to read. Must include file extension</param>
+        /// <returns></returns>
+
+        public string[] ToReadFile(string fullFilePath)
         {
-            string filePath = @"C:\Users\sgrib\Desktop\"+ fileName;
-         
-            File.AppendAllText(filePath, message);
+            try
+            {
+                if (string.IsNullOrEmpty(fullFilePath))
+                    return null;
+
+                if (!fullFilePath.Contains("."))
+                    return null;
+
+                var fileLines = File.ReadAllLines(fullFilePath);
+
+                return fileLines;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
+       
+         /// <summary>
+         /// Writes to a file the given text
+         /// </summary>
+         /// <param name="fileName"></param>
+         /// <param name="textLines"></param>
+         /// <returns></returns>
+        public bool ToWriteFile(string fullFilePath, string[] textLines)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fullFilePath))
+                    return false;
+
+                if (!fullFilePath.Contains("."))
+                    return false;
+
+                if (textLines == null)
+                    return false;
+
+                File.WriteAllLines(fullFilePath, textLines);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Writes to a file the given text
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="textLines"></param>
+        /// <returns></returns>
+        public bool ToWriteFile(IWritableObject writeable, string filePath)
+        {
+            string fullFilePath = Path.Combine(filePath, writeable.FileName);
+            try
+            {
+                if (string.IsNullOrEmpty(fullFilePath))
+                    return false;
+
+                if (!fullFilePath.Contains("."))
+                    return false;
+
+                if (writeable.GetLines() == null)
+                    return false;
+
+                File.WriteAllLines(fullFilePath, writeable.GetLines());
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e);
+                return false;
+            }
+        }
     }
 }
