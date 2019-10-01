@@ -8,7 +8,6 @@ public class SyntaxAnalyzer
     private ArrayList patterns;
 	public SyntaxAnalyzer()
 	{
-
         patterns = new ArrayList();
         this.loadPatterns();
 	}
@@ -18,10 +17,10 @@ public class SyntaxAnalyzer
     {
 
         MatchCollection matched_expression = null;
-
-        foreach(string pattern in this.patterns)
+        Regex rg;
+        foreach(string pattern in this.reg_patterns())
         {
-            Regex rg = new Regex(pattern);
+            rg = new Regex(pattern);
             matched_expression = rg.Matches(line);
 
             if(matched_expression.Count > 0)
@@ -29,16 +28,7 @@ public class SyntaxAnalyzer
                 return true;
             }
         }
-        //if (line.Contains("ADD") || line.Contains("SUB"))
-        //{
-        //    string[] math_pat = math_patterns();
-        //}
 
-        //if (line.Contains("AND") || line.Contains("OR")
-        //    || line.Contains("NOT") || line.Contains("NEG"))
-        //{
-        //    string[] conditional_pat = conditional_patterns();
-        //}
         return false;
     }
 
@@ -87,5 +77,10 @@ public class SyntaxAnalyzer
         {
             this.patterns.Add(pattern);
         }
+    }
+
+    public ArrayList reg_patterns()
+    {
+        return this.patterns;
     }
 }
