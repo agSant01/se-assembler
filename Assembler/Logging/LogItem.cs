@@ -7,15 +7,22 @@
     /// </summary>
     class LogItem
     {
-        // general items
-        private string message;
-        private string type;
+
+        /// <summary>
+        /// Getter for message
+        /// </summary>
+        public string Message { get; }
+
+        /// <summary>
+        /// Getter for log type
+        /// </summary>
+        public string Type { get; }
 
         // used for warning and error only
-        private string address;
-        private string line;
-        private string previousContent;
-        private string errorCause;
+        private readonly string address;
+        private readonly string line;
+        private readonly string previousContent;
+        private readonly string errorCause;
 
         /// <summary>
         /// Used to create a simple Log object.
@@ -24,8 +31,8 @@
         /// <param name="message">Message to log.</param>
         public LogItem(string message)
         {
-            this.type = "STATUS";
-            this.message = message;
+            this.Type = "STATUS";
+            this.Message = message;
             this.address = null;
             this.line = null;
         }
@@ -40,9 +47,9 @@
         public LogItem(string message, string address, string line, string previousContent)
         {
             this.previousContent = previousContent;
-            this.message = message;
+            this.Message = message;
             this.address = address;
-            this.type = "WARNING";
+            this.Type = "WARNING";
             this.line = line;
         }
 
@@ -54,27 +61,11 @@
         /// <param name="errorCause">Cause of the error.</param>
         public LogItem(string message, string line, string errorCause)
         {
-            this.type = "ERROR";
-            this.message = message;
+            this.Type = "ERROR";
+            this.Message = message;
             this.address = null;
             this.line = line;
             this.errorCause = errorCause;
-        }
-
-        /// <summary>
-        /// Getter for message
-        /// </summary>
-        public string Message
-        {
-            get => message;
-        }
-
-        /// <summary>
-        /// Getter for log type
-        /// </summary>
-        public string Type
-        {
-            get => type;
         }
 
         /// <summary>
@@ -83,19 +74,19 @@
         /// <returns>Formatted log ready to display.</returns>
         public override string ToString()
         {
-            if (this.type == "STATUS")
+            if (this.Type == "STATUS")
             {
-                return $"[{this.type}] {this.message}";
+                return $"[{this.Type}] {this.Message}";
             }
 
-            if (this.type == "WARNING")
+            if (this.Type == "WARNING")
             {
-                return $"[{this.type}] {this.message}. Address {this.address} overwrite [content: '{this.previousContent}'] at line {this.line}";
+                return $"[{this.Type}] {this.Message}. Address {this.address} overwrite [content: '{this.previousContent}'] at line {this.line}";
             }
 
-            if (this.type == "ERROR")
+            if (this.Type == "ERROR")
             {
-                return $"[{this.type}] {this.message} at line {this.line}. Cause: {this.errorCause}";
+                return $"[{this.Type}] {this.Message} at line {this.line}. Cause: {this.errorCause}";
             }
 
             return "Invalid Log Type";

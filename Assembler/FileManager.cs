@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
 
 namespace Assembler
@@ -34,18 +31,17 @@ namespace Assembler
         /// <param name="fileName">Name of file to read. Must include file extension</param>
         /// <returns></returns>
 
-        public string[] ToReadFile(string fileName)
+        public string[] ToReadFile(string fullFilePath)
         {
             try
             {
-                if (string.IsNullOrEmpty(fileName))
+                if (string.IsNullOrEmpty(fullFilePath))
                     return null;
 
-                if (!fileName.Contains("."))
+                if (!fullFilePath.Contains("."))
                     return null;
 
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
-                var fileLines = File.ReadAllLines(filePath);
+                var fileLines = File.ReadAllLines(fullFilePath);
 
                 return fileLines;
             }
@@ -62,49 +58,20 @@ namespace Assembler
          /// <param name="fileName"></param>
          /// <param name="textLines"></param>
          /// <returns></returns>
-        public string ToWriteFile(string fileName, string[] textLines)
+        public bool ToWriteFile(string fullFilePath, string[] textLines)
         {
             try
             {
-                if (string.IsNullOrEmpty(fileName))
-                    return null;
+                if (string.IsNullOrEmpty(fullFilePath))
+                    return false;
 
-                if (!fileName.Contains("."))
-                    return null;
+                if (!fullFilePath.Contains("."))
+                    return false;
 
                 if (textLines == null)
-                    return null;
-
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
-                File.WriteAllLines(filePath, textLines);
-                return filePath;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Appends the given log message to a file
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="message"></param>
-        public bool LoggerFile(string fileName, string message)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(fileName))
                     return false;
 
-                if (!fileName.Contains("."))
-                    return false;
-
-                if (message == null)
-                    return false;
-
-                string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
-                File.AppendAllText(filePath, message);
+                File.WriteAllLines(fullFilePath, textLines);
                 return true;
             }
             catch (Exception)
@@ -113,5 +80,35 @@ namespace Assembler
             }
         }
 
+        /// <summary>
+        /// Writes to a file the given text
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="textLines"></param>
+        /// <returns></returns>
+        public bool ToWriteFile(IWritableObject writeable, string filePath)
+        {
+            string fullFilePath = Path.Combine(filePath, writeable.FileName);
+            try
+            {
+                if (string.IsNullOrEmpty(fullFilePath))
+                    return false;
+
+                if (!fullFilePath.Contains("."))
+                    return false;
+
+                if (writeable.GetLines() == null)
+                    return false;
+
+                File.WriteAllLines(fullFilePath, writeable.GetLines());
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e);
+                return false;
+            }
+        }
     }
 }

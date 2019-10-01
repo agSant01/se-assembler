@@ -7,7 +7,7 @@ namespace Assembler
     /// <summary>
     /// Used to keep a track of the events during assembly of the source code.
     /// </summary>
-    public class AssemblyLogger : IWritable
+    public class AssemblyLogger : IWritableObject
     {
         
         /// <summary>
@@ -25,10 +25,14 @@ namespace Assembler
         public AssemblyLogger()
         {
             logs = new Queue<LogItem>();
+
             Random r = new Random();
+            FileName = $"AssemblyLog_{r.Next(100, 999)}_{r.Next(1000, 9999)}";
+
             StatusUpdate($"Started Assembly Log " +
-                $"#{r.Next(100, 999)}_{r.Next(1000, 9999)} " +
-                $"at {DateTime.Now.ToString()}");
+                FileName + $" at {DateTime.Now.ToString()}");
+
+            FileName += ".txt";
         }
 
         /// <summary>
@@ -103,6 +107,11 @@ namespace Assembler
         /// Getter for current item in the iterator
         /// </summary>
         object IEnumerator.Current => Current;
+
+        /// <summary>
+        /// Getter for full file path to save the log
+        /// </summary>
+        public string FileName { get; }
 
         /// <summary>
         /// Used to travers the Enumerator
