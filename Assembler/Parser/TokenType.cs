@@ -14,6 +14,9 @@ namespace Assembler.Parser
         COMMA,
         IDENTIFIER,
         OPERATOR,
-        REGISTER
+        REGISTER,
+        VARIABLE_ASSIGN,
+        CONSTANT_ASSIGN,
+        ORIGIN
     }
 }
