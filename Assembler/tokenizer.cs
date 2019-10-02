@@ -78,23 +78,6 @@ public class Tokenizer
             return false;
         }
 
-        //if(isKeyword(token))
-        //{
-        //    return matchingResults(line, token).Count > 0;
-        //}
-
-        //if (isRegister(token))
-        //{
-        //    //foreach (string t in this.tokens.register_tokens())
-        //    //{
-        //    //    if (t == line)
-        //    //    {
-        //    //        return true;
-        //    //    }
-        //    //}
-        //    return matchingResults(line, token).Count > 0;
-        //}
-
         return matchingResults(line, token).Count >  0;
 
     }
@@ -128,32 +111,7 @@ public class Tokenizer
         return tks;
     }
 
-    //Incorrect name
-    //public ArrayList extractTokens(string line)//Returns an arraylist of all matching lines
-    //{
-    //    ArrayList tokens = new ArrayList();
-    //    if (!grammar_analyzer.isProperSyntax(line))
-    //    {
-    //        return tokens;//return an empty ArrayList
-    //    }
-
-    //    string regex_pattern = this.findPattern(line);
-    //    MatchCollection matches;
-    //    if(regex_pattern.Length == 0 || regex_pattern.Trim().Length == 0)
-    //    {
-           
-    //        return tokens;
-    //    }
-
-    //    matches = new Regex(regex_pattern).Matches(line);
-    //    foreach (Match match in matches)
-    //    {
-    //        GroupCollection groups = match.Groups;
-    //        tokens.Add(groups["word"].Value);
-    //    }
-
-    //    return tokens;
-    //}
+   
 
    
 }

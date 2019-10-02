@@ -35,6 +35,15 @@ namespace Assembler
 
             string sub = "SUB R1, R2, R3";
             Assert.IsTrue(syntax.isProperSyntax(sub));
+
+            string load = "LOAD R1, R2";
+            Assert.IsTrue(syntax.isProperSyntax(load));
+
+            string pop = "POP R1";
+            Assert.IsTrue(syntax.isProperSyntax(pop));
+
+            string push = "PUSH R1";
+            Assert.IsTrue(syntax.isProperSyntax(push));
         }
 
         [TestMethod]
