@@ -121,9 +121,12 @@ public class SyntaxAnalyzer
     {
         this.patterns.Add(this.ending_pattern());
         this.patterns.Add(this.constant_pattern());
-
+        this.patterns.Add(new Regex(@"^[ ]*//[ ]*"));
+        this.patterns.Add(new Regex(@"^[ ]*[.]+[ ]+db[ ]+[0-9]+[ ]*"));
+        this.patterns.Add(new Regex(@"^[ ]*org[ ]+[0-9]+[ ]*"));
         this.patterns.Add(new Regex(@"^[ ]*NOP[ ]*"));
-        this.patterns.Add(new Regex(@"^[ ]*CALL[ ]+[0-9][0-9][0-9][0-9]"));//TODO fix the problem with address detection
+        this.patterns.Add(new Regex(@"^[ ]*CALL[ ]+[0-9][0-9][0-9][0-9][ ]*"));//TODO fix the problem with address detection
+
         foreach (Regex rg in movement_patterns())
         {
             this.patterns.Add(rg);
