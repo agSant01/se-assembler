@@ -102,7 +102,7 @@ public class Tokenizer
     public MatchCollection matchingResults(string line, string pattern)
     {
         Regex rg = new Regex(pattern);
-        return rg.Matches(pattern);
+        return rg.Matches(line);
     }
 
    //Extracts the tokens of provided line
