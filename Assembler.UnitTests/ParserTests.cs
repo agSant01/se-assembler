@@ -49,6 +49,13 @@ namespace Assembler.UnitTests
             Assert.IsNotNull(lines, "File Not Found.");
 
             lexer = new Lexer(lines);
+
+            Parser parser = new Parser(lexer);
+
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
+            }
         }
     }
 }

@@ -92,6 +92,8 @@ namespace Assembler.Parsing
 
         public bool SkipCommas { get; set; }
 
+        public bool SkipTabs { get; set; }
+
         private bool isRegister(int leftIdx, int rightIdx, ref char[] charsInLine)
         {
             return rightIdx - leftIdx + 1 == 2 &&
@@ -147,6 +149,9 @@ namespace Assembler.Parsing
             _current++;
 
             if (SkipCommas && CurrrentToken.Type == TokenType.COMMA)
+                return MoveNext();
+
+            if (SkipTabs && CurrrentToken.Type == TokenType.TAB)
                 return MoveNext();
 
             return true;

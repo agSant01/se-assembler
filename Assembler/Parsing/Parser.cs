@@ -16,7 +16,14 @@ namespace Assembler.Parsing
 
         public Parser(Lexer lexer)
         {
+            lexer.SkipCommas = true;
+            lexer.SkipTabs = true;
+
             ParseInstructions(lexer);
+
+            lexer.SkipCommas = false;
+            lexer.SkipTabs = false;
+
             lexer.Reset();
         }
 
@@ -24,80 +31,123 @@ namespace Assembler.Parsing
         {
             IFormatInstructions instruction;
 
-            lexer.SkipCommas = true;
-
             while (lexer.MoveNext())
             {
                 Token currToken = lexer.CurrrentToken;
 
+                // found comment line
+                if (currToken.Type == TokenType.LINE_COMMENT)
+                {
+                    // ignore every token in that line
+                    while (lexer.CurrrentToken.Type != TokenType.NEW_LINE)
+                    {
+                        lexer.MoveNext();
+                    }
 
-                if (currToken.Type == TokenType.ORIGIN) {
+                    // now CurrentToken is a new Line
+                }
+                // found and origin
+                else if (currToken.Type == TokenType.ORIGIN) {
                     lexer.MoveNext();
 
+                    // get the next token (address) associated with the ORG
                     Token address = lexer.CurrrentToken;
 
                     AddInstruction(new OriginCmd(currToken, address));
                 }
+                // found an operator
                 else if (OperatorsInfo.IsOperator(currToken.Value))
                 {
+                    // make instruction
                     MakeInstruction(lexer);
                 }
+                // found variable assign without name
+                else if (currToken.Type == TokenType.VARIABLE_ASSIGN)
+                {
+                    List<Token> variableList = new List<Token>();
+
+                    // move lexer to first param
+                    lexer.MoveNext();
+
+                    // add params to list
+                    while (lexer.CurrrentToken.Type != TokenType.NEW_LINE)
+                    {
+                        variableList.Add(lexer.CurrrentToken);
+                        lexer.MoveNext();
+                    }
+
+                    // add instruction to list
+                    AddInstruction(new VariableAssign(currToken, null, variableList.ToArray()));
+
+                    variableList.Clear();
+                }
+                // found constant assignment
+                else if (currToken.Type == TokenType.CONSTANT_ASSIGN)
+                {
+                    // move to name
+                    lexer.MoveNext();
+                    Token name = lexer.CurrrentToken;
+
+                    // move to value
+                    lexer.MoveNext();
+                    Token value = lexer.CurrrentToken;
+
+                    AddInstruction(new ConstantAssign(currToken, name, value));
+                }
+                // found a possible label, variable name for db, or possible typo in an operator
                 else if (currToken.Type == TokenType.IDENTIFIER)
                 {
-                    List<Token> list = new List<Token>();
+                    // found db after identifier.
                     if (lexer.PeekNext().Type == TokenType.VARIABLE_ASSIGN)
                     {
+                        List<Token> paramList = new List<Token>();
+                        
+                        // move lexer to db keyword
                         lexer.MoveNext();
-                        Token name = lexer.CurrrentToken;
+
+                        Token dbKeyword = lexer.CurrrentToken;
+
+                        // move lexer to first param
+                        lexer.MoveNext();
+
+                        // add params to list
                         while (lexer.CurrrentToken.Type != TokenType.NEW_LINE)
                         {
-                            list.Add(lexer.CurrrentToken);
+                            paramList.Add(lexer.CurrrentToken);
+
+                            // iterate
                             lexer.MoveNext();
                         }
 
-                        instruction = new VariableAssign(name, currToken, list.ToArray());
+                        instruction = new VariableAssign(dbKeyword, currToken, paramList.ToArray());
 
                         AddInstruction(instruction);
-                    } else if (lexer.PeekNext().Type == TokenType.COLON)
+                    }
+                    // found a colon after identifier this means it is a label
+                    else if (lexer.PeekNext().Type == TokenType.COLON)
                     {
                         Token labelName = lexer.CurrrentToken;
-
-                        // start label block
-                        AddInstruction(new Label(labelName));
-
-                        // ignore ':', WHITE_SPACE, and NEW_LINE
-                        while (lexer.CurrrentToken.Type != TokenType.TAB)
-                        {
-                            lexer.MoveNext();
-                        }                
                         
-                        // first instruction under label
-                        while(true)
+                        // start label block
+                        // add current label to the instruction list
+                        AddInstruction(new Label(labelName));
+                    } else
+                    {
+                        List<Token> paramList = new List<Token>();
+
+                        Token c = lexer.CurrrentToken;
+
+                        // add params to list
+                        while (lexer.CurrrentToken.Type != TokenType.NEW_LINE)
                         {
-                            // each instruction under label
-                            if (lexer.CurrrentToken.Type == TokenType.TAB)
-                            {
-                                // move to beginning of instruction
-                                lexer.MoveNext();
-
-                                // add instruction to list
-                                MakeInstruction(lexer);
-
-                                lexer.MoveNext();
-                                lexer.MoveNext();
-                            } else
-                            {
-                                // no more instructions under label
-                                // end label and exit
-                                break;
-                            }
+                            paramList.Add(lexer.CurrrentToken);
+                            lexer.MoveNext();
                         }
-                        AddInstruction(new EndLabel(labelName));
+
+                        AddInstruction(new InvalidInstruction(c, paramList.ToArray()));
                     }
                 }
             }
-
-            lexer.SkipCommas = false;
         }
 
         private void MakeInstruction(Lexer lexer)
