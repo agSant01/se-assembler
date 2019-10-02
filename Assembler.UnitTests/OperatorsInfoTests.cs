@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Assembler.Parser;
+using Assembler.Parsing;
 
 namespace Assembler.UnitTests
 {
@@ -10,7 +10,7 @@ namespace Assembler.UnitTests
     [TestClass]
     public class OperatorsInfoTests
     {
-        string[] ops = { "JMP", "add", "JMPAddR", "LoAd" };
+        string[] ops = { "JMPRIND", "add", "JMPAddR", "LoAd" };
 
         EInstructionFormat[] opFormats =
         {
