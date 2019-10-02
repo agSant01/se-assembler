@@ -135,7 +135,9 @@ namespace Assembler.Parsing
                     {
                         List<Token> paramList = new List<Token>();
 
-                        Token c = lexer.CurrrentToken;
+                        Token invalidInstruction = lexer.CurrrentToken;
+
+                        lexer.MoveNext();
 
                         // add params to list
                         while (lexer.CurrrentToken.Type != TokenType.NEW_LINE)
@@ -144,7 +146,7 @@ namespace Assembler.Parsing
                             lexer.MoveNext();
                         }
 
-                        AddInstruction(new InvalidInstruction(c, paramList.ToArray()));
+                        AddInstruction(new InvalidInstruction(invalidInstruction, paramList.ToArray()));
                     }
                 }
             }
