@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assembler.Parser
+namespace Assembler.Parsing
 {
     public enum TokenType
     {
@@ -14,6 +14,9 @@ namespace Assembler.Parser
         COMMA,
         IDENTIFIER,
         OPERATOR,
-        REGISTER
+        REGISTER,
+        VARIABLE_ASSIGN,
+        CONSTANT_ASSIGN,
+        ORIGIN
     }
 }

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assembler.Parser
+namespace Assembler.Parsing
 {
     public class Lexer
     {
-        private HashSet<string> operators = new HashSet<string>();
-
         private string[] text;
 
         private Token[] tokens = new Token[10];
@@ -18,52 +16,9 @@ namespace Assembler.Parser
         public Lexer(string[] text)
         {
             this.text = text;
-            Init();
             Start();
         }
-
-        private void Init()
-        {
-            // Data movement
-            operators.Add("JMP");
-            operators.Add("LOAD");
-            operators.Add("LOADIM");
-            operators.Add("POP");
-            operators.Add("STORE");
-            operators.Add("PUSH");
-            operators.Add("LOADRIND");
-            operators.Add("STOREIND");
-
-            // Arithmetic Operations
-            operators.Add("ADD");
-            operators.Add("SUB");
-            operators.Add("ADDIM");
-            operators.Add("SUBIM");
-
-            //Logic operations
-            operators.Add("OR");
-            operators.Add("XOR");
-            operators.Add("NOT");
-            operators.Add("NEG");
-            operators.Add("SHIFTR");
-            operators.Add("SHIFTL");
-            operators.Add("ROTAR");
-            operators.Add("ROTAL");
-
-            // Flow Control
-            operators.Add("JMPRIND");
-            operators.Add("JMPADDR");
-            operators.Add("JCONDRIN");
-            operators.Add("JCONDADDR");
-            operators.Add("LOOP");
-            operators.Add("GRT");
-            operators.Add("GRTEQ");
-            operators.Add("EQ");
-            operators.Add("NEQ");
-            operators.Add("NOP");
-            operators.Add("CALL");
-        }
-
+       
         private void Start()
         {
             foreach (string line in text)
@@ -80,8 +35,8 @@ namespace Assembler.Parser
 
                         if (char.Equals(charsInLine[rightIdx], '\t'))
                             MakeToken(TokenType.TAB, char.ToString(charsInLine[rightIdx]));
-                        else
-                            MakeToken(TokenType.WHITE_SPACE, char.ToString(charsInLine[rightIdx]));
+                        //else
+                        //    MakeToken(TokenType.WHITE_SPACE, char.ToString(charsInLine[rightIdx]));
 
                         leftIdx = rightIdx + 1;
                     } else if (charsInLine[rightIdx] == ',')
@@ -113,18 +68,31 @@ namespace Assembler.Parser
             {
                 MakeToken(TokenType.LINE_COMMENT, value);
             }
-            else if (operators.Contains(value))
+            else if (OperatorsInfo.IsOperator(value))
             {
                 MakeToken(TokenType.OPERATOR, value);
             } else if (isRegister(leftIdx, rightIdx, ref charsInLine))
             {
                 MakeToken(TokenType.REGISTER, value);
+            } else if (value.ToLower().Equals("db"))
+            {
+                MakeToken(TokenType.VARIABLE_ASSIGN, value);
+            } else if (value.ToLower().Equals("const"))
+            {
+                MakeToken(TokenType.CONSTANT_ASSIGN, value);
+            } else if (value.ToLower().Equals("org"))
+            {
+                MakeToken(TokenType.ORIGIN, value);
             }
             else if (!string.IsNullOrEmpty(value))
             {
                 MakeToken(TokenType.IDENTIFIER, value);
             }
         }
+
+        public bool SkipCommas { get; set; }
+
+        public bool SkipTabs { get; set; }
 
         private bool isRegister(int leftIdx, int rightIdx, ref char[] charsInLine)
         {
@@ -156,11 +124,48 @@ namespace Assembler.Parser
             }
         }
 
+        public Token Previous
+        {
+            get
+            {
+                if (_current <= 0)
+                    return null;
+
+                return tokens[_current - 1];
+            }
+        }
+
+        public Token PeekNext()
+        { 
+            if (_current + 1 >= sizeCounter)
+                return null;
+
+            return tokens[_current + 1];
+        }
+
         public bool MoveNext()
         {
             if (_current + 1 >= sizeCounter) return false;
             _current++;
+
+            if (SkipCommas && CurrrentToken.Type == TokenType.COMMA)
+                return MoveNext();
+
+            if (SkipTabs && CurrrentToken.Type == TokenType.TAB)
+                return MoveNext();
+
             return true;
+        }
+
+        public void MoveBack()
+        {
+            if (_current - 1 < 0) return;
+            _current--;
+        }
+
+        public void Reset()
+        {
+            _current = -1;
         }
     }
 }

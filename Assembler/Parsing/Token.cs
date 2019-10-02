@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Assembler.Parser
+﻿
+namespace Assembler.Parsing
 {
     public class Token
     {
