@@ -10,6 +10,7 @@ public class Tokenizer
     private Tokens tokens;
 	public Tokenizer()
 	{
+        tokens = new Tokens();
         codes = new OperationCodes();
         grammar_analyzer = new SyntaxAnalyzer();
 	}

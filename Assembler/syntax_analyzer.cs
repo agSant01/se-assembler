@@ -15,52 +15,53 @@ public class SyntaxAnalyzer
     // We use regular expressions to determine if the structure of the OP-Code is correct
     public bool isProperSyntax(string line)
     {
-
-        MatchCollection matched_expression = null;
-        Regex rg;
-        foreach(string pattern in this.reg_patterns())
+        bool result = false;
+        MatchCollection matched_expression ;
+        
+        foreach( Regex pattern in this.patterns)
         {
-            rg = new Regex(pattern);
-            matched_expression = rg.Matches(line);
-
+            
+            matched_expression = pattern.Matches(line);
+            //Console.WriteLine(matched_expression.Count);
             if(matched_expression.Count > 0)
             {
-                return true;
+                result = true;
+                break;
             }
         }
 
-        return false;
+        return result;
     }
 
-    public string[] math_patterns()
+    public Regex[] math_patterns()
     {
-        string add = @"[ ]*[A][D][D][ ]+ [R][0-7][ ]*[,][ ]*[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
-        string sub = @"[ ]*[S][U][B][ ]+ [R][0-7][ ]*[,][ ]*[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
+        Regex add = new Regex(@"^[ ]*ADD[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*,[ ]*R[0-7][ ]*");
+        Regex sub =  new Regex(@"^[ ]*SUB[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*,[ ]*R[0-7][ ]*");
+         
+        Regex addim = new Regex(@"^[ ]*ADDIM[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*");
+        Regex subim = new Regex(@"^[ ]*SUBIM[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*");
 
-        string addim = @"[ ]*[A][D][D][I][M][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
-        string subim = @"[ ]*[S][U][B][I][M][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
-
-        string []patterns = { add, sub, addim, subim };
+        Regex []patterns = { add, sub, addim, subim };
 
         return patterns;
     }
 
-    public string[] conditional_patterns()
+    public Regex[] conditional_patterns()
     {
-        string and = @"[ ]*[A][N][D][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
-        string or =  @"[ ]*[O][R][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][]*[,] [ ]*[R][0-7][ ]*";
-        string xor = @"[ ]*[X][O]R][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
+        Regex and = new Regex(@"^[ ]*AND[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*,[ ]*R[0-7][ ]*");
+        Regex or =  new Regex(@"^[ ]*OR[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*, [ ]*R[0-7][ ]*");
+        Regex xor = new Regex(@"^[ ]*XOR[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*,[ ]*R[0-7][ ]*");
 
-        string not = @"[ ]*[N][O][T][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
-        string neg = @"[ ]*[N][E][G][ ]+[R][0-7][ ]*[,][ ]*[R][0-7][ ]*";
+        Regex not = new Regex( @"^[ ]*NOT[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*");
+        Regex neg = new Regex( @"^[ ]*NEG[ ]+R[0-7][ ]*,[ ]*R[0-7][ ]*");
 
-        string[] patterns = { and, or , xor, not, neg };
+        Regex[] patterns = { and, or , xor, not, neg };
         return patterns;
     }
 
-    public string ending_pattern()
+    public Regex ending_pattern()
     {
-        return @"[ ]*[R][E][T][U][R][N][ ]*";
+        return new Regex( @"^[ ]*RETURN[ ]*");
     }
 
 
@@ -68,12 +69,12 @@ public class SyntaxAnalyzer
     {
         this.patterns.Add(this.ending_pattern());
 
-        foreach (string pattern in this.math_patterns())
+        foreach (Regex pattern in this.math_patterns())
         {
             this.patterns.Add(pattern);
         }
 
-        foreach (string pattern in this.conditional_patterns())
+        foreach (Regex pattern in this.conditional_patterns())
         {
             this.patterns.Add(pattern);
         }
