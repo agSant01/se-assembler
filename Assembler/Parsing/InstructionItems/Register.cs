@@ -24,7 +24,7 @@ namespace Assembler.Parsing.InstructionItems
                 _isValid = true;
             else if (char.IsDigit(Token.Value[1]))
             {
-                int registerNumber = (int) char.GetNumericValue(Token.Value[1]);
+                int registerNumber = (int)char.GetNumericValue(Token.Value[1]);
 
                 // registerNumber grater than 7 or less than 1
                 if (registerNumber > 7 || registerNumber < 1)
@@ -37,7 +37,7 @@ namespace Assembler.Parsing.InstructionItems
                 _isValid = false;
             }
         }
-        
+
         /// <summary>
         /// Getter for Register Token
         /// </summary>

@@ -51,13 +51,13 @@ namespace Assembler
             }
         }
 
-       
-         /// <summary>
-         /// Writes to a file the given text
-         /// </summary>
-         /// <param name="fileName"></param>
-         /// <param name="textLines"></param>
-         /// <returns></returns>
+
+        /// <summary>
+        /// Writes to a file the given text
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="textLines"></param>
+        /// <returns></returns>
         public bool ToWriteFile(string fullFilePath, string[] textLines)
         {
             try
