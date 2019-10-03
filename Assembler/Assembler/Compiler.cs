@@ -48,7 +48,7 @@ namespace Assembler.Assembler
             {
                 if(parser.CurrentInstruction.Operator == null && parser.CurrentInstruction.GetType().Name == "Label")
                 {
-                    //Load Labels    
+                    //Load Labels and check if next element is an instruction
                     labels.Add(((Label)parser.CurrentInstruction).Name.ToString(), 
                         ((currentAddress)%2==0)?(currentAddress): (currentAddress + 1));
                 }
@@ -72,10 +72,11 @@ namespace Assembler.Assembler
                         {
                             Console.WriteLine(parser.CurrentInstruction.GetType());
                             variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
-                            currentAddress++;
+                            currentAddress+= ((VariableAssign)parser.CurrentInstruction).Values.Length;
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
                         {
+                            ///--------------OPERATORS MUST BE ON EVEN ADDRESSES--------------------
                             currentAddress += (currentAddress % 2 == 0) ? 1 : 2;
                             currentAddress++;
                         }
@@ -122,6 +123,11 @@ namespace Assembler.Assembler
             return new string[12];
         }
 
+        public int Size()
+        {
+            return size;
+        }
+
         public bool Compile()
         {
             LoadConstantsAndLabels();
@@ -150,13 +156,18 @@ namespace Assembler.Assembler
                                 currentAddress += 2;
                             }
 
-                            //AddOperator(parser.CurrentInstruction.Operator);
+                            AddOperator(parser.CurrentInstruction.Operator);
                             currentAddress++;
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                         {
-                            AddInstruction(Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values.ToString(),16));
-                            currentAddress++;
+                            //Console.WriteLine("here "+((VariableAssign)parser.CurrentInstruction).Values);
+                            foreach(Hexa variable in ((VariableAssign)parser.CurrentInstruction).Values)
+                            {
+                                AddInstruction(Convert.ToInt32(variable.ToString(), 16));
+                                currentAddress++;
+                            }
+                               
                         }
                     }
                 }
@@ -168,7 +179,34 @@ namespace Assembler.Assembler
 
         private void AddOperator(Token _operator)
         {
-            throw new NotImplementedException();
+            
+        }
+
+        private string GetBinaryFormat(Token _operator)
+        {
+            int opcode = OperatorsInfo.GetOPCode(_operator);
+
+            switch (OperatorsInfo.GetInstructionFormat(_operator))
+            {
+                case EInstructionFormat.FORMAT_1:
+                    {
+                        Convert.ToString(opcode,2)
+                        break;
+                    }
+                case EInstructionFormat.FORMAT_2:
+                    {
+                        break;
+                    }
+                case EInstructionFormat.FORMAT_3:
+                    {
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception("Token is not an instruction");
+                    }
+            }
+            return "";
         }
 
         public long OutputSizeInBytes()
