@@ -64,15 +64,17 @@ namespace Assembler.Parsing
             return operatorInfo.ContainsKey(value.ToUpper());
         } 
 
-        public static EInstructionFormat GetInstructionFormat(string operatorCode)
+        public static EInstructionFormat GetInstructionFormat(Token token)
         {
+            string opcode = token.Value;
+
             if (operatorInfo == null) Init();
 
             // access second item in the array which is the format
-            if (!IsOperator(operatorCode))
+            if (!IsOperator(opcode))
                 return EInstructionFormat.INVALID;
 
-            int formatNumer = operatorInfo[operatorCode.ToUpper()][1];
+            int formatNumer = operatorInfo[opcode.ToUpper()][1];
 
             switch (formatNumer)
             {
@@ -87,18 +89,21 @@ namespace Assembler.Parsing
             }
         }
 
-        public static int GetOPCode(string operatorCode)
+        public static int GetOPCode(Token token)
         {
             if (operatorInfo == null) Init();
 
-            return operatorInfo[operatorCode.ToUpper()][0];
+
+            string opcode = token.Value;
+            return operatorInfo[opcode.ToUpper()][0];
         }
 
-        public static int GetNumberOfParams(string operatorCode)
+        public static int GetNumberOfParams(Token token)
         {
             if (operatorInfo == null) Init();
 
-            return operatorInfo[operatorCode.ToUpper()][2];
+            string opcode = token.Value;
+            return operatorInfo[opcode.ToUpper()][2];
         }
     }
 }

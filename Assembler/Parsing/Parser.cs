@@ -159,11 +159,11 @@ namespace Assembler.Parsing
             int parameters = 0;
             Token currToken = lexer.CurrrentToken;
 
-            switch (OperatorsInfo.GetInstructionFormat(currToken.Value))
+            switch (OperatorsInfo.GetInstructionFormat(currToken))
             {
                 case EInstructionFormat.FORMAT_1:
                     // extract possible registers
-                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -183,7 +183,7 @@ namespace Assembler.Parsing
 
                 case EInstructionFormat.FORMAT_2:
                     // extract possible registers
-                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -202,7 +202,7 @@ namespace Assembler.Parsing
 
                 case EInstructionFormat.FORMAT_3:
                     // extract possible registers
-                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -278,6 +278,11 @@ namespace Assembler.Parsing
         {
             if (_current - 1 < 0) return;
             _current--;
+        }
+
+        public void Reset()
+        {
+            _current = -1;
         }
     }
 }
