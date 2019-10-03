@@ -28,7 +28,7 @@ namespace Assembler
         /// <summary>
         /// Reads all text from a file and returns text seperated in lines.
         /// </summary>
-        /// <param name="fileName">Name of file to read. Must include file extension</param>
+        /// <param name="fullFilePath">Name of file to read. Must include file extension</param>
         /// <returns></returns>
 
         public string[] ToReadFile(string fullFilePath)
@@ -55,8 +55,8 @@ namespace Assembler
         /// <summary>
         /// Writes to a file the given text
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="textLines"></param>
+        /// <param name="fullFilePath">Full file path with filename to create file</param>
+        /// <param name="textLines">Array of text to write to file. Items in the array represent lines.</param>
         /// <returns></returns>
         public bool ToWriteFile(string fullFilePath, string[] textLines)
         {
@@ -83,8 +83,8 @@ namespace Assembler
         /// <summary>
         /// Writes to a file the given text
         /// </summary>
-        /// <param name="fileName"></param>
-        /// <param name="textLines"></param>
+        /// <param name="writeable">Writable object to write to file</param>
+        /// <param name="filePath">Complete path to save file into. (Without filename)</param>
         /// <returns></returns>
         public bool ToWriteFile(IWritableObject writeable, string filePath)
         {
