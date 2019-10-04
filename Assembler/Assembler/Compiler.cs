@@ -161,7 +161,10 @@ namespace Assembler.Assembler
         {
             return decimalInstuctions;
         }
-        ///TODO: 
+
+        /// <summary>
+        /// Get Hex output lines 
+        /// </summary>
         public string[] GetOutput()
         {
             string[] lines = new string[size/2];
@@ -181,7 +184,10 @@ namespace Assembler.Assembler
         {
             return size;
         }
-
+        /// <summary>
+        /// Secund Pass Over Code
+        /// get references and instructions and format
+        /// </summary>
         public bool Compile()
         {
             LoadConstantsAndLabels();
@@ -231,6 +237,9 @@ namespace Assembler.Assembler
             return true;
         }
 
+        /// <summary>
+        /// add operators to the instruction list in decimal
+        /// </summary>
         private void AddOperator(IFormatInstructions _operator)
         {
             string binInstruction = GetBinaryFormat(_operator);
@@ -248,6 +257,9 @@ namespace Assembler.Assembler
 
         }
 
+        /// <summary>
+        /// get binary format of each instruction
+        /// </summary>
         private string GetBinaryFormat(IFormatInstructions _operator)
         {
             int opcode = OperatorsInfo.GetOPCode(_operator.Operator);
@@ -337,7 +349,9 @@ namespace Assembler.Assembler
             }
             
         }
-
+        /// <summary>
+        /// size of file in bytes
+        /// </summary>
         public long OutputSizeInBytes()
         {
             return Size();
