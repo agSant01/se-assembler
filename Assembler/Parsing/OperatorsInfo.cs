@@ -67,13 +67,15 @@ namespace Assembler.Parsing
         /// </summary>
         /// <param name="operatorCode">Target operator string</param>
         /// <returns>EInstructionFormat of the operator code</returns>
-        public static EInstructionFormat GetInstructionFormat(string operatorCode)
+        public static EInstructionFormat GetInstructionFormat(Token token)
         {
+            string opcode = token.Value;
+
             // access second item in the array which is the format
-            if (!IsOperator(operatorCode))
+            if (!IsOperator(opcode))
                 return EInstructionFormat.INVALID;
 
-            int formatNumer = operatorInfo[operatorCode.ToUpper()][1];
+            int formatNumer = operatorInfo[opcode.ToUpper()][1];
 
             switch (formatNumer)
             {
@@ -93,9 +95,10 @@ namespace Assembler.Parsing
         /// </summary>
         /// <param name="operatorCode">Target operator string</param>
         /// <returns>OPCode of the operator</returns>
-        public static int GetOPCode(string operatorCode)
+        public static int GetOPCode(Token token)
         {
-            return operatorInfo[operatorCode.ToUpper()][0];
+            string opcode = token.Value;
+            return operatorInfo[opcode.ToUpper()][0];
         }
 
         /// <summary>
@@ -103,9 +106,10 @@ namespace Assembler.Parsing
         /// </summary>
         /// <param name="operatorCode">Target operator string</param>
         /// <returns>The number of required parameters</returns>
-        public static int GetNumberOfParams(string operatorCode)
+        public static int GetNumberOfParams(Token token)
         {
-            return operatorInfo[operatorCode.ToUpper()][2];
+            string opcode = token.Value;
+            return operatorInfo[opcode.ToUpper()][2];
         }
     }
 }
