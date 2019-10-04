@@ -38,6 +38,7 @@ namespace Assembler.Assembler
             constants = new Dictionary<string, int>();
             labels = new Dictionary<string, int>();
             variables = new Dictionary<string, int>();
+            vMemory = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
             logger = new AssemblyLogger();
@@ -56,6 +57,7 @@ namespace Assembler.Assembler
             constants = new Dictionary<string, int>();
             labels = new Dictionary<string, int>();
             variables = new Dictionary<string, int>();
+            vMemory = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
             this.logger = logger;
@@ -104,7 +106,14 @@ namespace Assembler.Assembler
 
                             variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
                             currentAddress+= ((VariableAssign)parser.CurrentInstruction).Values.Length;
-                            vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values.ToString(),16));
+
+                            string ofset = "";
+                            foreach (Hexa variable in ((VariableAssign)parser.CurrentInstruction).Values)
+                            {
+                                vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString()+ ofset,Convert.ToInt32(variable.ToString(), 16));
+                                ofset += "0";
+                            }
+                            //vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values[0].ToString(),16));
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
                         {
