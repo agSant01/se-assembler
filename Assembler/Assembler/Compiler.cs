@@ -5,6 +5,7 @@ using Assembler.Parsing;
 using Assembler.Interfaces;
 using Assembler.Parsing.InstructionFormats;
 using Assembler.Parsing.InstructionItems;
+using System.Text.RegularExpressions;
 
 namespace Assembler.Assembler
 {
@@ -70,7 +71,7 @@ namespace Assembler.Assembler
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                         {
-                            Console.WriteLine(parser.CurrentInstruction.GetType());
+                            //Console.WriteLine(parser.CurrentInstruction.GetType());
                             variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
                             currentAddress+= ((VariableAssign)parser.CurrentInstruction).Values.Length;
                         }
@@ -120,7 +121,17 @@ namespace Assembler.Assembler
         ///TODO: 
         public string[] GetOutput()
         {
-            return new string[12];
+            string[] lines = new string[size/2];
+            int currentLine = 0;
+            for (int i = 0; i < size; i++)
+            {
+                lines[currentLine] += Convert.ToString(decimalInstuctions[i],16).PadLeft(2,'0') + " ";
+                if (i % 2 != 0)
+                    currentLine += (currentLine<size/2)? 1:0;
+
+            }
+            Console.WriteLine($"usage = {size} bytes");
+            return lines;
         }
 
         public int Size()
@@ -156,7 +167,7 @@ namespace Assembler.Assembler
                                 currentAddress += 2;
                             }
 
-                            AddOperator(parser.CurrentInstruction.Operator);
+                            AddOperator(parser.CurrentInstruction);
                             currentAddress++;
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
@@ -177,36 +188,110 @@ namespace Assembler.Assembler
             return true;
         }
 
-        private void AddOperator(Token _operator)
+        private void AddOperator(IFormatInstructions _operator)
         {
-            
+            string binInstruction = GetBinaryFormat(_operator);
+            //Console.WriteLine(OperatorsInfo.GetInstructionFormat(_operator.Operator)+" "+ binInstruction);
+            if(binInstruction.Length != 16)
+            {
+                throw new Exception("invalid bytes");
+            }
+            string firstByte = binInstruction.Substring(0,8);
+            AddInstruction(Convert.ToInt32(firstByte, 2));
+            string secondByte = binInstruction.Substring(8,8);
+            AddInstruction(Convert.ToInt32(secondByte, 2));
+
+            //Console.WriteLine($"Bytes {firstByte} {secondByte}");
+
         }
 
-        private string GetBinaryFormat(Token _operator)
+        private string GetBinaryFormat(IFormatInstructions _operator)
         {
-            int opcode = OperatorsInfo.GetOPCode(_operator);
+            int opcode = OperatorsInfo.GetOPCode(_operator.Operator);
 
-            switch (OperatorsInfo.GetInstructionFormat(_operator))
+            switch (OperatorsInfo.GetInstructionFormat(_operator.Operator))
             {
                 case EInstructionFormat.FORMAT_1:
                     {
-                        Convert.ToString(opcode,2)
-                        break;
+                        InstructionFormat1 format = (InstructionFormat1)_operator;
+                        int Ra = (format.RegisterA.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        int Rb = (format.RegisterB.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        int Rc = (format.RegisterC.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+
+                        return $"{Convert.ToString(opcode, 2).PadLeft(5,'0')}" +
+                            $"{Convert.ToString(Ra, 2).PadLeft(3,'0')}" +
+                            $"{Convert.ToString(Rb, 2).PadLeft(3, '0')}" +
+                            $"{Convert.ToString(Rc, 2).PadLeft(3, '0')}00" ;
                     }
                 case EInstructionFormat.FORMAT_2:
                     {
-                        break;
+                        InstructionFormat2 format = (InstructionFormat2)_operator;
+                        int Ra = (format.RegisterA.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+
+
+                        int constOrAddr = 0;
+                        if (constants.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = constants[format.ConstOrAddress.ToString()];
+                        else if (variables.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = variables[format.ConstOrAddress.ToString()];
+                        else if (labels.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = labels[format.ConstOrAddress.ToString()];
+                        else
+                        {
+                            //check if the constant or address is a direct input
+                            try
+                            {
+                                constOrAddr = Convert.ToInt32(format.ConstOrAddress.ToString().Replace("#",""), 16);
+                            }
+                            catch
+                            {
+                                //send error message (undefined variable)
+                                return null;
+                            }
+                        }
+
+                        //Console.WriteLine($"{opcode} {format.RegisterA.ToString()} {constOrAddr}");
+                        return $"{Convert.ToString(opcode, 2).PadLeft(5, '0')}" +
+                            $"{Convert.ToString(Ra, 2).PadLeft(3, '0')}" +
+                            $"{Convert.ToString(constOrAddr, 2).PadLeft(8, '0')}";
+                           
                     }
                 case EInstructionFormat.FORMAT_3:
                     {
-                        break;
+                        InstructionFormat3 format = (InstructionFormat3)_operator;
+
+                        int constOrAddr = 0;
+                        if (constants.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = constants[format.ConstOrAddress.ToString()];
+                        else if (variables.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = variables[format.ConstOrAddress.ToString()];
+                        else if (labels.ContainsKey(format.ConstOrAddress.ToString()))
+                            constOrAddr = labels[format.ConstOrAddress.ToString()];
+                        else
+                        {
+                            //check if the constant or address is a direct input
+                            try
+                            {
+                                constOrAddr = Convert.ToInt32(format.ConstOrAddress.ToString().Replace("#", ""), 16);
+                            }
+                            catch
+                            {
+                                //send error message (undefined variable)
+                                return null;
+                            }
+                        }
+
+
+                        return $"{Convert.ToString(opcode, 2).PadLeft(5, '0')}" +
+                            $"{Convert.ToString(constOrAddr, 2).PadLeft(11, '0')}";
+                           
                     }
                 default:
                     {
                         throw new Exception("Token is not an instruction");
                     }
             }
-            return "";
+            
         }
 
         public long OutputSizeInBytes()
