@@ -53,7 +53,7 @@ namespace Assembler
             public static void Main()
             {
                 string val = "";
-                Console.Write("File in Current Dir:");
+                Console.Write("File (with complete Path):");
 
                 while (val.Equals(null) || val.Trim().Equals(""))
                 {
