@@ -13,7 +13,7 @@ namespace Assembler.Parsing
         //Parser and lexer for sifting through the file
         private Parser parser;
         private Lexer lexer;
-
+        private Compiler compiler;
         private string path;
 
         ///<summary>Constructor that receives a string of the file to be parsed.
@@ -26,6 +26,7 @@ namespace Assembler.Parsing
             {
                 this.lexer = new Lexer(FileManager.Instance.ToReadFile(path));
                 this.parser = new Parser(this.lexer);
+                this.compiler = new Compiler(this.parser);
             }
             catch (FileNotFoundException)
             {
@@ -43,7 +44,7 @@ namespace Assembler.Parsing
             if (this.lexer.Equals(null))
                 throw new FileNotFoundException();
 
-
+        
             Console.WriteLine("Provided File's Contents:\n");
             while (this.lexer.MoveNext())
             {
@@ -51,6 +52,21 @@ namespace Assembler.Parsing
             }
 
             Console.WriteLine("End of File...\n");
+        }
+
+        private void writeObjectCodeFile()
+        {
+            this.compiler.Compile();
+            string [] lines = compiler.GetOutput();
+
+            Console.WriteLine("\nOuput file contents:");
+            foreach(string line in lines)
+            {
+                Console.WriteLine(line);
+            }
+            Console.WriteLine("\n");
+
+            System.IO.File.WriteAllLines(this.path, lines);
         }
 
 
@@ -67,7 +83,10 @@ namespace Assembler.Parsing
 
             Shell shell = new Shell(val);
 
-            try { shell.outputFile(); }
+            try {
+                shell.outputFile();
+                shell.writeObjectCodeFile();
+            }
             catch(FileNotFoundException){Console.WriteLine("Couldn't open file....");}
             
 
