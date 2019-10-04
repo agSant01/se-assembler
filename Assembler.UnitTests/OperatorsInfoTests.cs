@@ -11,7 +11,10 @@ namespace Assembler.UnitTests
     public class OperatorsInfoTests
     {
         string[] ops = { "JMPRIND", "add", "JMPAddR", "LoAd" };
+<<<<<<< HEAD
         
+=======
+>>>>>>> master
 
         EInstructionFormat[] opFormats =
         {
@@ -24,6 +27,7 @@ namespace Assembler.UnitTests
         [TestMethod]
         public void OperatorsInfoTests_GetInstructionFormats_Success()
         {
+<<<<<<< HEAD
             Token[] opTkn = new Token[ops.Length];
             for (int i = 0; i < opTkn.Length; i++)
             {
@@ -31,6 +35,10 @@ namespace Assembler.UnitTests
             }
             int idx = 0;
             foreach (Token operation in opTkn)
+=======
+            int idx = 0;
+            foreach (string operation in ops)
+>>>>>>> master
             {
                 EInstructionFormat f = OperatorsInfo.GetInstructionFormat(operation);
 
@@ -51,6 +59,7 @@ namespace Assembler.UnitTests
             Array.Resize(ref opFormats, 5);
             opFormats[4] = EInstructionFormat.INVALID;
 
+<<<<<<< HEAD
             Token[] opTkn = new Token[ops.Length];
             for (int i = 0; i < opTkn.Length; i++)
             {
@@ -58,6 +67,11 @@ namespace Assembler.UnitTests
             }
 
             foreach (Token operation in opTkn)
+=======
+
+
+            foreach (string operation in ops)
+>>>>>>> master
             {
                 EInstructionFormat f = OperatorsInfo.GetInstructionFormat(operation);
 

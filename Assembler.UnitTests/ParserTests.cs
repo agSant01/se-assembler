@@ -1,4 +1,5 @@
 ﻿using Assembler.Parsing;
+<<<<<<< HEAD
 using Assembler.Assembler;
 using Assembler.Parsing.InstructionFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,6 +7,11 @@ using System.IO;
 using System;
 using Assembler.Parsing.InstructionItems;
 using System.Collections.Generic;
+=======
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System;
+>>>>>>> master
 
 namespace Assembler.UnitTests
 {
@@ -42,10 +48,14 @@ namespace Assembler.UnitTests
             while (parser.MoveNext())
             {
                 Console.WriteLine(parser.CurrentInstruction);
+<<<<<<< HEAD
                 
             }
 
 
+=======
+            }
+>>>>>>> master
         }
 
         [TestMethod]

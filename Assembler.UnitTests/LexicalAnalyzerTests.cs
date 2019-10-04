@@ -265,7 +265,14 @@ namespace Assembler.UnitTests
 
             Assert.IsNotNull(lines, "File Not Found.");
 
+<<<<<<< HEAD
             lexer = new Lexer(lines);
+=======
+            lexer = new Lexer(lines)
+            {
+                SkipWhiteSpaces = true
+            };
+>>>>>>> master
 
             int counter = 0;
             while (lexer.MoveNext())
@@ -283,7 +290,14 @@ namespace Assembler.UnitTests
 
             Assert.IsNotNull(lines, "File Not Found.");
 
+<<<<<<< HEAD
             lexer = new Lexer(lines);
+=======
+            lexer = new Lexer(lines)
+            {
+                SkipWhiteSpaces = true
+            };
+>>>>>>> master
 
             int counter = 0;
             while (lexer.MoveNext())
@@ -293,5 +307,10 @@ namespace Assembler.UnitTests
                 counter++;
             }
         }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> master
     }
 }

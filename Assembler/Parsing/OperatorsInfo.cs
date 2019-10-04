@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +15,23 @@ namespace Assembler.Parsing
             operatorInfo = new Dictionary<string, int[]>
             {
 
+=======
+﻿using System.Collections.Generic;
+
+namespace Assembler.Parsing
+{
+    /// <summary>
+    /// Information of the Operator Codes.
+    /// </summary>
+    public class OperatorsInfo
+    {
+        /// <summary>
+        /// Dictionary of Operator Codes Information
+        /// </summary>
+        private static readonly Dictionary<string, int[]>
+            operatorInfo = new Dictionary<string, int[]>
+            {
+>>>>>>> master
                 // Data movement
                 // { OP_CODE, INSTRUCTION_FORMAT, NUM_OF_PARAMS }
                 { "LOAD",       new int[] { 0, 2, 2 } },
@@ -23,13 +41,19 @@ namespace Assembler.Parsing
                 { "PUSH",       new int[] { 4, 2, 1 } },
                 { "LOADRIND",   new int[] { 5, 1, 2 } },
                 { "STOREIND",   new int[] { 6, 1, 2 } },
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
                 // Arithmetic Operations
                 { "ADD",        new int[] { 7, 1, 3 } },
                 { "SUB",        new int[] { 8, 1, 3 } },
                 { "ADDIM",      new int[] { 9, 2, 2 } },
                 { "SUBIM",      new int[] { 10, 2, 2 } },
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
                 //Logic operations
                 { "AND",        new int[] { 11, 1, 3 } },
                 { "OR",         new int[] { 12, 1, 3 } },
@@ -40,7 +64,10 @@ namespace Assembler.Parsing
                 { "SHIFTL",     new int[] { 17, 1, 3 } },
                 { "ROTAR",      new int[] { 18, 1, 3 } },
                 { "ROTAL",      new int[] { 19, 1, 3 } },
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
                 // Flow Control
                 { "JMPRIND",        new int[] { 20, 1, 1 } },
                 { "JMPADDR",    new int[] { 21, 3, 1 } },
@@ -55,6 +82,7 @@ namespace Assembler.Parsing
                 { "CALL",       new int[] { 30, 3, 1 } },
                 { "RETURN",     new int[] { 31, -1, 0 } }
             };
+<<<<<<< HEAD
         }
 
         public static bool IsOperator(string value)
@@ -75,6 +103,31 @@ namespace Assembler.Parsing
                 return EInstructionFormat.INVALID;
 
             int formatNumer = operatorInfo[opcode.ToUpper()][1];
+=======
+
+        /// <summary>
+        /// Identifies if string represents an operator
+        /// </summary>
+        /// <param name="value">Target string</param>
+        /// <returns>True if string is an operator, false otherwise</returns>
+        public static bool IsOperator(string value)
+        {
+            return operatorInfo.ContainsKey(value.ToUpper());
+        }
+
+        /// <summary>
+        /// Used to identify the instruction format of the target operator
+        /// </summary>
+        /// <param name="operatorCode">Target operator string</param>
+        /// <returns>EInstructionFormat of the operator code</returns>
+        public static EInstructionFormat GetInstructionFormat(string operatorCode)
+        {
+            // access second item in the array which is the format
+            if (!IsOperator(operatorCode))
+                return EInstructionFormat.INVALID;
+
+            int formatNumer = operatorInfo[operatorCode.ToUpper()][1];
+>>>>>>> master
 
             switch (formatNumer)
             {
@@ -89,6 +142,7 @@ namespace Assembler.Parsing
             }
         }
 
+<<<<<<< HEAD
         public static int GetOPCode(Token token)
         {
             if (operatorInfo == null) Init();
@@ -104,6 +158,26 @@ namespace Assembler.Parsing
 
             string opcode = token.Value;
             return operatorInfo[opcode.ToUpper()][2];
+=======
+        /// <summary>
+        /// Identifies the OPCode of the target operator 
+        /// </summary>
+        /// <param name="operatorCode">Target operator string</param>
+        /// <returns>OPCode of the operator</returns>
+        public static int GetOPCode(string operatorCode)
+        {
+            return operatorInfo[operatorCode.ToUpper()][0];
+        }
+
+        /// <summary>
+        /// Identifies the number of parameters an operator requires
+        /// </summary>
+        /// <param name="operatorCode">Target operator string</param>
+        /// <returns>The number of required parameters</returns>
+        public static int GetNumberOfParams(string operatorCode)
+        {
+            return operatorInfo[operatorCode.ToUpper()][2];
+>>>>>>> master
         }
     }
 }
