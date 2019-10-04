@@ -19,6 +19,7 @@ namespace Assembler.Assembler
         private Dictionary<string, int> constants;
         private Dictionary<string, int> labels;
         private Dictionary<string, int> variables;
+        private Dictionary<string, int> vMemory;
         private AssemblyLogger logger;
 
         //instructions list
@@ -29,6 +30,7 @@ namespace Assembler.Assembler
 
         /// <summary>
         /// Two pass Assembler
+        /// <paramref name="parser"/>
         /// </summary>
         public Compiler(Parser parser)
         {
@@ -43,6 +45,24 @@ namespace Assembler.Assembler
 
         }
 
+        /// <summary>
+        /// Two pass Assembler
+        /// <paramref name="parser"/>
+        /// <paramref name="logger"/>
+        /// </summary>
+        public Compiler(Parser parser, AssemblyLogger logger)
+        {
+            currentAddress = 0;
+            constants = new Dictionary<string, int>();
+            labels = new Dictionary<string, int>();
+            variables = new Dictionary<string, int>();
+            this.parser = parser;
+            decimalInstuctions = new int[10];
+            this.logger = logger;
+            size = 0;
+
+        }
+
 
         /// <summary>
         /// First Pass Over Code
@@ -50,6 +70,7 @@ namespace Assembler.Assembler
         /// </summary>
         private void LoadConstantsAndLabels()
         {
+            int lineCount = 0;
             parser.Reset();
             while (parser.MoveNext())
             {
@@ -77,9 +98,13 @@ namespace Assembler.Assembler
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                         {
-                            //Console.WriteLine(parser.CurrentInstruction.GetType());
+                            
+                            if (variables.ContainsValue(currentAddress))
+                                logger.Warning("Memory Overide",lineCount.ToString(),currentAddress.ToString(),vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
+
                             variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
                             currentAddress+= ((VariableAssign)parser.CurrentInstruction).Values.Length;
+                            vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values.ToString(),16));
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
                         {
@@ -90,8 +115,9 @@ namespace Assembler.Assembler
                         
                     }
                 }
-                
+                lineCount++;
             }
+
             
         }
 
@@ -180,7 +206,7 @@ namespace Assembler.Assembler
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                         {
-                            //Console.WriteLine("here "+((VariableAssign)parser.CurrentInstruction).Values);
+                           
                             foreach(Hexa variable in ((VariableAssign)parser.CurrentInstruction).Values)
                             {
                                 AddInstruction(Convert.ToInt32(variable.ToString(), 16));
@@ -199,7 +225,7 @@ namespace Assembler.Assembler
         private void AddOperator(IFormatInstructions _operator)
         {
             string binInstruction = GetBinaryFormat(_operator);
-            //Console.WriteLine(OperatorsInfo.GetInstructionFormat(_operator.Operator)+" "+ binInstruction);
+            
             if(binInstruction.Length != 16)
             {
                 throw new Exception("invalid bytes");
@@ -209,7 +235,7 @@ namespace Assembler.Assembler
             string secondByte = binInstruction.Substring(8,8);
             AddInstruction(Convert.ToInt32(secondByte, 2));
 
-            //Console.WriteLine($"Bytes {firstByte} {secondByte}");
+            
 
         }
 
@@ -259,7 +285,7 @@ namespace Assembler.Assembler
                             }
                         }
 
-                        //Console.WriteLine($"{opcode} {format.RegisterA.ToString()} {constOrAddr}");
+                        
                         return $"{Convert.ToString(opcode, 2).PadLeft(5, '0')}" +
                             $"{Convert.ToString(Ra, 2).PadLeft(3, '0')}" +
                             $"{Convert.ToString(constOrAddr, 2).PadLeft(8, '0')}";
