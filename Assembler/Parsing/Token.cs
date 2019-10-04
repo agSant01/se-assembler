@@ -1,10 +1,9 @@
 ﻿
 namespace Assembler.Parsing
 {
-<<<<<<< HEAD
-    public class Token
-    {
-=======
+
+
+
     /// <summary>
     /// Representation of a token. Stores value and Token type.
     /// </summary>
@@ -15,19 +14,14 @@ namespace Assembler.Parsing
         /// </summary>
         /// <param name="type">Token type</param>
         /// <param name="value">value of the token</param>
->>>>>>> master
+
         public Token(TokenType type, string value)
         {
             Type = type;
             Value = value;
         }
 
-<<<<<<< HEAD
-        public string Value { get; }
 
-        public TokenType Type { get; }
-
-=======
         /// <summary>
         /// Getter for the Token value
         /// </summary>
@@ -42,14 +36,13 @@ namespace Assembler.Parsing
         /// ToString Override
         /// </summary>
         /// <returns>String representation of VariableName</returns>
->>>>>>> master
+
         public override string ToString()
         {
             return $"Token(type: {Type.ToString()}, val: '{Value}')";
         }
 
-<<<<<<< HEAD
-=======
+
         /// <summary>
         /// GetHashCode Override
         /// </summary>
@@ -63,7 +56,7 @@ namespace Assembler.Parsing
         /// Equals Override
         /// </summary>
         /// <returns>Equals of this Token and target token contain the same value and type</returns>
->>>>>>> master
+
         public override bool Equals(object obj)
         {
             if (!this.GetType().Equals(obj.GetType()))

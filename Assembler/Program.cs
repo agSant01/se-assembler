@@ -7,14 +7,12 @@ namespace Assembler
 {
     class Program
     {
-<<<<<<< HEAD
-      
-=======
+
         //static void Main(string[] args)
         //{
            
         //    Console.WriteLine("Hello World!");
         //}
->>>>>>> master
+
     }
 }
