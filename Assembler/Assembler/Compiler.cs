@@ -19,12 +19,17 @@ namespace Assembler.Assembler
         private Dictionary<string, int> constants;
         private Dictionary<string, int> labels;
         private Dictionary<string, int> variables;
+        private AssemblyLogger logger;
 
         //instructions list
         private int[] decimalInstuctions;
         private Parser parser;
-        
+
         //initialize components
+
+        /// <summary>
+        /// Two pass Assembler
+        /// </summary>
         public Compiler(Parser parser)
         {
             currentAddress = 0;
@@ -33,6 +38,7 @@ namespace Assembler.Assembler
             variables = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
+            logger = new AssemblyLogger();
             size = 0;
 
         }
@@ -88,6 +94,8 @@ namespace Assembler.Assembler
             }
             
         }
+
+
 
         private void AddInstruction(int decimalInstruction)
         {
@@ -246,6 +254,7 @@ namespace Assembler.Assembler
                             catch
                             {
                                 //send error message (undefined variable)
+                                logger.Error("Variable not defined",currentAddress.ToString(),"Variable called but never defined");
                                 return null;
                             }
                         }
@@ -296,7 +305,7 @@ namespace Assembler.Assembler
 
         public long OutputSizeInBytes()
         {
-            return 0;
+            return Size();
         }
 
 
