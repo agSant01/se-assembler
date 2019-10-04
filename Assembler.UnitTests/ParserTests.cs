@@ -1,7 +1,11 @@
 ﻿using Assembler.Parsing;
+using Assembler.Assembler;
+using Assembler.Parsing.InstructionFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System;
+using Assembler.Parsing.InstructionItems;
+using System.Collections.Generic;
 
 namespace Assembler.UnitTests
 {
@@ -38,7 +42,10 @@ namespace Assembler.UnitTests
             while (parser.MoveNext())
             {
                 Console.WriteLine(parser.CurrentInstruction);
+                
             }
+
+
         }
 
         [TestMethod]
