@@ -43,12 +43,12 @@ namespace Assembler.Parsing
         }
 
 
-            public static void Main()
+          public static void Main()
         {
-            string val =  null;
+            string val = "";
             Console.Write("File in Current Dir:");
 
-            while(val.Trim().Equals(null))
+            while(val.Equals(null) || val.Trim().Equals(""))
             {
                 val = Console.ReadLine();
             }
