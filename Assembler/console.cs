@@ -18,7 +18,7 @@ namespace Assembler.Parsing
 
         ///<summary>Constructor that receives a string of the file to be parsed.
         ///</summary>
-        /// <param name="filename"></param>
+        /// <param name="filename"> Name of the file from current directory to be parsed.</param>
         public Shell(string filename)
         {
             path = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, @filename);
@@ -34,7 +34,10 @@ namespace Assembler.Parsing
 
         }
 
-        //<summary> 
+        ///<summary>
+        ///Prints the contents of the provided file into stdout.
+        ///</summary>
+
         public void outputFile()
         {
             if (this.lexer.Equals(null))
@@ -47,7 +50,7 @@ namespace Assembler.Parsing
                 Console.WriteLine(this.lexer.CurrrentToken);
             }
 
-            Console.WriteLine("\n");
+            Console.WriteLine("End of File...\n");
         }
 
 
