@@ -1,5 +1,8 @@
 ﻿using Assembler.Parsing;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/LuisAndParser
 using Assembler.Assembler;
 using Assembler.Parsing.InstructionFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,11 +10,14 @@ using System.IO;
 using System;
 using Assembler.Parsing.InstructionItems;
 using System.Collections.Generic;
+<<<<<<< HEAD
 =======
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System;
 >>>>>>> master
+=======
+>>>>>>> origin/LuisAndParser
 
 namespace Assembler.UnitTests
 {
@@ -49,6 +55,7 @@ namespace Assembler.UnitTests
             {
                 Console.WriteLine(parser.CurrentInstruction);
 <<<<<<< HEAD
+<<<<<<< HEAD
                 
             }
 
@@ -56,6 +63,12 @@ namespace Assembler.UnitTests
 =======
             }
 >>>>>>> master
+=======
+                
+            }
+
+
+>>>>>>> origin/LuisAndParser
         }
 
         [TestMethod]

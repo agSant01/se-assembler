@@ -12,9 +12,13 @@ namespace Assembler.UnitTests
     {
         string[] ops = { "JMPRIND", "add", "JMPAddR", "LoAd" };
 <<<<<<< HEAD
+<<<<<<< HEAD
         
 =======
 >>>>>>> master
+=======
+        
+>>>>>>> origin/LuisAndParser
 
         EInstructionFormat[] opFormats =
         {
@@ -28,17 +32,25 @@ namespace Assembler.UnitTests
         public void OperatorsInfoTests_GetInstructionFormats_Success()
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/LuisAndParser
             Token[] opTkn = new Token[ops.Length];
             for (int i = 0; i < opTkn.Length; i++)
             {
                 opTkn[i] = new Token(TokenType.OPERATOR, ops[i]);
             }
+<<<<<<< HEAD
             int idx = 0;
             foreach (Token operation in opTkn)
 =======
             int idx = 0;
             foreach (string operation in ops)
 >>>>>>> master
+=======
+            int idx = 0;
+            foreach (Token operation in opTkn)
+>>>>>>> origin/LuisAndParser
             {
                 EInstructionFormat f = OperatorsInfo.GetInstructionFormat(operation);
 
@@ -60,11 +72,15 @@ namespace Assembler.UnitTests
             opFormats[4] = EInstructionFormat.INVALID;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/LuisAndParser
             Token[] opTkn = new Token[ops.Length];
             for (int i = 0; i < opTkn.Length; i++)
             {
                 opTkn[i] = new Token(TokenType.OPERATOR, ops[i]);
             }
+<<<<<<< HEAD
 
             foreach (Token operation in opTkn)
 =======
@@ -72,6 +88,10 @@ namespace Assembler.UnitTests
 
             foreach (string operation in ops)
 >>>>>>> master
+=======
+
+            foreach (Token operation in opTkn)
+>>>>>>> origin/LuisAndParser
             {
                 EInstructionFormat f = OperatorsInfo.GetInstructionFormat(operation);
 

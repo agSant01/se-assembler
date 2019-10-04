@@ -236,6 +236,7 @@ namespace Assembler.Parsing
             Token currToken = lexer.CurrrentToken;
 
             switch (OperatorsInfo.GetInstructionFormat(currToken))
+<<<<<<< HEAD
             {
                 case EInstructionFormat.FORMAT_1:
                     // extract possible registers
@@ -265,6 +266,12 @@ namespace Assembler.Parsing
                     // extract possible registers
                     while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
 >>>>>>> master
+=======
+            {
+                case EInstructionFormat.FORMAT_1:
+                    // extract possible registers
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
+>>>>>>> origin/LuisAndParser
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -285,10 +292,14 @@ namespace Assembler.Parsing
                 case EInstructionFormat.FORMAT_2:
                     // extract possible registers
 <<<<<<< HEAD
+<<<<<<< HEAD
                     while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
 =======
                     while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
 >>>>>>> master
+=======
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
+>>>>>>> origin/LuisAndParser
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -312,10 +323,14 @@ namespace Assembler.Parsing
                 case EInstructionFormat.FORMAT_3:
                     // extract possible registers
 <<<<<<< HEAD
+<<<<<<< HEAD
                     while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
 =======
                     while (parameters < OperatorsInfo.GetNumberOfParams(currToken.Value))
 >>>>>>> master
+=======
+                    while (parameters < OperatorsInfo.GetNumberOfParams(currToken))
+>>>>>>> origin/LuisAndParser
                     {
                         lexer.MoveNext();
                         tempList[parameters] = lexer.CurrrentToken;
@@ -435,11 +450,14 @@ namespace Assembler.Parsing
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         /// <summary>
         /// Reset the CurrentInstruction to the first Instruction of the Iterator
         /// </summary>
 >>>>>>> master
+=======
+>>>>>>> origin/LuisAndParser
         public void Reset()
         {
             _current = -1;

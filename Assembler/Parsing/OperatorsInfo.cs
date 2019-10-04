@@ -100,6 +100,7 @@ namespace Assembler.Parsing
 
             // access second item in the array which is the format
             if (!IsOperator(opcode))
+<<<<<<< HEAD
                 return EInstructionFormat.INVALID;
 
             int formatNumer = operatorInfo[opcode.ToUpper()][1];
@@ -128,6 +129,11 @@ namespace Assembler.Parsing
 
             int formatNumer = operatorInfo[operatorCode.ToUpper()][1];
 >>>>>>> master
+=======
+                return EInstructionFormat.INVALID;
+
+            int formatNumer = operatorInfo[opcode.ToUpper()][1];
+>>>>>>> origin/LuisAndParser
 
             switch (formatNumer)
             {
@@ -143,6 +149,9 @@ namespace Assembler.Parsing
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/LuisAndParser
         public static int GetOPCode(Token token)
         {
             if (operatorInfo == null) Init();
@@ -158,6 +167,7 @@ namespace Assembler.Parsing
 
             string opcode = token.Value;
             return operatorInfo[opcode.ToUpper()][2];
+<<<<<<< HEAD
 =======
         /// <summary>
         /// Identifies the OPCode of the target operator 
@@ -178,6 +188,8 @@ namespace Assembler.Parsing
         {
             return operatorInfo[operatorCode.ToUpper()][2];
 >>>>>>> master
+=======
+>>>>>>> origin/LuisAndParser
         }
     }
 }
