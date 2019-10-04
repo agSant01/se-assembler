@@ -78,13 +78,17 @@ namespace Assembler
 
         public bool objectCodeOfFile(string[] outLines, string[] logLines)
         {
+            logger.StatusUpdate("Writting output file");
             String outputPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_HEX_output.txt";
             Console.WriteLine("output located in : " + outputPath);
             bool outResult = FileManager.Instance.ToWriteFile(outputPath, outLines);
-
+            logger.StatusUpdate("Writting output file completed");
+            logger.StatusUpdate("Writting log file");
             String logPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_report.log";
             Console.WriteLine("output located in : " + logPath);
             bool logResult = FileManager.Instance.ToWriteFile(logPath, logLines);
+            logger.StatusUpdate("Writting output file Completed");
+
 
             return logResult & outResult;
         }

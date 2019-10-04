@@ -130,7 +130,21 @@ namespace Assembler.Assembler
             
         }
 
-
+        private bool HaveSyntaxErrors()
+        {
+            int lineCount = 0;
+            parser.Reset();
+            while (parser.MoveNext())
+            {
+                if (!parser.CurrentInstruction.IsValid)
+                {
+                    logger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
+                    return true;
+                };
+                lineCount++;
+            }
+            return false;
+        }
 
         private void AddInstruction(int decimalInstruction)
         {
@@ -190,6 +204,10 @@ namespace Assembler.Assembler
         /// </summary>
         public bool Compile()
         {
+            logger.StatusUpdate("Assembling process started");
+            if (HaveSyntaxErrors())
+                return false;
+            
             LoadConstantsAndLabels();
 
             parser.Reset();
@@ -233,7 +251,7 @@ namespace Assembler.Assembler
                 }
 
             }
-
+            logger.StatusUpdate("Assembling completed");
             return true;
         }
 
