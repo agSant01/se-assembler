@@ -243,9 +243,14 @@ namespace Assembler.Assembler
         private void AddOperator(IFormatInstructions _operator)
         {
             string binInstruction = GetBinaryFormat(_operator);
-            
+
+            //this will execute if it was an undefined variable
+            if (binInstruction == null)
+                return;
+
             if(binInstruction.Length != 16)
             {
+                logger.Error("invalid bites",size.ToString(),"program crashed please report :)");
                 throw new Exception("invalid bytes");
             }
             string firstByte = binInstruction.Substring(0,8);

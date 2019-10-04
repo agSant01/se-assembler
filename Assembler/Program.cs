@@ -27,8 +27,9 @@ namespace Assembler
             {
                 shell.outputFile();
                 shell.compiler.Compile();
-                string[] lines = shell.compiler.GetOutput();
-                shell.objectCodeOfFile(lines);
+                string[] outLines = shell.compiler.GetOutput();
+                string[] logLines = shell.logger.GetLines();
+                shell.objectCodeOfFile(outLines, logLines);
             }
             catch (FileNotFoundException) { Console.WriteLine("Couldn't open file...."); }
 
@@ -42,14 +43,16 @@ namespace Assembler
         private Lexer lexer;
         public Compiler compiler;
         private string path;
+        public AssemblyLogger logger;
         public Shell(string filename)
         {
             path = @filename;
             try
             {
+                this.logger = new AssemblyLogger();
                 this.lexer = new Lexer(FileManager.Instance.ToReadFile(path));
                 this.parser = new Parser(this.lexer);
-                this.compiler = new Compiler(parser);
+                this.compiler = new Compiler(parser,logger);
             }
             catch (FileNotFoundException)
             {
@@ -73,13 +76,17 @@ namespace Assembler
             Console.WriteLine("\n");
         }
 
-        public bool objectCodeOfFile(string[] lines)
+        public bool objectCodeOfFile(string[] outLines, string[] logLines)
         {
             String outputPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_HEX_output.txt";
             Console.WriteLine("output located in : " + outputPath);
-            bool result = FileManager.Instance.ToWriteFile(outputPath, lines);
+            bool outResult = FileManager.Instance.ToWriteFile(outputPath, outLines);
 
-            return result;
+            String logPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_report.log";
+            Console.WriteLine("output located in : " + logPath);
+            bool logResult = FileManager.Instance.ToWriteFile(logPath, logLines);
+
+            return logResult & outResult;
         }
 
 
