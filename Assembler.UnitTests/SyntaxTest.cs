@@ -1,112 +1,113 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text.RegularExpressions;
+﻿//using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using System;
+//using System.Collections.Generic;
+//using System.Collections;
+//using System.Text.RegularExpressions;
+//using Assembler.Parsing;
 
-namespace Assembler
-{
-    [TestClass]
-    public class SyntaxTest
-    {
-        private SyntaxAnalyzer syntax;
-        private Tokenizer tokenizer;
+//namespace Assembler
+//{
+//    [TestClass]
+//    public class SyntaxTest
+//    {
+//        private SyntaxAnalyzer syntax;
+//        private Tokenizer tokenizer;
 
-        [TestInitialize]
-        public void TestInit()
-        {
-            syntax = new SyntaxAnalyzer();
-            tokenizer = new Tokenizer();
-        }
+//        [TestInitialize]
+//        public void TestInit()
+//        {
+//            syntax = new SyntaxAnalyzer();
+//            tokenizer = new Tokenizer();
+//        }
 
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-            syntax = null;
-        }
+//        [TestCleanup]
+//        public void TestCleanUp()
+//        {
+//            syntax = null;
+//        }
 
-        [TestMethod]
-        public void Verify_Syntax()
-        {
+//        [TestMethod]
+//        public void Verify_Syntax()
+//        {
            
-            string add = "ADD R1 , R2 , R3 ";
+//            string add = "ADD R1 , R2 , R3 ";
 
-            Assert.IsTrue(syntax.isProperSyntax(add));
+//            Assert.IsTrue(syntax.isProperSyntax(add));
 
-            string sub = "SUB R1, R2, R3";
-            Assert.IsTrue(syntax.isProperSyntax(sub));
+//            string sub = "SUB R1, R2, R3";
+//            Assert.IsTrue(syntax.isProperSyntax(sub));
 
-            string load = "LOAD R1, R2";
-            Assert.IsTrue(syntax.isProperSyntax(load));
+//            string load = "LOAD R1, R2";
+//            Assert.IsTrue(syntax.isProperSyntax(load));
 
-            string pop = "POP R1";
-            Assert.IsTrue(syntax.isProperSyntax(pop));
+//            string pop = "POP R1";
+//            Assert.IsTrue(syntax.isProperSyntax(pop));
 
-            string push = "PUSH R1";
-            Assert.IsTrue(syntax.isProperSyntax(push));
-        }
+//            string push = "PUSH R1";
+//            Assert.IsTrue(syntax.isProperSyntax(push));
+//        }
 
-        [TestMethod]
-        public void VerifyAddTokenExtraction()
-        {
+//        [TestMethod]
+//        public void VerifyAddTokenExtraction()
+//        {
             
-            string add = "ADD R1 , R2 , R3 ";
-            ArrayList tokens = new ArrayList();
-            tokens.Add("ADD");
-            tokens.Add("R1");
-            tokens.Add("R2");
-            tokens.Add("R3");
-            Assert.AreEqual(tokenizer.tokensOf(add).Count, tokens.Count);
-            //Assert.AreEqual(tokens.Count, tokenizer.tokensOf(add).Count);
-            //foreach (String s in tokenizer.tokensOf(add))
-            //{
-            //    Console.WriteLine(s);
-            //}
+//            string add = "ADD R1 , R2 , R3 ";
+//            ArrayList tokens = new ArrayList();
+//            tokens.Add("ADD");
+//            tokens.Add("R1");
+//            tokens.Add("R2");
+//            tokens.Add("R3");
+//            Assert.AreEqual(tokenizer.tokensOf(add).Count, tokens.Count);
+//            //Assert.AreEqual(tokens.Count, tokenizer.tokensOf(add).Count);
+//            //foreach (String s in tokenizer.tokensOf(add))
+//            //{
+//            //    Console.WriteLine(s);
+//            //}
 
-            // Assert.IsNotNull(data[0]);
+//            // Assert.IsNotNull(data[0]);
 
-        }
+//        }
 
-        [TestMethod]
-        public void VerifySubTokenExtraction()
-        {
-            string add = "SUB R1 , R2 , R3 ";
-            ArrayList tokens = new ArrayList();
-            tokens.Add("SUB");
-            tokens.Add("R1");
-            tokens.Add("R2");
-            tokens.Add("R3");
-            Assert.AreEqual(tokenizer.tokensOf(add).Count, tokens.Count);
-            //Assert.AreEqual(tokens.Count, tokenizer.tokensOf(add).Count);
-            //foreach (String s in tokenizer.tokensOf(add))
-            //{
-            //    Console.WriteLine(s);
-            //}
+//        [TestMethod]
+//        public void VerifySubTokenExtraction()
+//        {
+//            string add = "SUB R1 , R2 , R3 ";
+//            ArrayList tokens = new ArrayList();
+//            tokens.Add("SUB");
+//            tokens.Add("R1");
+//            tokens.Add("R2");
+//            tokens.Add("R3");
+//            Assert.AreEqual(tokenizer.tokensOf(add).Count, tokens.Count);
+//            //Assert.AreEqual(tokens.Count, tokenizer.tokensOf(add).Count);
+//            //foreach (String s in tokenizer.tokensOf(add))
+//            //{
+//            //    Console.WriteLine(s);
+//            //}
 
-            // Assert.IsNotNull(data[0]);
+//            // Assert.IsNotNull(data[0]);
 
-        }
-
-
+//        }
 
 
 
-        //[TestMethod]
-        //public void Verify_Patterns()
-        //{
 
-        //    string add = "ADD R1,R2,R3";
-        //    foreach (Regex pat in syntax.reg_patterns())
-        //    {
-        //        Console.WriteLine(pat);
+
+//        //[TestMethod]
+//        //public void Verify_Patterns()
+//        //{
+
+//        //    string add = "ADD R1,R2,R3";
+//        //    foreach (Regex pat in syntax.reg_patterns())
+//        //    {
+//        //        Console.WriteLine(pat);
                 
-        //        Console.WriteLine($"Is correct grammar:{syntax.isProperSyntax(add)}");
-        //    }
+//        //        Console.WriteLine($"Is correct grammar:{syntax.isProperSyntax(add)}");
+//        //    }
 
-        //    // Assert.IsNotNull(data[0]);
+//        //    // Assert.IsNotNull(data[0]);
 
-        //}
+//        //}
 
 
-    }
-}
+//    }
+//}
