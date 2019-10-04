@@ -9,7 +9,7 @@ namespace Assembler
     /// </summary>
     public class AssemblyLogger : IWritableObject
     {
-        
+
         /// <summary>
         /// Internal record of all log events
         /// </summary>
@@ -95,7 +95,8 @@ namespace Assembler
         /// <summary>
         /// Getter for current item in the Enumerator
         /// </summary>
-        public string Current {
+        public string Current
+        {
             get
             {
                 if (logIterator == null) Reset();
@@ -117,7 +118,8 @@ namespace Assembler
         /// Used to travers the Enumerator
         /// </summary>
         /// <returns>True if there is a next item.</returns>
-        public bool MoveNext() {
+        public bool MoveNext()
+        {
             if (logIterator == null) Reset();
             return logIterator.MoveNext();
         }

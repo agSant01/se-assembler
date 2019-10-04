@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Assembler.Parsing
+﻿namespace Assembler.Parsing
 {
+    /// <summary>
+    /// Enum of possible instruction formats
+    /// </summary>
     public enum EInstructionFormat
     {
         /// <summary>
