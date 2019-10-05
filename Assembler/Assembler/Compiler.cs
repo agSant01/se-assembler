@@ -181,14 +181,13 @@ namespace Assembler.Assembler
         /// </summary>
         public string[] GetOutput()
         {
-            string[] lines = new string[size/2];
+            string[] lines = new string[(size/2)+1];
             int currentLine = 0;
             for (int i = 0; i < size; i++)
             {
                 lines[currentLine] += Convert.ToString(decimalInstuctions[i],16).PadLeft(2,'0') + " ";
                 if (i % 2 != 0)
                     currentLine += (currentLine<size/2)? 1:0;
-
             }
             Console.WriteLine($"usage = {size} bytes");
             return lines;
