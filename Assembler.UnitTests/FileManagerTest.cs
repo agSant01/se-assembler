@@ -1,13 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 
 namespace Assembler.UnitTests
 {
     [TestClass]
     public class FileManagerTest
     {
-        private readonly string workingDir = Environment.GetFolderPath(
-                         System.Environment.SpecialFolder.DesktopDirectory);
+        private readonly string workingDir = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"UnitTestingGeneratedFiles");
 
         private string GetFullPath(string fileName)
         {
@@ -39,11 +41,17 @@ namespace Assembler.UnitTests
         {
             var textLines = new string[] { "Hello", "World" };
 
-            FileManager.Instance.ToWriteFile(GetFullPath("mock.txt"), textLines);
+            bool result = FileManager.Instance.ToWriteFile(GetFullPath("mock.txt"), textLines);
+
+            Assert.IsTrue(result);
+
+            Console.WriteLine(GetFullPath("mock.txt"));
 
             var readLines = FileManager.Instance.ToReadFile(
                 GetFullPath("mock.txt")
             );
+
+            Assert.IsNotNull(readLines);
 
             foreach(string line in readLines)
             {
