@@ -130,7 +130,21 @@ namespace Assembler.Assembler
             
         }
 
-
+        private bool HaveSyntaxErrors()
+        {
+            int lineCount = 0;
+            parser.Reset();
+            while (parser.MoveNext())
+            {
+                if (!parser.CurrentInstruction.IsValid)
+                {
+                    logger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
+                    return true;
+                };
+                lineCount++;
+            }
+            return false;
+        }
 
         private void AddInstruction(int decimalInstruction)
         {
@@ -167,14 +181,13 @@ namespace Assembler.Assembler
         /// </summary>
         public string[] GetOutput()
         {
-            string[] lines = new string[size/2];
+            string[] lines = new string[(size/2)+1];
             int currentLine = 0;
             for (int i = 0; i < size; i++)
             {
                 lines[currentLine] += Convert.ToString(decimalInstuctions[i],16).PadLeft(2,'0') + " ";
                 if (i % 2 != 0)
                     currentLine += (currentLine<size/2)? 1:0;
-
             }
             Console.WriteLine($"usage = {size} bytes");
             return lines;
@@ -190,6 +203,10 @@ namespace Assembler.Assembler
         /// </summary>
         public bool Compile()
         {
+            logger.StatusUpdate("Assembling process started");
+            if (HaveSyntaxErrors())
+                return false;
+            
             LoadConstantsAndLabels();
 
             parser.Reset();
@@ -233,7 +250,7 @@ namespace Assembler.Assembler
                 }
 
             }
-
+            logger.StatusUpdate("Assembling completed");
             return true;
         }
 
@@ -243,9 +260,14 @@ namespace Assembler.Assembler
         private void AddOperator(IFormatInstructions _operator)
         {
             string binInstruction = GetBinaryFormat(_operator);
-            
+
+            //this will execute if it was an undefined variable
+            if (binInstruction == null)
+                return;
+
             if(binInstruction.Length != 16)
             {
+                logger.Error("invalid bites",size.ToString(),"program crashed please report :)");
                 throw new Exception("invalid bytes");
             }
             string firstByte = binInstruction.Substring(0,8);
