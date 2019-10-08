@@ -45,7 +45,7 @@ namespace Assembler
             {
                 shell.ExportFiles();
             }
-            catch (Exception err) { Console.WriteLine($"Unexpected Error during runtime: \n\t'{err}'");
+            catch (Exception err) { Console.WriteLine($"Unexpected Error during runtime: \n\t'{err}'"); }
         }
     }
 
