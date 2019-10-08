@@ -1,11 +1,8 @@
 ﻿using Assembler.Assembler;
 using Assembler.Parsing;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using static Assembler.FileManager;
+
 namespace Assembler
 {
     class Program
@@ -35,26 +32,20 @@ namespace Assembler
             
             ");
             string val = "";
-            Console.Write("File (with complete Path):");
+            Console.Write("File (with complete Path): ");
 
             while (val.Equals(null) || val.Trim().Equals(""))
             {
                 val = Console.ReadLine();
             }
 
-
             Shell shell = new Shell(val);
 
             try
             {
-                shell.outputFile();
-                shell.compiler.Compile();
-                string[] outLines = shell.compiler.GetOutput();
-                string[] logLines = shell.logger.GetLines();
-                shell.objectCodeOfFile(outLines, logLines);
+                shell.ExportFiles();
             }
-            catch (FileNotFoundException) { Console.WriteLine("Couldn't open file...."); }
-
+            catch (Exception err) { Console.WriteLine($"Unexpected Error during runtime: \n\t'{err}'"); }
         }
     }
 
@@ -64,63 +55,49 @@ namespace Assembler
         private Parser parser;
         private Lexer lexer;
         public Compiler compiler;
-        private string path;
+        private string fullFilePath;
         public AssemblyLogger logger;
-        public Shell(string filename)
+        public Shell(string filePath)
         {
-            path = @filename;
+            this.fullFilePath = @filePath;
             try
             {
-                this.logger = new AssemblyLogger();
-                this.lexer = new Lexer(FileManager.Instance.ToReadFile(path));
+                this.logger = new AssemblyLogger(Path.GetFileNameWithoutExtension(fullFilePath));
+                this.lexer = new Lexer(FileManager.Instance.ToReadFile(fullFilePath));
                 this.parser = new Parser(this.lexer);
-                this.compiler = new Compiler(parser,logger);
+                this.compiler = new Compiler(parser, logger);
+                this.compiler.Compile();
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("Couldn't open file....");
+                Console.WriteLine("File Not Found...");
             }
-
         }
 
-        public void outputFile()
+        public void ExportFiles()
         {
-            if (this.lexer.Equals(null))
-                throw new FileNotFoundException();
+            string workingDirFullPath = Path.GetDirectoryName(this.fullFilePath);
 
+            string objFileName = $"{Path.GetFileNameWithoutExtension(fullFilePath)}_OBJ_FILE.txt";
 
-            Console.WriteLine("Provided File's Contents:\n");
-            while (this.lexer.MoveNext())
-            {
-                Console.WriteLine(this.lexer.CurrrentToken);
-            }
+            logger.StatusUpdate("Writting Obj. file");
+            Console.WriteLine("Writting Obj. file");
+            Console.WriteLine($"Obj file located in: '{workingDirFullPath}'");
 
-            Console.WriteLine("\n");
+            FileManager.Instance.ToWriteFile(
+                Path.Combine(workingDirFullPath, objFileName),
+                compiler.GetOutput()
+            );
+
+            logger.StatusUpdate("Writting obj. file completed.");
+            Console.WriteLine("Writting obj. file completed.");
+
+            Console.WriteLine("Writting assembly log file file Completed.");
+            logger.StatusUpdate("Writting assembly log file file Completed.");
+
+            FileManager.Instance.ToWriteFile(logger, workingDirFullPath);
+
+            Console.WriteLine("Exiting.");
         }
-
-        public bool objectCodeOfFile(string[] outLines, string[] logLines)
-        {
-            logger.StatusUpdate("Writting output file");
-            String outputPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_HEX_output.txt";
-            Console.WriteLine("output located in : " + outputPath);
-            bool outResult = FileManager.Instance.ToWriteFile(outputPath, outLines);
-            logger.StatusUpdate("Writting output file completed");
-            logger.StatusUpdate("Writting log file");
-            String logPath = $@"{Path.GetDirectoryName(this.path)}\{Path.GetFileNameWithoutExtension(path)}_report.log";
-            Console.WriteLine("output located in : " + logPath);
-            bool logResult = FileManager.Instance.ToWriteFile(logPath, logLines);
-            logger.StatusUpdate("Writting output file Completed");
-
-
-            return logResult & outResult;
-        }
-
-
-        //public static void Main()
-        //{
-            
-
-        //}
-
     }
 }

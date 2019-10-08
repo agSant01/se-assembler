@@ -22,6 +22,8 @@ namespace Assembler.Assembler
         private Dictionary<string, int> vMemory;
         private AssemblyLogger logger;
 
+        private string[] compiledLines;
+
         //instructions list
         private int[] decimalInstuctions;
         private Parser parser;
@@ -41,7 +43,7 @@ namespace Assembler.Assembler
             vMemory = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
-            logger = new AssemblyLogger();
+            logger = new AssemblyLogger("ASM");
             size = 0;
 
         }
@@ -76,58 +78,51 @@ namespace Assembler.Assembler
             parser.Reset();
             while (parser.MoveNext())
             {
-                if(parser.CurrentInstruction.Operator == null && parser.CurrentInstruction.GetType().Name == "Label")
+                if (parser.CurrentInstruction.Operator == null && parser.CurrentInstruction.GetType().Name == "Label")
                 {
                     //Load Labels and check if next element is an instruction
-                    labels.Add(((Label)parser.CurrentInstruction).Name.ToString(), 
-                        ((currentAddress)%2==0)?(currentAddress): (currentAddress + 1));
+                    labels.Add(((Label)parser.CurrentInstruction).Name.ToString(),
+                        ((currentAddress) % 2 == 0) ? (currentAddress) : (currentAddress + 1));
                 }
-                else
+                else if (parser.CurrentInstruction.Operator.Type == TokenType.ORIGIN)
                 {
-                    //Update address counter
-                    if (parser.CurrentInstruction.Operator.Type == TokenType.ORIGIN)
-                    {
-                        currentAddress = Convert.ToInt32(((OriginCmd)parser.CurrentInstruction).Address.ToString(),16);
-                    }
-                    else 
-                    {
-                        //load constant references
-                        if (parser.CurrentInstruction.Operator.Type == TokenType.CONSTANT_ASSIGN)
-                        {
-                            constants.Add(((ConstantAssign)parser.CurrentInstruction).Name.ToString(),
-                                Convert.ToInt32(((ConstantAssign)parser.CurrentInstruction).Value.ToString(),16));
-                            
-                        }
-                        else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
-                        {
-                            
-                            if (variables.ContainsValue(currentAddress))
-                                logger.Warning("Memory Overide",lineCount.ToString(),currentAddress.ToString(),vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
-
-                            variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
-                            currentAddress+= ((VariableAssign)parser.CurrentInstruction).Values.Length;
-
-                            string ofset = "";
-                            foreach (Hexa variable in ((VariableAssign)parser.CurrentInstruction).Values)
-                            {
-                                vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString()+ ofset,Convert.ToInt32(variable.ToString(), 16));
-                                ofset += "0";
-                            }
-                            //vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values[0].ToString(),16));
-                        }
-                        else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
-                        {
-                            ///--------------OPERATORS MUST BE ON EVEN ADDRESSES--------------------
-                            currentAddress += (currentAddress % 2 == 0) ? 1 : 2;
-                            currentAddress++;
-                        }
-                        
-                    }
+                    currentAddress = Convert.ToInt32(((OriginCmd)parser.CurrentInstruction).Address.ToString(), 16);
                 }
+                else if (parser.CurrentInstruction.Operator.Type == TokenType.CONSTANT_ASSIGN)
+                {
+                    constants.Add(((ConstantAssign)parser.CurrentInstruction).Name.ToString(),
+                        Convert.ToInt32(((ConstantAssign)parser.CurrentInstruction).Value.ToString(), 16));
+
+                }
+                else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
+                {
+
+                    if (variables.ContainsValue(currentAddress))
+                        logger.Warning("Memory Overide", lineCount.ToString(), currentAddress.ToString(), vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
+
+                    variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
+                    currentAddress += ((VariableAssign)parser.CurrentInstruction).Values.Length;
+
+                    string ofset = "";
+                    foreach (Hexa variable in ((VariableAssign)parser.CurrentInstruction).Values)
+                    {
+                        vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString() + ofset, Convert.ToInt32(variable.ToString(), 16));
+                        ofset += "0";
+                    }
+                    //vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values[0].ToString(),16));
+                }
+                else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
+                {
+                    ///--------------OPERATORS MUST BE ON EVEN ADDRESSES--------------------
+                    currentAddress += (currentAddress % 2 == 0) ? 1 : 2;
+                    currentAddress++;
+                }
+
+
                 lineCount++;
             }
 
-            
+
         }
 
         private bool HaveSyntaxErrors()
@@ -181,16 +176,7 @@ namespace Assembler.Assembler
         /// </summary>
         public string[] GetOutput()
         {
-            string[] lines = new string[(size/2)+1];
-            int currentLine = 0;
-            for (int i = 0; i < size; i++)
-            {
-                lines[currentLine] += Convert.ToString(decimalInstuctions[i],16).PadLeft(2,'0') + " ";
-                if (i % 2 != 0)
-                    currentLine += (currentLine<size/2)? 1:0;
-            }
-            Console.WriteLine($"usage = {size} bytes");
-            return lines;
+            return compiledLines;
         }
 
         public int Size()
@@ -251,6 +237,16 @@ namespace Assembler.Assembler
 
             }
             logger.StatusUpdate("Assembling completed");
+
+            compiledLines = new string[(size / 2) + 1];
+            int currentLine = 0;
+            for (int i = 0; i < size; i++)
+            {
+                compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0') + " ";
+                if (i % 2 != 0)
+                    currentLine += (currentLine < size / 2) ? 1 : 0;
+            }
+
             return true;
         }
 
@@ -378,11 +374,5 @@ namespace Assembler.Assembler
         {
             return Size();
         }
-
-
-
-        
-
-
     }
 }
