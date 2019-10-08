@@ -243,12 +243,21 @@ namespace Assembler.Parsing
         /// Peek next Token of the Iterator, without moving the CurrentToken
         /// </summary>
         /// <returns>Next Token</returns>
-        public Token PeekNext()
+        public Token PeekNext(int next = 1)
         {
             if (_current + 1 >= sizeCounter)
                 return null;
 
-            return tokens[_current + 1];
+            if (SkipCommas && tokens[_current + next].Type == TokenType.COMMA)
+                return PeekNext(++next);
+
+            if (SkipTabs && tokens[_current + next].Type == TokenType.TAB)
+                return PeekNext(++next);
+
+            if (SkipWhiteSpaces && tokens[_current + next].Type == TokenType.WHITE_SPACE)
+                return PeekNext(++next);
+
+            return tokens[_current + next];
         }
 
         /// <summary>
