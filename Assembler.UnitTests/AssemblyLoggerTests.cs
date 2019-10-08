@@ -12,7 +12,7 @@ namespace Assembler.UnitTests
         [TestInitialize]
         public void TestInit()
         {
-            logger = new AssemblyLogger();
+            logger = new AssemblyLogger("TEST");
         }
 
         [TestCleanup]

@@ -63,6 +63,7 @@ namespace Assembler.UnitTests
 
             Parser parser = new Parser(lexer);
 
+            Assert.Fail("Add logger to compiler for test");
             Compiler compiler = new Compiler(parser);
 
             compiler.Compile();

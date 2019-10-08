@@ -65,7 +65,7 @@ namespace Assembler.UnitTests
         public void FileManagerTester_WriteWritable_Success()
         {
 
-            AssemblyLogger logger = new AssemblyLogger();
+            AssemblyLogger logger = new AssemblyLogger("ASM");
 
             string txt = "Started Parsing.";
             string msg = "Memory Overwrite";

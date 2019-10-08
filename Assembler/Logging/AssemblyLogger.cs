@@ -22,12 +22,12 @@ namespace Assembler
         /// <summary>
         /// Create a new instance of AssemblyLogger
         /// </summary>
-        public AssemblyLogger()
+        public AssemblyLogger(string asmFileName)
         {
             logs = new Queue<LogItem>();
 
             Random r = new Random();
-            FileName = $"AssemblyLog_{r.Next(100, 999)}_{r.Next(1000, 9999)}";
+            FileName = $"{asmFileName}_AssemblyLog_{r.Next(100, 999)}_{r.Next(1000, 9999)}";
 
             StatusUpdate($"Started Assembly Log " +
                 FileName + $" at {DateTime.Now.ToString()}");
