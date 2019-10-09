@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Assembler
 {
     
-    class VirtualMemory
+    class VirtualMemory : IEnumerable
     {
         private string[] memory_contents;
         private string[] memory_addresses;
@@ -26,6 +27,18 @@ namespace Assembler
             string[] address = null;
             return address;
         }
+
+        public IEnumerable<string> GetEnumerator()
+        {
+            for(int i=0; i < this.memory_contents.Length; i++)
+                yield return this.memory_contents[i];
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            yield return GetEnumerator();
+        }
+
 
     }
 }
