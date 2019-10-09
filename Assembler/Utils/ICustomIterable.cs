@@ -6,14 +6,23 @@ namespace Assembler.Utils
 {
     public abstract class ICustomIterable<E>
     {
+        /// <summary>
+        /// Current item in the Iterator fashion
+        /// </summary>
         private int _current = -1;
 
+        /// <summary>
+        /// Inner Element array
+        /// </summary>
         private E[] innerList = new E[10];
 
+        /// <summary>
+        /// Size counter
+        /// </summary>
         public int Size { get; private set; } = 0;
 
         /// <summary>
-        /// Add E to inner list
+        /// Add Element to Inner List
         /// </summary>
         /// <param name="instruction"></param>
         protected void Add(E obj)
@@ -29,7 +38,7 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Current element of the Iterator
+        /// Current Element of the Iterator
         /// </summary>
         public E Current
         {
@@ -44,7 +53,7 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Previous element of the Iterator
+        /// Previous Element of the Iterator
         /// </summary>
         public E Previous
         {
@@ -58,9 +67,9 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Peek next element of the Iterator, without moving the Current
+        /// Peek next Element of the Iterator, without moving Current
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Next Element of Current</returns>
         public E PeekNext()
         {
             if (_current + 1 >= Size)
@@ -70,9 +79,9 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Move to the next element of the Iterator
+        /// Move to the next Element of the Iterator
         /// </summary>
-        /// <returns>True if there is a next element, False otherwise</returns>
+        /// <returns>True if there is a next Element, False otherwise</returns>
         public bool MoveNext()
         {
             if (_current + 1 >= Size) return false;
@@ -81,7 +90,7 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Move back one element
+        /// Move back one Element
         /// </summary>
         public void MoveBack()
         {
@@ -90,7 +99,7 @@ namespace Assembler.Utils
         }
 
         /// <summary>
-        /// Reset the Current to the first element of the Iterator
+        /// Reset the Current to the first Element of the Iterator
         /// </summary>
         public void Reset()
         {

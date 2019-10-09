@@ -1,4 +1,4 @@
-﻿namespace Assembler.Microprocessor.Interfaces
+﻿namespace Assembler.Microprocessor
 {
     public class VirtualMemory
     {

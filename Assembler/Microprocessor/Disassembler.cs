@@ -1,4 +1,4 @@
-﻿using Assembler.Microprocessor.Interfaces;
+﻿using Assembler.Microprocessor;
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,13 +8,6 @@ namespace Assembler.Microprocessor
 {
     public class Disassembler : ICustomIterable<string>
     {
-        public Disassembler(VirtualMemory virtualMemory)
-        {
-
-        }
-
-        public void AddTest(string i) {
-            Add(i);
-        } 
+        public Disassembler(VirtualMemory virtualMemory) { }
     }
 }
