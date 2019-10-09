@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Assembler.UnitTests/UnitTestingGeneratedFiles
+/Assembler.UnitTests/UtilsTests/UnitTestingGeneratedFiles
