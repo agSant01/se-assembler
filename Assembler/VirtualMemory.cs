@@ -3,41 +3,76 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
+
 namespace Assembler
 {
     
-    class VirtualMemory : IEnumerable
+    class VirtualMemory : Utils.ICustomIterable<string>
     {
-        private string[] memory_contents;
-        private string[] memory_addresses;
+        //private string[] memory_contents;
+        //private  long[] memory_addresses;
 
-        public VirtualMemory(string[] contents, string[] addresses)
+        private Dictionary<long, string> memory;
+        public VirtualMemory(string[] contents, long[] addresses)
         {
-
+            memory = new Dictionary<long, string>();
+            LoadMemory(contents, addresses);
         }
 
-        public string[] GetContents(string address)
+         private void LoadMemory(string[] contents, long[] addresses)
         {
-            string[] contents = null;
-            return contents;
+            for (int i = 0; i < contents.Length; i++)
+                memory[addresses[i]] = contents[i];
+        }
+        
+        public string GetContents(long address)
+        {
+            if (memory.ContainsKey(address))
+                return memory[address];
+            else
+                return null;//need to throw error here
         }
 
-        public string[] GetAddress(string contents)
+        public long GetAddress(string contents)
         {
-            string[] address = null;
-            return address;
+            if (memory.ContainsValue(contents))
+            {
+                foreach (KeyValuePair<long, string> item in memory)
+                {
+                    //  Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
+                    if (item.Value == contents)
+                        return item.Key;
+                }
+            }
+       
+                return 0;//need to throw error here
         }
 
-        public IEnumerable<string> GetEnumerator()
-        {
-            for(int i=0; i < this.memory_contents.Length; i++)
-                yield return this.memory_contents[i];
-        }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override string ToString()
         {
-            yield return GetEnumerator();
+            StringBuilder builder = new StringBuilder();
+            builder.Append("{\n");
+            foreach (KeyValuePair<long, string> item in memory)
+            {
+                //  Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
+                builder.Append("\t[" + item.Key + "," + item.Value + "]\n");
+            }
+            builder.Append("}\n\n");
+
+            return builder.ToString();
+
         }
+        //public IEnumerable<string> GetEnumerator()
+        //{
+        //    for(int i=0; i < this.memory_contents.Length; i++)
+        //        yield return this.memory_contents[i];
+        //}
+
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    yield return GetEnumerator();
+        //}
 
 
     }
