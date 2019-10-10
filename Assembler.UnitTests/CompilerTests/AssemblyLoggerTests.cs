@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace Assembler.UnitTests
+namespace Assembler.UnitTests.CompilerTests
 {
     [TestClass]
     public class AssemblyLoggerTest
@@ -12,7 +12,7 @@ namespace Assembler.UnitTests
         [TestInitialize]
         public void TestInit()
         {
-            logger = new AssemblyLogger();
+            logger = new AssemblyLogger("TEST");
         }
 
         [TestCleanup]
