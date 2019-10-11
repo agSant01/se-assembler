@@ -11,17 +11,22 @@ namespace Assembler.Microprocessor
     public  class VirtualMemory : Utils.ICustomIterable<string>
     {
 
-        //private string[] memory_contents;
-        //private  long[] memory_addresses;
-
         private Dictionary<long, string> memory;
+
         public VirtualMemory(string[] contents, long[] addresses)
         {
             this.memory = new Dictionary<long, string>();
             LoadMemory(contents, addresses);
         }
-
-         private void LoadMemory(string[] contents, long[] addresses)
+        
+        /// <summary>
+        /// A private method for initializing the VirtualMemory instance.
+        /// Internally creates a dictionary via iteration through both provided arrays.
+        /// Throws an exception when contents' length exceeds that of addresses'.
+        /// </summary>
+        /// <param name="contents"></param>
+        /// <param name="addresses"></param>
+         private void LoadMemory(string[] contents, long[] addresses)//Either of these args could be null and pose problems
         {
             //Fails if len(contents) > len(addresses)
             if( contents.Length > addresses.Length )
@@ -31,6 +36,12 @@ namespace Assembler.Microprocessor
                 this.memory[addresses[i]] = contents[i];
         }
         
+        /// <summary>
+        /// A method for retrieving the contents from provided address.
+        /// Throws an exception if provided address is not found within current VirtualMemory instance.
+        /// </summary>
+        /// <param name="address">long representing the location in memory to retrieve contents from</param>
+        /// <returns>string representation of contents in current VirtualMemory instance (if found).</returns>
         public string GetContents(long address)
         {
             if (memory.ContainsKey(address))
@@ -39,6 +50,12 @@ namespace Assembler.Microprocessor
                 throw new Exception("The address provided is invalid\n");
         }
 
+        /// <summary>
+        /// A method for retreieving the address in VirtualMemory of provided contents.
+        /// Will throw an Exception if said contents  are not found within current instance of VirtualMemory.
+        /// </summary>
+        /// <param name="contents"> String of contents to be found in VirtualMemory instance.</param>
+        /// <returns> long representing the address in VirtualMemory where contents are located (if found).</returns>
         public long GetAddress(string contents)
         {
             if (memory.ContainsValue(contents))
@@ -54,6 +71,11 @@ namespace Assembler.Microprocessor
             throw new Exception("Contents provided are not in memory \n");
         }
 
+        /// <summary>
+        /// A method for manipulating the contents of current VirtualMemory instance.
+        /// </summary>
+        /// <param name="address">The address (long) into which to insert the new contents.</param>
+        /// <param name="contents"> The new contents (string) to be added into internal memory structure.</param>
         public void SetContents(long address, string contents)
         {
             if(memory.ContainsKey(address))
@@ -62,13 +84,18 @@ namespace Assembler.Microprocessor
             }
             else
             {
+                //Maybe add constant to limit what addresses may be added to the internal structure
+                //Since we have a limit of 4k lines anyway.
                 //we just add both anyway no?
                 this.memory[address] = contents;
             }
         }
 
 
-
+        /// <summary>
+        /// A string representation of the current instance of the VirtualMemory class
+        /// </summary>
+        /// <returns> string representation of the current instance of the Virtual Memory</returns>
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
