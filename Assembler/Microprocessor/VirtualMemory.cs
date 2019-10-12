@@ -1,14 +1,16 @@
 ﻿using Assembler.Utils;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Assembler.Microprocessor
 {
 
-    public class VirtualMemory : ICustomIterable<string>
+    public class VirtualMemory
     {
         private string[] memoryBlocksInHexadecimal;
         private ushort lastUsedAddressDecimal = 0;
+        private HashSet<ushort> addressesUsed = new HashSet<ushort>();
 
         public VirtualMemory(string[] lines, int kiloBytes = 4)
         {
@@ -33,6 +35,9 @@ namespace Assembler.Microprocessor
                 {
                     lastUsedAddressDecimal = (ushort) i;
                 }
+
+                addressesUsed.Add((ushort) (i * 2));
+                addressesUsed.Add((ushort) (i * 2 + 1));
             }
         }
 
@@ -93,6 +98,35 @@ namespace Assembler.Microprocessor
             int decimalAddress = UnitsConverter.HexToDecimal(hexAddress);
 
             SetContentInMemory(decimalAddress, hexContent);
+        }
+
+        /// <summary>
+        /// Tells if a memory address has been proviously used.
+        /// </summary>
+        /// <param name="decimalAddress">Address (decimal) to know if contains data</param>
+        /// <returns>True is previously used, False otherwise</returns>
+        public bool IsInUse(int decimalAddress)
+        {
+            return addressesUsed.Contains((ushort) decimalAddress);
+        }
+
+        /// <summary>
+        /// Tells if a memory address has been proviously used.
+        /// </summary>
+        /// <param name="hexAddress">Address (hexadecimal) to know if contains data</param>
+        /// <returns>True is previously used, False otherwise</returns>
+        public bool IsInUse(string hexAddress)
+        {
+            return IsInUse(UnitsConverter.HexToDecimal(hexAddress));
+        }
+
+        /// <summary>
+        /// Amount of addresse blocks used in memory
+        /// </summary>
+        /// <returns>The amount of addresses already in use.</returns>
+        public int AddressesUsed()
+        {
+            return addressesUsed.Count;
         }
 
         /// <summary>
