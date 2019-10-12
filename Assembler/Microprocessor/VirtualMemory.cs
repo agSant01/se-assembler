@@ -1,96 +1,99 @@
-﻿using Assembler.Microprocessor;
+﻿using Assembler.Utils;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
-
 
 namespace Assembler.Microprocessor
 {
-    
-    public  class VirtualMemory : Utils.ICustomIterable<string>
+
+    public class VirtualMemory : ICustomIterable<string>
     {
+        private string[] memoryBlocksInHexadecimal;
+        private ushort lastUsedAddressDecimal = 0;
 
-        private Dictionary<long, string> memory;
+        public VirtualMemory(string[] lines, int kiloBytes = 4)
+        {
+            memoryBlocksInHexadecimal = new string[kiloBytes * 1024];
+            
+            // blockBitSize / (4bits/1hex)
+            int requiredHexaChars = 16 / 4;
 
-        public VirtualMemory(string[] contents, long[] addresses)
-        {
-            this.memory = new Dictionary<long, string>();
-            LoadMemory(contents, addresses);
+            // save lines to memory
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string line = lines[i].Replace(" ", "");
+
+                if (line.Length != requiredHexaChars && line.Length > 0)
+                    throw new OverflowException($"Writing of memory exection. Invalid block size: {line.Length}");
+               
+                memoryBlocksInHexadecimal[i*2] = $"{line[0]}{line[1]}";
+
+                memoryBlocksInHexadecimal[i*2+1] = $"{line[2]}{line[3]}";
+
+                if (lastUsedAddressDecimal < i)
+                {
+                    lastUsedAddressDecimal = (ushort) i;
+                }
+            }
         }
-        
-        /// <summary>
-        /// A private method for initializing the VirtualMemory instance.
-        /// Internally creates a dictionary via iteration through both provided arrays.
-        /// Throws an exception when contents' length exceeds that of addresses'.
-        /// </summary>
-        /// <param name="contents"></param>
-        /// <param name="addresses"></param>
-         private void LoadMemory(string[] contents, long[] addresses)//Either of these args could be null and pose problems
-        {
-            //Fails if len(contents) > len(addresses)
-            if( contents.Length > addresses.Length )
-                throw new Exception("Contents of memory greater than address space\n");
-          
-            for (int i = 0; i < contents.Length; i++)
-                this.memory[addresses[i]] = contents[i];
-        }
-        
+
         /// <summary>
         /// A method for retrieving the contents from provided address.
         /// Throws an exception if provided address is not found within current VirtualMemory instance.
         /// </summary>
-        /// <param name="address">long representing the location in memory to retrieve contents from</param>
+        /// <param name="decimalAddress">Int representing the location in memory to retrieve contents from</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
         /// <returns>string representation of contents in current VirtualMemory instance (if found).</returns>
-        public string GetContents(long address)
+        public string GetContentsInHex(int decimalAddress)
         {
-            if (memory.ContainsKey(address))
-                return this.memory[address];
-            else
-                throw new Exception("The address provided is invalid\n");
+            IsValidAddress(decimalAddress);
+
+            return memoryBlocksInHexadecimal[decimalAddress];
         }
 
         /// <summary>
-        /// A method for retreieving the address in VirtualMemory of provided contents.
-        /// Will throw an Exception if said contents  are not found within current instance of VirtualMemory.
+        /// A method for retrieving the contents from provided address.
+        /// Throws an exception if provided address is not found within current VirtualMemory instance.
         /// </summary>
-        /// <param name="contents"> String of contents to be found in VirtualMemory instance.</param>
-        /// <returns> long representing the address in VirtualMemory where contents are located (if found).</returns>
-        public long GetAddress(string contents)
+        /// <param name="hexAddress">The address (hexadecimal) to read from memory</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <returns>string representation of contents in current VirtualMemory in Hexadecimal.</returns>
+        public string GetContentsInHex(string hexAddress)
         {
-            if (memory.ContainsValue(contents))
-            {
-                foreach (KeyValuePair<long, string> item in memory)
-                {
-                    //  Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
-                    if (item.Value == contents)
-                        return item.Key;
-                }
-            }
+            int decimalAddress = UnitsConverter.HexToDecimal(hexAddress);
 
-            throw new Exception("Contents provided are not in memory \n");
+            return GetContentsInHex(decimalAddress);
         }
 
         /// <summary>
         /// A method for manipulating the contents of current VirtualMemory instance.
         /// </summary>
-        /// <param name="address">The address (long) into which to insert the new contents.</param>
-        /// <param name="contents"> The new contents (string) to be added into internal memory structure.</param>
-        public void SetContents(long address, string contents)
+        /// <param name="decimalAddress">The address (decimal) into which to write the new contents.</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <param name="hexContent"> The new contents (hexadecimal) to be added into internal memory structure.</param>
+        public void SetContentInMemory(int decimalAddress, string hexContent)
         {
-            if(memory.ContainsKey(address))
+            IsValidAddress(decimalAddress);
+
+            if (lastUsedAddressDecimal < decimalAddress)
             {
-                this.memory[address] = contents;
+                lastUsedAddressDecimal = (ushort) decimalAddress;
             }
-            else
-            {
-                //Maybe add constant to limit what addresses may be added to the internal structure
-                //Since we have a limit of 4k lines anyway.
-                //we just add both anyway no?
-                this.memory[address] = contents;
-            }
+
+            memoryBlocksInHexadecimal[decimalAddress] = hexContent;
         }
 
+        /// <summary>
+        /// A method for manipulating the contents of current VirtualMemory instance.
+        /// </summary>
+        /// <param name="hexAddress">The address (hexadecimal) into which to write the new contents.</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <param name="hexContent"> The new contents (hexadecimal) to be added into internal memory structure.</param>
+        public void SetContentInMemory(string hexAddress, string hexContent)
+        {
+            int decimalAddress = UnitsConverter.HexToDecimal(hexAddress);
+
+            SetContentInMemory(decimalAddress, hexContent);
+        }
 
         /// <summary>
         /// A string representation of the current instance of the VirtualMemory class
@@ -99,19 +102,35 @@ namespace Assembler.Microprocessor
         public override string ToString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("{\n");
-            foreach (KeyValuePair<long, string> item in this.memory)
+            builder.AppendLine("VirtualMemory[");
+            for(int i = 0; i < lastUsedAddressDecimal; i+=2)
             {
-                //  Console.WriteLine("Key: {0}, Value: {1}", item.Key, item.Value);
-                builder.Append("\t[" + item.Key + "," + item.Value + "]\n");
+                builder.Append("\t");
+
+                builder.Append(memoryBlocksInHexadecimal[i]);
+                builder.Append(" ");
+                builder.Append(memoryBlocksInHexadecimal[i+1]);
+
+                builder.Append("\n");
             }
-            builder.Append("}\n\n");
+
+            builder.AppendLine("]");
 
             return builder.ToString();
 
         }
 
-
-
+        /// <summary>
+        /// Validates memory address
+        /// </summary>
+        /// <exception cref="IndexOutOfRangeException">If index is out of bounds</exception>
+        /// <param name="decimalAddress">Decimal Memory Address</param>
+        private void IsValidAddress(int decimalAddress)
+        {
+            if (decimalAddress < 0 || decimalAddress >= memoryBlocksInHexadecimal.Length)
+            {
+                throw new IndexOutOfRangeException($"Invalid address: {UnitsConverter.DecimalToHex(decimalAddress)}, Decimal[{decimalAddress}]");
+            }
+        }
     }
 }
