@@ -72,6 +72,34 @@ namespace Assembler.Microprocessor
         }
 
         /// <summary>
+        /// A method for retrieving the contents from provided address.
+        /// Throws an exception if provided address is not found within current VirtualMemory instance.
+        /// </summary>
+        /// <param name="hexAddress">The address (hexadecimal) to read from memory</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <returns>string representation of contents in current VirtualMemory in Binary.</returns>
+        public string GetContentsInBin(string hexAddress)
+        {
+            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+
+            return UnitConverter.HexToBinary(GetContentsInHex(decimalAddress));
+        }
+
+        /// <summary>
+        /// A method for retrieving the contents from provided address.
+        /// Throws an exception if provided address is not found within current VirtualMemory instance.
+        /// </summary>
+        /// <param name="hexAddress">The address (hexadecimal) to read from memory</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <returns>string representation of contents in current VirtualMemory in Decimal.</returns>
+        public int GetContentsInDecimal(string hexAddress)
+        {
+            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+
+            return UnitConverter.HexToDecimal(GetContentsInHex(decimalAddress));
+        }
+
+        /// <summary>
         /// A method for manipulating the contents of current VirtualMemory instance.
         /// </summary>
         /// <param name="decimalAddress">The address (decimal) into which to write the new contents.</param>
@@ -117,7 +145,7 @@ namespace Assembler.Microprocessor
         /// </summary>
         /// <param name="hexAddress">Address (hexadecimal) to know if contains data</param>
         /// <returns>True is previously used, False otherwise</returns>
-        public bool IsInUse(string hexAddress)
+        public bool IsAddressInUse(string hexAddress)
         {
             return IsInUse(UnitConverter.HexToDecimal(hexAddress));
         }
