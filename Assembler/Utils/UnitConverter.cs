@@ -23,5 +23,15 @@ namespace Assembler.Utils
         {
             return Convert.ToString(decimalNumber, 2);
         }
+
+        public static int BinaryToDecimal(string binaryNumber)
+        {
+            return Convert.ToInt32(binaryNumber, 2);
+        }
+
+        public static string BinaryToHex(string binaryNumber)
+        {
+            return Convert.ToString(Convert.ToInt32(binaryNumber, 2), 16);
+        }
     }
 }
