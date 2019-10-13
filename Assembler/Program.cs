@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static Assembler.FileManager;
+using System.Drawing.Drawing2D;
+
 namespace Assembler
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {

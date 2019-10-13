@@ -1,0 +1,18 @@
+﻿<Window x:Class="GUI_Assembler.FileExplorerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI_Assembler"
+        mc:Ignorable="d"
+        Title="FileExplorerWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="prevBtn" Content="&lt;&lt;" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="61"/>
+        <Button x:Name="forwardBtn" Content="&gt;&gt;" HorizontalAlignment="Left" Height="38" Margin="76,10,0,0" VerticalAlignment="Top" Width="60"/>
+        <Label Content="PATH:" HorizontalAlignment="Left" Height="38" Margin="141,10,0,0" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="pathText" HorizontalAlignment="Left" Height="38" Margin="181,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="493"/>
+        <Button x:Name="openBtn" Content="Open" HorizontalAlignment="Left" Margin="679,10,0,0" VerticalAlignment="Top" Width="104" Height="38" Click="Button_Click"/>
+        <WebBrowser x:Name="webBrowser" HorizontalAlignment="Left" Height="329" Margin="10,69,0,0" VerticalAlignment="Top" Width="773"/>
+
+    </Grid>
+</Window>
