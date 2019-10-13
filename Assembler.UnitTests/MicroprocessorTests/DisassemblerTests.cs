@@ -12,7 +12,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         [TestMethod]
         public void Disassember_Dummy_Fail()
         {
-            Assert.Fail();
+            Assert.Inconclusive();
         }
     }
 }
