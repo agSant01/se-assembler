@@ -41,6 +41,8 @@ namespace Assembler.Microprocessor
             }
         }
 
+        /// TODO: return decimal
+
         /// <summary>
         /// A method for retrieving the contents from provided address.
         /// Throws an exception if provided address is not found within current VirtualMemory instance.
@@ -64,7 +66,7 @@ namespace Assembler.Microprocessor
         /// <returns>string representation of contents in current VirtualMemory in Hexadecimal.</returns>
         public string GetContentsInHex(string hexAddress)
         {
-            int decimalAddress = UnitsConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
 
             return GetContentsInHex(decimalAddress);
         }
@@ -95,7 +97,7 @@ namespace Assembler.Microprocessor
         /// <param name="hexContent"> The new contents (hexadecimal) to be added into internal memory structure.</param>
         public void SetContentInMemory(string hexAddress, string hexContent)
         {
-            int decimalAddress = UnitsConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
 
             SetContentInMemory(decimalAddress, hexContent);
         }
@@ -117,7 +119,7 @@ namespace Assembler.Microprocessor
         /// <returns>True is previously used, False otherwise</returns>
         public bool IsInUse(string hexAddress)
         {
-            return IsInUse(UnitsConverter.HexToDecimal(hexAddress));
+            return IsInUse(UnitConverter.HexToDecimal(hexAddress));
         }
 
         /// <summary>
@@ -163,7 +165,7 @@ namespace Assembler.Microprocessor
         {
             if (decimalAddress < 0 || decimalAddress >= memoryBlocksInHexadecimal.Length)
             {
-                throw new IndexOutOfRangeException($"Invalid address: {UnitsConverter.DecimalToHex(decimalAddress)}, Decimal[{decimalAddress}]");
+                throw new IndexOutOfRangeException($"Invalid address: {UnitConverter.DecimalToHex(decimalAddress)}, Decimal[{decimalAddress}]");
             }
         }
     }
