@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Assembler.UnitTests.MicroprocessorTests
@@ -10,62 +11,124 @@ namespace Assembler.UnitTests.MicroprocessorTests
     [TestClass]
     public class VirtualMemoryTests
     {
-        //string[] contents;
-        //long[] addresses;
-        VirtualMemory memory;
+        private readonly string machineCodeFile = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"MicroprocessorTests\TestFiles\assembly_test_OBJ_FILE.txt");
+
+        private readonly string machineCodeFileInvalid = Path.Combine(
+                   Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+                   @"MicroprocessorTests\TestFiles\assembly_test_OBJ_FILE_WRONGFORMAT.txt");
 
         [TestMethod]
-        [ExpectedException(typeof(Exception), "Contents of memory greater than address space\n")]
-        public void Virtual_Memory_Init_Uneven_Args_Length_Fail()
+        public void VirtualMemoryTest_ReadStringLines_Success()
         {
-            long[] addresses = { 0L, 1L, 2L, 3L, 4L };
-            string[] contents = { "a", "b", "c","d","e","f" };
+            string[] expectedLines = {
+             //  evenAddress, oddAddress
+             //   0     1
+                "a8", "06",
+            //    2     3
+                "05", "07",
+                "00", "00",
+                "01", "02",
+                "02", "03",
+                "c9", "24",
+                "a8", "12",
+                "1a", "04",
+                "a8", "16",
+                "19", "04",
+                "0b", "08",
+                "a8", "16"
+            };
 
-            memory = new VirtualMemory(contents, addresses);
-        }
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
 
+            Assert.IsNotNull(lines);
 
-        [TestMethod]
-        [ExpectedException(typeof(Exception), "The address provided is invalid\n")]
-        public void Virtual_Memory_Invalid_Address_Fail()
-        {
-            long[] addresses = { 0L, 1L, 2L };
-            string[] contents = { "a", "b", "c" };
+            VirtualMemory vm = new VirtualMemory(lines);
 
-            memory = new VirtualMemory(contents, addresses);
+            // complete VirtualMemery
+            Console.WriteLine(vm);
 
-            memory.GetContents(3L);
-        }
+            for (int i = 0; i < expectedLines.Length; i++)
+            {
+                Console.WriteLine($"Expected: {expectedLines[i]}, Result: {vm.GetContentsInHex(i)}");
 
-
-
-        [TestMethod]
-        [ExpectedException(typeof(Exception), "Contents provided are not in memory \n")]
-        public void Virtual_Memory_Invalid_Contents_Not_In_Memory_Fail()
-        {
-            long[] addresses = { 0L, 1L, 2L };
-            string[] contents = { "a", "b", "c" };
-
-            memory = new VirtualMemory(contents, addresses);
-
-            memory.GetAddress("d");
-        }
-
-
-        [TestMethod]
-        public void Virtual_Memory_To_String_Conversion()
-        {
-            long[] addresses = { 0L, 1L, 2L };
-            string[] contents = { "a", "b", "c" };
-
-            memory = new VirtualMemory(contents, addresses);
-
-            string result = memory.ToString();
-            string desired = "{\n\t[0,a]\n\t[1,b]\n\t[2,c]\n}\n\n";
-
-            Assert.AreEqual(result, desired);
+                Assert.AreEqual(expectedLines[i], vm.GetContentsInHex(i));
+            }
 
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException), "More than 16 bit block size")]
+        public void VirtualMemoryTest_ReadStringLines_BiggerThan16Bit_Fail()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFileInvalid);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(IndexOutOfRangeException), "Invalid DecimalAddress")]
+        public void VirtualMemoryTest_ReadStringLines_InvalidDecimalAddress()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            vm.GetContentsInHex(4200);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(IndexOutOfRangeException), "Invalid DecimalAddress")]
+        public void VirtualMemoryTest_ReadStringLines_InvalidHexAddress()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            vm.GetContentsInHex("1194");
+        }
+
+        [TestMethod]
+        public void VirtualMemoryTest_ReadStringLines_ValidHexAddress()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            string expected = "02";
+
+            string result = vm.GetContentsInHex("07");
+
+            Assert.AreEqual(expected, result);
+
+            Console.WriteLine($"Expected: {expected}, Result: {result}");
+        }
+
+        [TestMethod]
+        public void VirtualMemoryTest_ReadStringLines_ValidDecimalAddress()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            string expected = "07";
+
+            string result = vm.GetContentsInHex(3);
+
+            Assert.AreEqual(expected, result);
+
+            Console.WriteLine($"Expected: {expected}, Result: {result}");
+        }
     }
 }
