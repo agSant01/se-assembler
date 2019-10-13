@@ -27,7 +27,13 @@ namespace GUI_Assembler
 
         public void ideTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            
+        }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var newWindow = new FileExplorerWindow();
+            newWindow.Show();
         }
     }
 }

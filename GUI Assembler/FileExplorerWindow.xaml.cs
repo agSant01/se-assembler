@@ -27,19 +27,20 @@ namespace GUI_Assembler
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.DefaultExt = ".txt";
             ofd.Filter = "Text Document (.txt)|*.txt";
-            //if (ofd.ShowDialog() == true)
-            //{
-            //    string filename = ofd.FileName;
-            //    pathText.Text = filename;
-            //    //ideTextBox.Text = File.ReadAllText(filename);
-            //}
+            Nullable<bool> result = ofd.ShowDialog();
+            if (result == true)
+            {
+                string filename = ofd.FileName;
+                pathText.Text = filename;
+                //ideTextBox.Text = File.ReadAllText(filename);
+            }
             //using (FolderBrowserDialog fbd = new FolderBrowserDialog() { Description = "Select the file path."})
             //{
             //    if (fbd.ShowDialog()==DialogResult.OK)
-                    
+
             //        webBrowser.Url = new Uri(fbd.SelectedPath);
             //        pathText.Text = fbd.SelectedPath;
             //}
