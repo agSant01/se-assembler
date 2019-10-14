@@ -11,31 +11,31 @@ namespace Assembler.Microprocessor.InstructionFormats
 
             this.Ra = (byte) UnitConverter.BinaryToDecimal(Ra);
 
-            HexAddress = UnitConverter.BinaryToHex(binaryAddress);
+            AddressParamHex = UnitConverter.BinaryToHex(binaryAddress);
 
-            MemoryAddressDecimal = decimalAddress;
+            InstructionAddressDecimal = decimalAddress;
         }
 
         public byte OpCode { get; }
 
         public byte Ra { get; }
 
-        public string HexAddress { get; }
+        public string AddressParamHex { get; }
 
-        public ushort MemoryAddressDecimal { get; }
+        public ushort InstructionAddressDecimal { get; }
 
         public override bool Equals(object obj)
         {
             return obj is MCInstructionF2 f &&
                    OpCode == f.OpCode &&
                    Ra == f.Ra &&
-                   HexAddress == f.HexAddress &&
-                   MemoryAddressDecimal == f.MemoryAddressDecimal;
+                   AddressParamHex == f.AddressParamHex &&
+                   InstructionAddressDecimal == f.InstructionAddressDecimal;
         }
 
         public override string ToString()
         {
-            return $"MCInstructionF1[MemoryAddress: (decimal)'{MemoryAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', Address:'{HexAddress}']";
+            return $"MCInstructionF2[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', AddressParamHex:'{AddressParamHex}']";
         }
     }
 }

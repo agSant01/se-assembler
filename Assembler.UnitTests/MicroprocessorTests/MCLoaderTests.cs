@@ -19,11 +19,11 @@ namespace Assembler.UnitTests.MicroprocessorTests
         [TestMethod]
         public void MCLoaderTests_ExecuteOneInstruction_Success()
         {
-            string expected = "MCInstructionF1[MemoryAddress: (decimal)'0', opcode:'21', Address:'06']";
+            string expected = "MCInstructionF3[InstructionAddressDecimal: (decimal)'0', opcode:'21', AddressParamHex:'06']";
 
             VirtualMemory vm = new VirtualMemory(new string[] { "A8 06" });
 
-            MCLoader l = new MCLoader(vm, new MicroSimulatorTester(vm));
+            MCLoader l = new MCLoader(vm, new MicroSimulator(vm));
 
             IMCInstruction i = l.NextInstruction();
 
@@ -39,33 +39,47 @@ namespace Assembler.UnitTests.MicroprocessorTests
 
             Assert.IsNotNull(lines);
 
+            string[] expected =
+            {
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'0', opcode:'21', AddressParamHex:'06']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'6', opcode:'0', Ra:'2', AddressParamHex:'01']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'8', opcode:'0', Ra:'4', AddressParamHex:'02']",
+                "MCInstructionF1[InstructionAddressDecimal: (decimal)'10', opcode:'25', Ra:'2', Rb:'2', Rc:'0']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'12', opcode:'21', AddressParamHex:'12']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'18', opcode:'3', Ra:'2', AddressParamHex:'19']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'20', opcode:'1', Ra:'6', AddressParamHex:'0B']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']"
+            };
+
             VirtualMemory vm = new VirtualMemory(lines);
 
             Console.WriteLine(vm);
 
-            MicroSimulatorTester micro = new MicroSimulatorTester(vm);
+            MicroSimulator micro = new MicroSimulator(vm);
 
             MCLoader l = new MCLoader(vm, micro);
 
             int i = 0;
-            while (i < 20)
+            while (i < 10)
             {
                 IMCInstruction instruction = l.NextInstruction();
 
-                //micro.ProgramCounter += 2;
-                
+                if (OpCodesInfo.IsJump(UnitConverter.DecimalToBinary(instruction.OpCode, 5))) {
+                    micro.ProgramCounter = (ushort) UnitConverter.HexToDecimal(
+                        ((MCInstructionF3)instruction).AddressParamHex);
+                } else
+                {
+                    micro.ProgramCounter += 2;
+                }
+
                 Console.WriteLine(instruction);
+
+                Assert.AreEqual(expected[i], instruction.ToString());
+
                 i++;
             }
-
-            Console.WriteLine(i);
-        }
-    }
-
-    class MicroSimulatorTester : MicroSimulator
-    {
-        public MicroSimulatorTester(VirtualMemory virtualMemory)
-            : base(virtualMemory) {
         }
     }
 }

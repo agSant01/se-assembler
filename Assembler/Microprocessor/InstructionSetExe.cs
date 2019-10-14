@@ -16,14 +16,14 @@ namespace Assembler.Microprocessor
                 // { OP_CODE, INSTRUCTION_FORMAT, NUM_OF_PARAMS }
                 { "00000",     (IMCInstruction instruction, MicroSimulator micro) => {
                     //LOAD F2
-                    string value  = micro.MicroVirtualMemory.GetContentsInHex(((MCInstructionF2)instruction).HexAddress);
+                    string value  = micro.MicroVirtualMemory.GetContentsInHex(((MCInstructionF2)instruction).AddressParamHex);
                     micro.MicroRegisters.SetRegisterValue(((MCInstructionF2)instruction).Ra,value);
                     return true; }},
 
 
                 { "00001",      (IMCInstruction instruction, MicroSimulator micro) => {
                     //LOADIM F2
-                    micro.MicroRegisters.SetRegisterValue(((MCInstructionF2)instruction).Ra,((MCInstructionF2)instruction).HexAddress);
+                    micro.MicroRegisters.SetRegisterValue(((MCInstructionF2)instruction).Ra,((MCInstructionF2)instruction).AddressParamHex);
                     return true; }},
 
                 { "00010",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -32,7 +32,7 @@ namespace Assembler.Microprocessor
 
                 { "00011",     (IMCInstruction instruction, MicroSimulator micro) => {
                     //STORE F2
-                    micro.MicroVirtualMemory.SetContentInMemory(((MCInstructionF2)instruction).HexAddress,Convert.ToString(((MCInstructionF2)instruction).Ra,16));
+                    micro.MicroVirtualMemory.SetContentInMemory(((MCInstructionF2)instruction).AddressParamHex,Convert.ToString(((MCInstructionF2)instruction).Ra,16));
                     return true; }},
 
                 { "00100",     (IMCInstruction instruction, MicroSimulator micro) => {
