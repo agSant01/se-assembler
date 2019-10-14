@@ -1,5 +1,5 @@
 ﻿using Assembler.Microprocessor;
-
+using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

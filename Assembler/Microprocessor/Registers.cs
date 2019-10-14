@@ -89,5 +89,10 @@ namespace Assembler.Microprocessor
                     $"{registerByteSize*8}-Bits.");
             }
         }
+
+        public override string ToString()
+        {
+            return $"Registers{ArrayUtils.ArrayToString(registers)}"; ;
+        }
     }
 }

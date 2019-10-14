@@ -1,5 +1,6 @@
 ﻿using Assembler.Assembler;
 using Assembler.Parsing;
+using Assembler.Utils;
 using System;
 using System.IO;
 

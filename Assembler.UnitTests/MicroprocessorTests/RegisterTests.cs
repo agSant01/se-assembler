@@ -78,7 +78,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         [TestMethod]
         public void RegisterTests_GetFromEmptyRegister_Success()
         {
-            string expected = "0";
+            string expected = "00";
 
             string result = registers.GetRegisterValue(3);
 
