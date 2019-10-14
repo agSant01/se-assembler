@@ -1,4 +1,5 @@
 ﻿using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Text;
 
 namespace Assembler.Microprocessor
 {
-    public class InstructionSetExe
+    public static class InstructionSetExe
     {
-        private MicroSimulator _microprocessor;
-
         private static readonly Dictionary<string, Func<IMCInstruction, MicroSimulator, bool>>
            operatorFunctions = new Dictionary<string, Func<IMCInstruction, MicroSimulator, bool>>
            {
@@ -88,20 +87,13 @@ namespace Assembler.Microprocessor
                 { "11111",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }}
            };
 
-        public InstructionSetExe(MicroSimulator micro)
+        public static bool ExecuteInstruction(IMCInstruction instruction, MicroSimulator microSimulator)
         {
-            this._microprocessor = micro;
-        }
+            string opCode = UnitConverter.DecimalToBinary(instruction.OpCode, defaultWidth: 5);
 
-        public bool ExecuteInstruction(IMCInstruction instruction)
-        {
-            string opCode = Convert.ToString(instruction.OpCode, 2).Substring(0, 5);
             if (!operatorFunctions.ContainsKey(opCode))
                 return false;
-            return operatorFunctions[opCode](instruction, this._microprocessor);
+            return operatorFunctions[opCode](instruction, microSimulator);
         }
-
-
-
     }
 }

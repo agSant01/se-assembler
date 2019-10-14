@@ -7,5 +7,7 @@ namespace Assembler.Microprocessor.InstructionFormats
     public interface IMCInstruction
     {
         byte OpCode { get; }
+
+        ushort MemoryAddressDecimal { get; }
     }
 }
