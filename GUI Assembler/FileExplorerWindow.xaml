@@ -7,12 +7,9 @@
         mc:Ignorable="d"
         Title="FileExplorerWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="prevBtn" Content="&lt;&lt;" HorizontalAlignment="Left" Height="38" Margin="10,10,0,0" VerticalAlignment="Top" Width="61"/>
-        <Button x:Name="forwardBtn" Content="&gt;&gt;" HorizontalAlignment="Left" Height="38" Margin="76,10,0,0" VerticalAlignment="Top" Width="60"/>
-        <Label Content="PATH:" HorizontalAlignment="Left" Height="38" Margin="141,10,0,0" VerticalAlignment="Top" Width="59"/>
-        <TextBox x:Name="pathText" HorizontalAlignment="Left" Height="38" Margin="181,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="493"/>
-        <Button x:Name="openBtn" Content="Open" HorizontalAlignment="Left" Margin="679,10,0,0" VerticalAlignment="Top" Width="104" Height="38" Click="Button_Click"/>
-        <WebBrowser x:Name="webBrowser" HorizontalAlignment="Left" Height="329" Margin="10,69,0,0" VerticalAlignment="Top" Width="773"/>
+        <Label Content="PATH:" HorizontalAlignment="Left" Height="38" Margin="344,106,0,0" VerticalAlignment="Top" Width="59"/>
+        <TextBox x:Name="pathText" HorizontalAlignment="Left" Height="38" Margin="141,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="493" TextChanged="pathText_TextChanged" IsReadOnly="True"/>
+        <Button x:Name="openBtn" Content="Open" HorizontalAlignment="Left" Margin="230,259,0,0" VerticalAlignment="Top" Width="309" Height="54" Click="Button_Click"/>
 
     </Grid>
 </Window>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,13 @@ namespace GUI_Assembler
         public FileExplorerWindow()
         {
             InitializeComponent();
+           
+        }
+
+        public string ResponseString
+        {
+            get;
+            set;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -35,15 +43,16 @@ namespace GUI_Assembler
             {
                 string filename = ofd.FileName;
                 pathText.Text = filename;
-                //ideTextBox.Text = File.ReadAllText(filename);
-            }
-            //using (FolderBrowserDialog fbd = new FolderBrowserDialog() { Description = "Select the file path."})
-            //{
-            //    if (fbd.ShowDialog()==DialogResult.OK)
+             
 
-            //        webBrowser.Url = new Uri(fbd.SelectedPath);
-            //        pathText.Text = fbd.SelectedPath;
-            //}
+            }
+            
+           
+        }
+
+        private void pathText_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
