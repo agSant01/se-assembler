@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace Assembler.UnitTests
+namespace Assembler.UnitTests.CompilerTests
 {
     [TestClass]
     public class AssemblyLoggerTest

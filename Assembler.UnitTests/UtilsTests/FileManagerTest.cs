@@ -2,14 +2,14 @@
 using System;
 using System.IO;
 
-namespace Assembler.UnitTests
+namespace Assembler.UnitTests.UtilsTests
 {
     [TestClass]
     public class FileManagerTest
     {
         private readonly string workingDir = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
-            @"UnitTestingGeneratedFiles");
+            @"UtilsTests\UnitTestingGeneratedFiles");
 
         private string GetFullPath(string fileName)
         {

@@ -7,7 +7,7 @@ using System;
 using Assembler.Parsing.InstructionItems;
 using System.Collections.Generic;
 
-namespace Assembler.UnitTests
+namespace Assembler.UnitTests.CompilerTests
 {
     [TestClass]
     public class ParserTests
@@ -16,10 +16,10 @@ namespace Assembler.UnitTests
 
         private readonly string testFileSuccess =  Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
-            @"AssemblyFiles\assembly_test.txt");
+            @"CompilerTests\AssemblyFiles\assembly_test.txt");
         private readonly string testFileErrorToken = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
-            @"AssemblyFiles\assembly_test_syntax_error.txt");
+            @"CompilerTests\AssemblyFiles\assembly_test_syntax_error.txt");
 
         
         [TestCleanup]
