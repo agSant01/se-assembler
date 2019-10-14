@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Assembler
+namespace Assembler.Utils
 {
     /// <summary>
     /// This File Manager class has three methods.
@@ -77,7 +77,7 @@ namespace Assembler
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                    File.WriteAllLines(fullFilePath, textLines);
+                File.WriteAllLines(fullFilePath, textLines);
                 return true;
             }
             catch (Exception e)
@@ -105,7 +105,7 @@ namespace Assembler
 
                 if (writeable.GetLines() == null)
                     return false;
-                
+
                 File.WriteAllLines(fullFilePath, writeable.GetLines());
 
                 return true;
@@ -141,7 +141,8 @@ namespace Assembler
                 Console.WriteLine("Error: " + e);
             }
 
-            Task task = new Task(delegate() {
+            Task task = new Task(delegate ()
+            {
 
                 while (writeable.MoveNext())
                 {
