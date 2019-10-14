@@ -32,8 +32,8 @@ namespace Assembler.UnitTests.UtilsTests
             int test1 = 10 * 16 + 3;
             int test2 = 15 * (int) Math.Pow(16, 2) + 9;
 
-            string expected1 = "0xA3";
-            string expected2 = "0xF09";
+            string expected1 = "A3";
+            string expected2 = "F09";
 
 
             string result1 = UnitConverter.DecimalToHex(test1);

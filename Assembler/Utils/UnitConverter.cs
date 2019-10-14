@@ -6,7 +6,7 @@ namespace Assembler.Utils
     {
         public static string DecimalToHex(int decimalNumber, byte defaultWidth = 2)
         {
-            return Convert.ToString(decimalNumber, 16).PadLeft(defaultWidth, '0');
+            return Convert.ToString(decimalNumber, 16).ToUpper().PadLeft(defaultWidth, '0');
         }
 
         public static int HexToDecimal(string hexNumber)
@@ -31,7 +31,7 @@ namespace Assembler.Utils
 
         public static string BinaryToHex(string binaryNumber, byte defaultWidth = 2)
         {
-            return Convert.ToString(Convert.ToInt32(binaryNumber, 2), 16).PadLeft(defaultWidth, '0');
+            return Convert.ToString(Convert.ToInt32(binaryNumber, 2), 16).ToUpper().PadLeft(defaultWidth, '0');
         }
     }
 }
