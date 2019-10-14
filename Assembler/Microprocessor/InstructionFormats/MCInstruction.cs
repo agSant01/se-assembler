@@ -8,6 +8,6 @@ namespace Assembler.Microprocessor.InstructionFormats
     {
         byte OpCode { get; }
 
-        ushort MemoryAddressDecimal { get; }
+        ushort InstructionAddressDecimal { get; }
     }
 }

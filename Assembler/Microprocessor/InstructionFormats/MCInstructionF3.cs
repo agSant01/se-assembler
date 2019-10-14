@@ -8,28 +8,28 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             OpCode = (byte) UnitConverter.BinaryToDecimal(opCodeBinary);
 
-            HexAddress = UnitConverter.BinaryToHex(binaryAddress);
+            AddressParamHex = UnitConverter.BinaryToHex(binaryAddress);
 
-            MemoryAddressDecimal = decimalAddress;
+            InstructionAddressDecimal = decimalAddress;
         }
 
         public byte OpCode { get; }
 
-        public string HexAddress { get; }
+        public string AddressParamHex { get; }
 
-        public ushort MemoryAddressDecimal { get; }
+        public ushort InstructionAddressDecimal { get; }
 
         public override bool Equals(object obj)
         {
             return obj is MCInstructionF3 f &&
                    OpCode == f.OpCode &&
-                   HexAddress == f.HexAddress &&
-                   MemoryAddressDecimal == f.MemoryAddressDecimal;
+                   AddressParamHex == f.AddressParamHex &&
+                   InstructionAddressDecimal == f.InstructionAddressDecimal;
         }
 
         public override string ToString()
         {
-            return $"MCInstructionF1[MemoryAddress: (decimal)'{MemoryAddressDecimal}', opcode:'{OpCode}', Address:'{HexAddress}']";
+            return $"MCInstructionF3[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', AddressParamHex:'{AddressParamHex}']";
         }
     }
 }

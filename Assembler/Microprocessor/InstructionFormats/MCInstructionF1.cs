@@ -13,7 +13,7 @@ namespace Assembler.Microprocessor.InstructionFormats
             this.Rb = (byte) UnitConverter.BinaryToDecimal(Rb);
             this.Rc = (byte) UnitConverter.BinaryToDecimal(Rc);
 
-            MemoryAddressDecimal = decimalAddress;
+            InstructionAddressDecimal = decimalAddress;
         }
 
         public byte OpCode { get; }
@@ -24,7 +24,7 @@ namespace Assembler.Microprocessor.InstructionFormats
         
         public byte Rc { get; }
 
-        public ushort MemoryAddressDecimal { get; }
+        public ushort InstructionAddressDecimal { get; }
 
         public override bool Equals(object obj)
         {
@@ -33,12 +33,12 @@ namespace Assembler.Microprocessor.InstructionFormats
                    Ra == f.Ra &&
                    Rb == f.Rb &&
                    Rc == f.Rc &&
-                   MemoryAddressDecimal == f.MemoryAddressDecimal;
+                   InstructionAddressDecimal == f.InstructionAddressDecimal;
         }
 
         public override string ToString()
         {
-            return $"MCInstructionF1[MemoryAddress: (decimal)'{MemoryAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', Rb:'{Rb}', Rc:'{Rc}']";
+            return $"MCInstructionF1[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', Rb:'{Rb}', Rc:'{Rc}']";
         }
     }
 }
