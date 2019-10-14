@@ -1,4 +1,5 @@
 ﻿using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Utils;
 using System;
 
 namespace Assembler.Microprocessor
@@ -44,7 +45,7 @@ namespace Assembler.Microprocessor
             byte numberOfParams = OpCodesInfo.GetNumberOfParams(opcode);
 
             byte count = 0;
-            string[] paramList = new string[numberOfParams];
+            string[] paramList = new string[3];
 
             IMCInstruction instructionToExecute = null;
 
@@ -56,7 +57,7 @@ namespace Assembler.Microprocessor
                         paramList[count] = completeBlock.Substring(count * 3 + 6, 3);
                         count++;
                     }
-
+                    
                     instructionToExecute = new MCInstructionF1(
                           decimalAddress: currProgramCounter,
                           opCodeBinary: opcode,
