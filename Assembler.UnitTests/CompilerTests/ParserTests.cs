@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using Assembler.Parsing.InstructionItems;
 using System.Collections.Generic;
+using Assembler.Utils;
 
 namespace Assembler.UnitTests.CompilerTests
 {

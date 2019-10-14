@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Assembler.Utils
 {
@@ -13,6 +14,19 @@ namespace Assembler.Utils
         /// <param name="arr">Array of objects</param>
         /// <returns></returns>
         public static string ArrayToString(object[] arr)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append("[");
+
+            builder.AppendJoin(",", arr);
+
+            builder.Append("]");
+
+            return builder.ToString();
+        }
+
+        internal static object ArrayToString(sbyte[] arr)
         {
             StringBuilder builder = new StringBuilder();
 
