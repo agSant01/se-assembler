@@ -31,17 +31,32 @@ namespace Assembler.Microprocessor
 
                 memoryBlocksInHexadecimal[i*2+1] = $"{line[2]}{line[3]}";
 
-                if (lastUsedAddressDecimal < i)
-                {
-                    lastUsedAddressDecimal = (ushort) i;
-                }
 
                 addressesUsed.Add((ushort) (i * 2));
                 addressesUsed.Add((ushort) (i * 2 + 1));
+
+                if (lastUsedAddressDecimal < i * 2 + 1)
+                {
+                    lastUsedAddressDecimal = (ushort) (i * 2 + 1);
+                }
             }
         }
 
-        /// TODO: return decimal
+        public ushort LastAddressDecimal
+        {
+            get
+            {
+                return lastUsedAddressDecimal;
+            }
+        }
+
+        public string LastAddressHex
+        {
+            get
+            {
+                return UnitConverter.DecimalToHex(lastUsedAddressDecimal);
+            }
+        }
 
         /// <summary>
         /// A method for retrieving the contents from provided address.
@@ -69,6 +84,18 @@ namespace Assembler.Microprocessor
             int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
 
             return GetContentsInHex(decimalAddress);
+        }
+
+        /// <summary>
+        /// A method for retrieving the contents from provided address.
+        /// Throws an exception if provided address is not found within current VirtualMemory instance.
+        /// </summary>
+        /// <param name="decimalAddress">The address (decimal) to read from memory</param>
+        /// <exception cref="IndexOutOfRangeException">If invalid address</exception>
+        /// <returns>string representation of contents in current VirtualMemory in Binary.</returns>
+        public string GetContentsInBin(int decimalAddress)
+        {
+            return UnitConverter.HexToBinary(GetContentsInHex(decimalAddress));
         }
 
         /// <summary>

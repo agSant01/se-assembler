@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Assembler.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
