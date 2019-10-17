@@ -36,7 +36,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidCastException), "Should have thrown Exception. The saved data is to big for this regiter.")]
+        [ExpectedException(typeof(OverflowException), "Should have thrown Exception. The saved data is to big for this regiter.")]
         public void RegisterTests_SaveInvalidData_Success()
         {
             string test = "1A5";
@@ -45,10 +45,10 @@ namespace Assembler.UnitTests.MicroprocessorTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidCastException), "Should have thrown Exception. The saved data is to big for this register.")]
+        [ExpectedException(typeof(OverflowException), "Should have thrown Exception. The saved data is to big for this register.")]
         public void RegisterTests_SaveNegativeInvalidData_Success()
         {
-            string hexTest = UnitConverter.DecimalToHex(-129);
+            string hexTest = UnitConverter.IntToHex(-129);
 
             registers.SetRegisterValue(2, hexTest);
         }
