@@ -215,7 +215,7 @@ namespace Assembler.Assembler
                             }
                             else
                             {
-                                AddInstruction(0);
+                                AddInstruction(0);//TODO: FIX THIS, HARDCODED TO WRITE 0 INTO MEM ON ODD ADDRESSES
                                 currentAddress += 2;
                             }
 
@@ -237,12 +237,15 @@ namespace Assembler.Assembler
 
             }
             logger.StatusUpdate("Assembling completed");
-
+            //TODO: Error possibly here when adding instruction to compiledLines list
             compiledLines = new string[(size / 2) + 1];
             int currentLine = 0;
             for (int i = 0; i < size; i++)
             {
+                Console.WriteLine($"Current DEC instruction:{decimalInstuctions[i]}");
+                Console.WriteLine($"Pre-padded string:{Convert.ToString(decimalInstuctions[i], 16)}");
                 compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0') + " ";
+                Console.WriteLine($"Padded string:{compiledLines[currentLine]}\n\n");
                 if (i % 2 != 0)
                     currentLine += (currentLine < size / 2) ? 1 : 0;
             }
@@ -266,9 +269,14 @@ namespace Assembler.Assembler
                 logger.Error("invalid bites",size.ToString(),"program crashed please report :)");
                 throw new Exception("invalid bytes");
             }
+            //string firstByte = binInstruction.Substring(0,8);
+            Console.WriteLine($"Instruction Length:{binInstruction.Length}");
             string firstByte = binInstruction.Substring(0,8);
+            Console.WriteLine($"{firstByte}");
             AddInstruction(Convert.ToInt32(firstByte, 2));
-            string secondByte = binInstruction.Substring(8,8);
+            //string secondByte = binInstruction.Substring(8,8);//TODO: This might be the problematic part that gives us the wrong instructions
+            string secondByte = binInstruction.Substring(8, 8);
+            Console.WriteLine($"{secondByte} \n\n");
             AddInstruction(Convert.ToInt32(secondByte, 2));
 
             
@@ -280,17 +288,22 @@ namespace Assembler.Assembler
         /// </summary>
         private string GetBinaryFormat(IFormatInstructions _operator)
         {
+            Console.WriteLine("--BIN OUTPUT--");
+            Console.WriteLine($"String OP:{_operator}\n");
             int opcode = OperatorsInfo.GetOPCode(_operator.Operator);
+            Console.WriteLine($"int OP:{opcode}\n---------\n\n");
 
             switch (OperatorsInfo.GetInstructionFormat(_operator.Operator))
             {
                 case EInstructionFormat.FORMAT_1:
                     {
                         InstructionFormat1 format = (InstructionFormat1)_operator;
-                        int Ra = (format.RegisterA.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        Console.WriteLine($"{format}");
+                        int Ra = (format.RegisterA?.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
                         int Rb = (format.RegisterB.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
                         int Rc = (format.RegisterC.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-
+                        //int Rb = (format.RegisterB?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterB.ToString(), @"[.\D+]", ""));
+                        //int Rc = (format.RegisterC?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterC.ToString(), @"[.\D+]", ""));
                         return $"{Convert.ToString(opcode, 2).PadLeft(5,'0')}" +
                             $"{Convert.ToString(Ra, 2).PadLeft(3,'0')}" +
                             $"{Convert.ToString(Rb, 2).PadLeft(3, '0')}" +
@@ -367,6 +380,7 @@ namespace Assembler.Assembler
             }
             
         }
+       
         /// <summary>
         /// size of file in bytes
         /// </summary>
