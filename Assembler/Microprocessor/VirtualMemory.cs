@@ -54,7 +54,7 @@ namespace Assembler.Microprocessor
         {
             get
             {
-                return UnitConverter.DecimalToHex(lastUsedAddressDecimal);
+                return UnitConverter.IntToHex(lastUsedAddressDecimal);
             }
         }
 
@@ -81,7 +81,7 @@ namespace Assembler.Microprocessor
         /// <returns>string representation of contents in current VirtualMemory in Hexadecimal.</returns>
         public string GetContentsInHex(string hexAddress)
         {
-            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToInt(hexAddress);
 
             return GetContentsInHex(decimalAddress);
         }
@@ -107,7 +107,7 @@ namespace Assembler.Microprocessor
         /// <returns>string representation of contents in current VirtualMemory in Binary.</returns>
         public string GetContentsInBin(string hexAddress)
         {
-            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToInt(hexAddress);
 
             return UnitConverter.HexToBinary(GetContentsInHex(decimalAddress));
         }
@@ -121,9 +121,9 @@ namespace Assembler.Microprocessor
         /// <returns>string representation of contents in current VirtualMemory in Decimal.</returns>
         public int GetContentsInDecimal(string hexAddress)
         {
-            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToInt(hexAddress);
 
-            return UnitConverter.HexToDecimal(GetContentsInHex(decimalAddress));
+            return UnitConverter.HexToInt(GetContentsInHex(decimalAddress));
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Assembler.Microprocessor
         /// <param name="hexContent"> The new contents (hexadecimal) to be added into internal memory structure.</param>
         public void SetContentInMemory(string hexAddress, string hexContent)
         {
-            int decimalAddress = UnitConverter.HexToDecimal(hexAddress);
+            int decimalAddress = UnitConverter.HexToInt(hexAddress);
 
             SetContentInMemory(decimalAddress, hexContent);
         }
@@ -174,7 +174,7 @@ namespace Assembler.Microprocessor
         /// <returns>True is previously used, False otherwise</returns>
         public bool IsAddressInUse(string hexAddress)
         {
-            return IsInUse(UnitConverter.HexToDecimal(hexAddress));
+            return IsInUse(UnitConverter.HexToInt(hexAddress));
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Assembler.Microprocessor
         {
             if (decimalAddress < 0 || decimalAddress >= memoryBlocksInHexadecimal.Length)
             {
-                throw new IndexOutOfRangeException($"Invalid address: {UnitConverter.DecimalToHex(decimalAddress)}, Decimal[{decimalAddress}]");
+                throw new IndexOutOfRangeException($"Invalid address: {UnitConverter.IntToHex(decimalAddress)}, Decimal[{decimalAddress}]");
             }
         }
     }

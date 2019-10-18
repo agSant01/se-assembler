@@ -7,11 +7,11 @@ namespace Assembler.Microprocessor.InstructionFormats
     {
         public MCInstructionF1(ushort decimalAddress, string opCodeBinary, string Ra, string Rb = null, string Rc = null)
         {
-            OpCode = (byte) UnitConverter.BinaryToDecimal(opCodeBinary);
+            OpCode = (byte) UnitConverter.BinaryToInt(opCodeBinary);
 
-            this.Ra = (byte) UnitConverter.BinaryToDecimal(Ra);
-            this.Rb = (byte) UnitConverter.BinaryToDecimal(Rb);
-            this.Rc = (byte) UnitConverter.BinaryToDecimal(Rc);
+            this.Ra = UnitConverter.BinaryToByte(Ra);
+            this.Rb = UnitConverter.BinaryToByte(Rb);
+            this.Rc = UnitConverter.BinaryToByte(Rc);
 
             InstructionAddressDecimal = decimalAddress;
         }

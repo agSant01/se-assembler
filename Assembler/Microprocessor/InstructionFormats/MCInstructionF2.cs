@@ -7,9 +7,9 @@ namespace Assembler.Microprocessor.InstructionFormats
     {
         public MCInstructionF2(ushort decimalAddress, string opCodeBinary, string Ra, string binaryAddress)
         {
-            OpCode = (byte) UnitConverter.BinaryToDecimal(opCodeBinary);
+            OpCode = UnitConverter.BinaryToByte(opCodeBinary);
 
-            this.Ra = (byte) UnitConverter.BinaryToDecimal(Ra);
+            this.Ra = UnitConverter.BinaryToByte(Ra);
 
             AddressParamHex = UnitConverter.BinaryToHex(binaryAddress);
 
