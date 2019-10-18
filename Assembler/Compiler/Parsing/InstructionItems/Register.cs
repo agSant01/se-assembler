@@ -21,8 +21,8 @@ namespace Assembler.Parsing.InstructionItems
             Token = token;
 
             if (Token == null)
-                //     _isValid = true;
-                _isValid = false;
+                     _isValid = true;
+                //_isValid = false;
             else if (char.IsDigit(Token.Value[1]))
             {
                 int registerNumber = (int)char.GetNumericValue(Token.Value[1]);
@@ -55,11 +55,12 @@ namespace Assembler.Parsing.InstructionItems
         /// </summary>
         /// <returns>String representation of Register</returns>
         public override string ToString()
-        {   if (IsValid())
+        {   if (IsValid() && Token != null)//BUG FIXED:If we didn't check for null, the toString in compiler would throw an exception when unused regiters were left empty
                 return Token?.Value;
 
             else
-                return "";//TODO: PROPER FIX FOR UNINIT REGs
+                //return null;//TODO: PROPER FIX FOR UNINIT REGs
+            return "";
         }
     }
 }

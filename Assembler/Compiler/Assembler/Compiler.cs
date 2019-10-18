@@ -297,13 +297,19 @@ namespace Assembler.Assembler
             {
                 case EInstructionFormat.FORMAT_1:
                     {
+                        int Rc = 0;
+                        int Ra = 0;
+                        int Rb = 0;
                         InstructionFormat1 format = (InstructionFormat1)_operator;
                         Console.WriteLine($"{format}");
-                        int Ra = (format.RegisterA?.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-                        int Rb = (format.RegisterB.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-                        int Rc = (format.RegisterC.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-                        //int Rb = (format.RegisterB?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterB.ToString(), @"[.\D+]", ""));
-                        //int Rc = (format.RegisterC?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterC.ToString(), @"[.\D+]", ""));
+                        if (format.RegisterA != null)
+                             Ra = (format.RegisterA?.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        //int Rb = (format.RegisterB.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        //int Rc = (format.RegisterC.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        if (format.RegisterC != null)
+                            Rb = (format.RegisterB?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterB.ToString(), @"[.\D+]", ""));
+                        if (format.RegisterC != null)
+                             Rc = (format.RegisterC.ToString() == "" ) ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterC.ToString(), @"[.\D+]", ""));
                         return $"{Convert.ToString(opcode, 2).PadLeft(5,'0')}" +
                             $"{Convert.ToString(Ra, 2).PadLeft(3,'0')}" +
                             $"{Convert.ToString(Rb, 2).PadLeft(3, '0')}" +
