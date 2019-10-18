@@ -33,6 +33,12 @@ namespace Assembler.Microprocessor.InstructionFormats
                    InstructionAddressDecimal == f.InstructionAddressDecimal;
         }
 
+        public override int GetHashCode()
+
+        {
+            return HashCode.Combine(OpCode, Ra, AddressParamHex, InstructionAddressDecimal);
+        }
+
         public override string ToString()
         {
             return $"MCInstructionF2[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', AddressParamHex:'{AddressParamHex}']";

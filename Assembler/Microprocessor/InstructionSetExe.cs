@@ -28,9 +28,7 @@ namespace Assembler.Microprocessor
                     //F2; LOADIM Ra, const
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
 
-                    byte registerA = instructionF2.Ra;
-
-                    micro.MicroRegisters.SetRegisterValue(registerA, instructionF2.AddressParamHex);
+                    micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, instructionF2.AddressParamHex);
 
                     return true;
                 }},
@@ -41,9 +39,7 @@ namespace Assembler.Microprocessor
                     // STORE mem, Ra  {F2} [mem] <- R[Ra]
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
 
-                    byte registerA = instructionF2.Ra;
-
-                    string registerAValue = micro.MicroRegisters.GetRegisterValue(registerA);
+                    string registerAValue = micro.MicroRegisters.GetRegisterValue(instructionF2.Ra);
 
                     micro.MicroVirtualMemory.SetContentInMemory(instructionF2.AddressParamHex, registerAValue);
                     return true;
@@ -55,28 +51,22 @@ namespace Assembler.Microprocessor
                     // LOADRIND Ra,Rb  {F1} R[Ra] <- mem[R[Rb]]
                     MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                    byte registerA = instructionF1.Ra;
-                    byte registerB = instructionF1.Rb;
-
-                    string valueRegisterB = micro.MicroRegisters.GetRegisterValue(registerB);
+                    string valueRegisterB = micro.MicroRegisters.GetRegisterValue(instructionF1.Rb);
 
                     string memoryData = micro.MicroVirtualMemory.GetContentsInHex(valueRegisterB);
 
-                    micro.MicroRegisters.SetRegisterValue(registerA, memoryData);
+                    micro.MicroRegisters.SetRegisterValue( instructionF1.Ra, memoryData);
                     return true;
                 }},
                 { "00110",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // STORERIND Ra,Rb  {F1} R[Rb] <- mem[R[Ra]]
                     MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                    byte registerA = instructionF1.Ra;
-                    byte registerB = instructionF1.Rb;
-
-                    string valueRegisterA = micro.MicroRegisters.GetRegisterValue(registerA);
+                    string valueRegisterA = micro.MicroRegisters.GetRegisterValue(instructionF1.Ra);
 
                     string valueInMemory  = micro.MicroVirtualMemory.GetContentsInHex(valueRegisterA);
 
-                    micro.MicroRegisters.SetRegisterValue(registerB, valueInMemory);
+                    micro.MicroRegisters.SetRegisterValue(instructionF1.Rb, valueInMemory);
 
                     return true;
                 }},
@@ -135,12 +125,12 @@ namespace Assembler.Microprocessor
 
                     byte ra = instructionF2.Ra;
 
-                    string result = ArithmeticOperations.HexSubstract(
+                    string resultHex = ArithmeticOperations.HexSubstract(
                         micro.MicroRegisters.GetRegisterValue(ra),
                         instructionF2.AddressParamHex
                         );
 
-                    micro.MicroRegisters.SetRegisterValue(ra, result);
+                    micro.MicroRegisters.SetRegisterValue(ra, resultHex);
 
                     return true;
                 }},
@@ -158,7 +148,7 @@ namespace Assembler.Microprocessor
 
                     sbyte resultForA = (sbyte) (valueInB & valueInC);
 
-                    micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.IntToHex(resultForA));
+                    micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
                     return true; 
                 }},
@@ -290,17 +280,140 @@ namespace Assembler.Microprocessor
                     
                     return true; 
                 }},
-                { "10101",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "10110",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "10111",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11000",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11001",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11010",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11011",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11100",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11101",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11110",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }},
-                { "11111",     (IMCInstruction instruction, MicroSimulator micro) => { return true; }}
+                { "10101",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // JMPADDR addr {F3} [pc] <- address
+                    MCInstructionF3 instructionF3 = (MCInstructionF3) instruction;
+
+                    string address = instructionF3.AddressParamHex;
+
+                    ushort addressShort = (ushort) UnitConverter.HexToInt(address);
+
+                    micro.ProgramCounter = addressShort;
+
+                    return true;
+                }},
+                { "10110",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    //JCONDRIN Ra {F1} If cond then [pc] <- [R[ra]] 
+
+                    if (micro.ConditionalBit)
+                    {
+                        MCInstructionF3 instructionF3 = (MCInstructionF3) instruction;
+
+                        byte ra = UnitConverter.BinaryToByte(UnitConverter.HexToBinary(instructionF3.AddressParamHex));
+
+                        string hexaAddress = micro.MicroRegisters.GetRegisterValue(ra);
+
+                        micro.ProgramCounter = (ushort) UnitConverter.HexToInt(hexaAddress);
+                    }
+
+                    micro.ConditionalBit = false;
+
+                    return true; 
+                }},
+                { "10111",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // JCONDADDR addr {F3} If cond then [pc] <- address
+                    if (micro.ConditionalBit)
+                    {
+                        string addressHex = ((MCInstructionF3)instruction).AddressParamHex;
+
+                        micro.ProgramCounter = (ushort) UnitConverter.HexToInt(addressHex);
+                    }
+
+                    micro.ConditionalBit = false;
+
+                    return true; 
+                }},
+                { "11000",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // LOOP Ra, address {F2} 
+                    // [R[ra]] <- [R[ra]] – 1 
+                    // If R[Ra] != 0 [pc] <- address 
+
+                    MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
+
+                    // R[Ra]
+                    string valueHex = micro.MicroRegisters.GetRegisterValue(instructionF2.Ra);
+
+                    // R[Ra] =- 1
+                    string valueMinus1Hex = ArithmeticOperations.HexSubstract(valueHex, "1");
+                    micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, valueMinus1Hex);
+
+                    // If R[Ra] != 0
+                    if (UnitConverter.HexToSByte(valueMinus1Hex) != 0) {
+                        // [pc] <- address
+                        micro.ProgramCounter = (ushort) UnitConverter.HexToInt(instructionF2.AddressParamHex);
+                    }
+
+                    return true; 
+                }},
+                { "11001",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // GRT Ra, Rb {F1} Cond <- R[Ra] > R[Rb]
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    sbyte raData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Ra));
+
+                    sbyte rbData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
+
+                    micro.ConditionalBit = raData > rbData;
+
+                    return true; 
+                }},
+                { "11010",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // GRTEQ Ra, Rb {F1} Cond <- R[Ra] >= R[Rb]
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    sbyte raData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Ra));
+
+                    sbyte rbData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
+
+                    micro.ConditionalBit = raData >= rbData;
+
+                    return true; 
+                }},
+                { "11011",     (IMCInstruction instruction, MicroSimulator micro) => {
+                    // EQ Ra, Rb {F1} Cond <- R[Ra] == R[Rb] 
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    sbyte raData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Ra));
+
+                    sbyte rbData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
+
+                    micro.ConditionalBit = raData == rbData;
+
+                    return true; }},
+                { "11100",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // NEQ Ra, Rb {F1} Cond <- R[Ra] != R[Rb] 
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    sbyte raData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Ra));
+
+                    sbyte rbData = UnitConverter.HexToSByte(
+                        micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
+
+                    micro.ConditionalBit = raData != rbData;
+
+                    return true; }},
+                { "11101",     (IMCInstruction instruction, MicroSimulator micro) => {
+                    // NOP  {F1} Do nothing
+                    return true; }},
+                { "11110",     (IMCInstruction instruction, MicroSimulator micro) => { 
+                    // CALL address {F3} 
+                    // SP <- SP - 2 
+                    // mem[SP] <- PC 
+                    // PC <- address 
+                    return true; }},
+                { "11111",     (IMCInstruction instruction, MicroSimulator micro) => {
+                    // RETURN 
+                    // PC <- mem[SP] 
+                    // SP <- SP + 2  
+                    
+                    return true; }}
            };
 
         public static bool ExecuteInstruction(IMCInstruction instruction, MicroSimulator microSimulator)

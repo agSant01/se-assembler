@@ -1,4 +1,5 @@
 ﻿using Assembler.Utils;
+using System;
 
 namespace Assembler.Microprocessor.InstructionFormats
 {
@@ -7,7 +8,7 @@ namespace Assembler.Microprocessor.InstructionFormats
         public MCInstructionF3(ushort decimalAddress, string opCodeBinary, string binaryAddress)
         {
             OpCode = UnitConverter.BinaryToByte(opCodeBinary);
-
+            
             AddressParamHex = UnitConverter.BinaryToHex(binaryAddress);
 
             InstructionAddressDecimal = decimalAddress;
@@ -25,6 +26,11 @@ namespace Assembler.Microprocessor.InstructionFormats
                    OpCode == f.OpCode &&
                    AddressParamHex == f.AddressParamHex &&
                    InstructionAddressDecimal == f.InstructionAddressDecimal;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(OpCode, AddressParamHex, InstructionAddressDecimal);
         }
 
         public override string ToString()

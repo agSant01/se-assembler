@@ -14,8 +14,8 @@ namespace Assembler.Utils
         /// <returns></returns>
         public static string HexAdd(string hex1, string hex2)
         {
-            int element1 = UnitConverter.HexToSByte(hex1);
-            int element2 = UnitConverter.HexToSByte(hex2);
+            sbyte element1 = UnitConverter.HexToSByte(hex1);
+            sbyte element2 = UnitConverter.HexToSByte(hex2);
 
             return UnitConverter.ByteToHex((byte)(element1 + element2));
         }
@@ -28,8 +28,8 @@ namespace Assembler.Utils
         /// <returns>Product</returns>
         public static string HexMultiply(string hex1, string hex2)
         {
-            int element1 = UnitConverter.HexToSByte(hex1);
-            int element2 = UnitConverter.HexToSByte(hex2);
+            sbyte element1 = UnitConverter.HexToSByte(hex1);
+            sbyte element2 = UnitConverter.HexToSByte(hex2);
 
             return UnitConverter.ByteToHex((byte)(element1 * element2));
         }
