@@ -64,7 +64,6 @@ namespace Assembler.UnitTests.CompilerTests
 
             Parser parser = new Parser(lexer);
 
-            Assert.Fail("Add logger to compiler for test");
             Compiler compiler = new Compiler(parser);
 
             compiler.Compile();
@@ -73,12 +72,35 @@ namespace Assembler.UnitTests.CompilerTests
             {
                 Console.WriteLine($"instruction: {arr[i]}");
             }
+
+            compiler.AsmLogger.Reset();
+            while(compiler.AsmLogger.MoveNext())
+            {
+                Console.WriteLine(compiler.AsmLogger.Current);
+            }
         }
 
         [TestMethod]
         public void CompilerTest_HexOutput()
         {
             string[] lines = FileManager.Instance.ToReadFile(testFileSuccess);
+
+            string[] expectedLines =
+            {
+                "A8 06 ",
+                "05 07 ",
+                "00 00 ",
+                "01 02 ",
+                "02 03 ",
+                "C9 24 ",
+                "A8 12 ",
+                "1A 04 ",
+                "A8 16 ",
+                "19 04 ",
+                "0B 08 ",
+                "A8 16 ",
+                null
+            };
 
             Assert.IsNotNull(lines, "File Not Found.");
 
@@ -89,10 +111,64 @@ namespace Assembler.UnitTests.CompilerTests
             Compiler compiler = new Compiler(parser);
 
             compiler.Compile();
+            int i = 0;
+            Console.WriteLine(compiler.GetOutput().Length);
             foreach (string s in compiler.GetOutput())
+            {
                 Console.WriteLine(s);
+                Assert.AreEqual(expectedLines[i++], s);
+            }
+
+            compiler.AsmLogger.Reset();
+            while (compiler.AsmLogger.MoveNext())
+            {
+                Console.WriteLine(compiler.AsmLogger.Current);
+            }
         }
 
+        [TestMethod]
+        public void CompilerTest_HexOutput_Error()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(testFileErrorToken);
+
+            string[] expectedLines =
+            {
+                "A8 06 ",
+                "05 07 ",
+                "00 00 ",
+                "01 02 ",
+                "02 03 ",
+                "C9 24 ",
+                "1A 04 ",
+                "A8 12 ",
+                "0B 08 ",
+                "A8 12 ", 
+                null
+            };
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            lexer = new Lexer(lines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+            int i = 0;
+            Console.WriteLine(compiler.GetOutput().Length);
+            foreach (string s in compiler.GetOutput())
+            {
+                Console.WriteLine(s);
+                Assert.AreEqual(expectedLines[i++], s);
+            }
+
+            compiler.AsmLogger.Reset();
+            while (compiler.AsmLogger.MoveNext())
+            {
+                Console.WriteLine(compiler.AsmLogger.Current);
+            }
+        }
 
       /*  [TestMethod]
         public void CompilerTest_DecimalOutput_Op_ADD()

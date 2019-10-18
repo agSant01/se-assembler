@@ -20,7 +20,8 @@ namespace Assembler.Assembler
         private Dictionary<string, int> labels;
         private Dictionary<string, int> variables;
         private Dictionary<string, int> vMemory;
-        private AssemblyLogger logger;
+        
+        public AssemblyLogger AsmLogger { get; }
 
         private string[] compiledLines;
 
@@ -43,7 +44,7 @@ namespace Assembler.Assembler
             vMemory = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
-            logger = new AssemblyLogger("ASM");
+            AsmLogger = new AssemblyLogger("ASM");
             size = 0;
 
         }
@@ -62,7 +63,7 @@ namespace Assembler.Assembler
             vMemory = new Dictionary<string, int>();
             this.parser = parser;
             decimalInstuctions = new int[10];
-            this.logger = logger;
+            this.AsmLogger = logger;
             size = 0;
 
         }
@@ -76,6 +77,9 @@ namespace Assembler.Assembler
         {
             int lineCount = 0;
             parser.Reset();
+
+            AsmLogger.StatusUpdate("Started loading of labels and constants");
+
             while (parser.MoveNext())
             {
                 if (parser.CurrentInstruction.Operator == null && parser.CurrentInstruction.GetType().Name == "Label")
@@ -98,7 +102,7 @@ namespace Assembler.Assembler
                 {
 
                     if (variables.ContainsValue(currentAddress))
-                        logger.Warning("Memory Overide", lineCount.ToString(), currentAddress.ToString(), vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
+                        AsmLogger.Warning("Memory Overide", lineCount.ToString(), currentAddress.ToString(), vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
 
                     variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
                     currentAddress += ((VariableAssign)parser.CurrentInstruction).Values.Length;
@@ -122,7 +126,7 @@ namespace Assembler.Assembler
                 lineCount++;
             }
 
-
+            AsmLogger.StatusUpdate("Completed loading labels and constants");
         }
 
         private bool HaveSyntaxErrors()
@@ -133,7 +137,7 @@ namespace Assembler.Assembler
             {
                 if (!parser.CurrentInstruction.IsValid)
                 {
-                    logger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
+                    AsmLogger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
                     return true;
                 };
                 lineCount++;
@@ -189,9 +193,9 @@ namespace Assembler.Assembler
         /// </summary>
         public bool Compile()
         {
-            logger.StatusUpdate("Assembling process started");
-            if (HaveSyntaxErrors())
-                return false;
+            AsmLogger.StatusUpdate("Assembly process started");
+
+            HaveSyntaxErrors();
             
             LoadConstantsAndLabels();
 
@@ -236,17 +240,19 @@ namespace Assembler.Assembler
                 }
 
             }
-            logger.StatusUpdate("Assembling completed");
-            //TODO: Error possibly here when adding instruction to compiledLines list
+            AsmLogger.StatusUpdate("Assembly process completed");
+            AsmLogger.StatusUpdate("Stated generation of Object file");
+
             compiledLines = new string[(size / 2) + 1];
             int currentLine = 0;
             for (int i = 0; i < size; i++)
             {
-
-                compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0') + " ";
+                compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0').ToUpper() + " ";
                 if (i % 2 != 0)
                     currentLine += (currentLine < size / 2) ? 1 : 0;
             }
+
+            AsmLogger.StatusUpdate("Finished generating Object file");
 
             return true;
         }
@@ -264,7 +270,7 @@ namespace Assembler.Assembler
 
             if(binInstruction.Length != 16)
             {
-                logger.Error("invalid bites",size.ToString(),"program crashed please report :)");
+                AsmLogger.Error("invalid bites",size.ToString(),"program crashed please report :)");
                 throw new Exception("invalid bytes");
             }
 
@@ -328,7 +334,7 @@ namespace Assembler.Assembler
                             catch
                             {
                                 //send error message (undefined variable)
-                                logger.Error("Variable not defined",currentAddress.ToString(),"Variable called but never defined");
+                                AsmLogger.Error("Variable not defined",currentAddress.ToString(),"Variable called but never defined");
                                 return null;
                             }
                         }
