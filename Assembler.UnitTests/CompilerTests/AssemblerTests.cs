@@ -54,7 +54,7 @@ namespace Assembler.UnitTests.CompilerTests
         }
 
         [TestMethod]
-        public void CompilerTest_DesimalOutput()
+        public void CompilerTest_DecimalOutput()
         {
             string[] lines = FileManager.Instance.ToReadFile(testFileSuccess);
 
@@ -92,6 +92,31 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string s in compiler.GetOutput())
                 Console.WriteLine(s);
         }
+
+
+      /*  [TestMethod]
+        public void CompilerTest_DecimalOutput_Op_ADD()
+        {
+            string[] lines = {"ADD R1, R2, R3", "ADD R3,  R4, R5", "ADD R6,  R7, R0" };
+            string[] expected = { "00111 001 010 011 00", "00111 011 100 101 00" };
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            lexer = new Lexer(lines);
+
+            Parser parser = new Parser(lexer);
+
+            Assert.Fail("Add logger to compiler for test");
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+            int[] arr = compiler.GetDecimalInstructions();
+            for (int i = 0; i < compiler.Size(); i++)
+            {
+                Console.WriteLine($"instruction: {arr[i]}");
+            }
+        }*/
+
 
     }
 }

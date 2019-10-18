@@ -136,6 +136,7 @@ namespace Assembler.Parsing
             // token is a register
             else if (IsRegister(leftIdx, rightIdx, ref charsInLine))
             {
+                
                 MakeToken(TokenType.REGISTER, value);
             }
             // token is a variable assign keyword

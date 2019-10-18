@@ -215,7 +215,7 @@ namespace Assembler.Assembler
                             }
                             else
                             {
-                                AddInstruction(0);
+                                AddInstruction(0);//TODO: FIX THIS, HARDCODED TO WRITE 0 INTO MEM ON ODD ADDRESSES
                                 currentAddress += 2;
                             }
 
@@ -237,11 +237,12 @@ namespace Assembler.Assembler
 
             }
             logger.StatusUpdate("Assembling completed");
-
+            //TODO: Error possibly here when adding instruction to compiledLines list
             compiledLines = new string[(size / 2) + 1];
             int currentLine = 0;
             for (int i = 0; i < size; i++)
             {
+
                 compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0') + " ";
                 if (i % 2 != 0)
                     currentLine += (currentLine < size / 2) ? 1 : 0;
@@ -266,9 +267,10 @@ namespace Assembler.Assembler
                 logger.Error("invalid bites",size.ToString(),"program crashed please report :)");
                 throw new Exception("invalid bytes");
             }
+
             string firstByte = binInstruction.Substring(0,8);
             AddInstruction(Convert.ToInt32(firstByte, 2));
-            string secondByte = binInstruction.Substring(8,8);
+            string secondByte = binInstruction.Substring(8, 8);
             AddInstruction(Convert.ToInt32(secondByte, 2));
 
             
@@ -282,15 +284,22 @@ namespace Assembler.Assembler
         {
             int opcode = OperatorsInfo.GetOPCode(_operator.Operator);
 
+
             switch (OperatorsInfo.GetInstructionFormat(_operator.Operator))
             {
                 case EInstructionFormat.FORMAT_1:
                     {
+                        int Rc = 0;
+                        int Ra = 0;
+                        int Rb = 0;
                         InstructionFormat1 format = (InstructionFormat1)_operator;
-                        int Ra = (format.RegisterA.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-                        int Rb = (format.RegisterB.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-                        int Rc = (format.RegisterC.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
-
+                        
+                        if (format.RegisterA != null)
+                             Ra = (format.RegisterA?.ToString() == "") ? 0 :Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
+                        if (format.RegisterC != null)
+                            Rb = (format.RegisterB?.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterB.ToString(), @"[.\D+]", ""));
+                        if (format.RegisterC != null)
+                             Rc = (format.RegisterC.ToString() == "" ) ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterC.ToString(), @"[.\D+]", ""));
                         return $"{Convert.ToString(opcode, 2).PadLeft(5,'0')}" +
                             $"{Convert.ToString(Ra, 2).PadLeft(3,'0')}" +
                             $"{Convert.ToString(Rb, 2).PadLeft(3, '0')}" +
@@ -367,6 +376,7 @@ namespace Assembler.Assembler
             }
             
         }
+       
         /// <summary>
         /// size of file in bytes
         /// </summary>
