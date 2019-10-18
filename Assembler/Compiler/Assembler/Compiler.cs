@@ -78,7 +78,7 @@ namespace Assembler.Assembler
             int lineCount = 0;
             parser.Reset();
 
-            AsmLogger.StatusUpdate("Started loading of labels and constants");
+            AsmLogger.StatusUpdate("Loading labels and constants");
 
             while (parser.MoveNext())
             {
@@ -126,11 +126,12 @@ namespace Assembler.Assembler
                 lineCount++;
             }
 
-            AsmLogger.StatusUpdate("Completed loading labels and constants");
+            AsmLogger.StatusUpdate("Finished loading labels and constants");
         }
 
         private bool HaveSyntaxErrors()
         {
+            AsmLogger.StatusUpdate("Syntax analysis");
             int lineCount = 0;
             parser.Reset();
             while (parser.MoveNext())
@@ -138,7 +139,6 @@ namespace Assembler.Assembler
                 if (!parser.CurrentInstruction.IsValid)
                 {
                     AsmLogger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
-                    return true;
                 };
                 lineCount++;
             }
@@ -194,7 +194,7 @@ namespace Assembler.Assembler
         public bool Compile()
         {
             AsmLogger.StatusUpdate("Assembly process started");
-
+            
             HaveSyntaxErrors();
             
             LoadConstantsAndLabels();
@@ -241,7 +241,7 @@ namespace Assembler.Assembler
 
             }
             AsmLogger.StatusUpdate("Assembly process completed");
-            AsmLogger.StatusUpdate("Stated generation of Object file");
+            AsmLogger.StatusUpdate("Generating of Object file");
 
             compiledLines = new string[(size / 2) + 1];
             int currentLine = 0;

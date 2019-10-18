@@ -92,7 +92,7 @@ namespace Assembler.UnitTests.CompilerTests
                 "00 00 ",
                 "01 02 ",
                 "02 03 ",
-                "C9 24 ",
+                "C9 40 ",
                 "A8 12 ",
                 "1A 04 ",
                 "A8 16 ",
@@ -138,11 +138,11 @@ namespace Assembler.UnitTests.CompilerTests
                 "00 00 ",
                 "01 02 ",
                 "02 03 ",
-                "C9 24 ",
+                "C9 40 ",
                 "1A 04 ",
                 "A8 12 ",
                 "0B 08 ",
-                "A8 12 ", 
+                "A8 12 ",
                 null
             };
 
@@ -169,30 +169,5 @@ namespace Assembler.UnitTests.CompilerTests
                 Console.WriteLine(compiler.AsmLogger.Current);
             }
         }
-
-      /*  [TestMethod]
-        public void CompilerTest_DecimalOutput_Op_ADD()
-        {
-            string[] lines = {"ADD R1, R2, R3", "ADD R3,  R4, R5", "ADD R6,  R7, R0" };
-            string[] expected = { "00111 001 010 011 00", "00111 011 100 101 00" };
-
-            Assert.IsNotNull(lines, "File Not Found.");
-
-            lexer = new Lexer(lines);
-
-            Parser parser = new Parser(lexer);
-
-            Assert.Fail("Add logger to compiler for test");
-            Compiler compiler = new Compiler(parser);
-
-            compiler.Compile();
-            int[] arr = compiler.GetDecimalInstructions();
-            for (int i = 0; i < compiler.Size(); i++)
-            {
-                Console.WriteLine($"instruction: {arr[i]}");
-            }
-        }*/
-
-
     }
 }

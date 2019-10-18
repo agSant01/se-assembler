@@ -21,8 +21,9 @@ namespace Assembler.Parsing.InstructionItems
             Token = token;
 
             if (Token == null)
-                     _isValid = true;
-                //_isValid = false;
+            {
+                _isValid = true;
+            }
             else if (char.IsDigit(Token.Value[1]))
             {
                 int registerNumber = (int)char.GetNumericValue(Token.Value[1]);
