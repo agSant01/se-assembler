@@ -40,11 +40,11 @@ namespace Assembler.Microprocessor
         }
 
         /// <summary>
-        /// Access contents in the registers
+        /// Access contents in the registers in Hexadecimal format
         /// </summary>
         /// <param name="registerNumber">Register Number</param>
         /// <exception cref="InvalidCastException">If the data is invalid for the size of the register</exception>
-        /// <returns></returns>
+        /// <returns>Contents of the registers in Hexadecimal format</returns>
         public string GetRegisterValue(byte registerNumber)
         {
             if (registerNumber < 1 || registerNumber > 7)
@@ -52,7 +52,7 @@ namespace Assembler.Microprocessor
                 throw new IndexOutOfRangeException($"Invalid Register: {registerNumber}");
             }
 
-            return UnitConverter.DecimalToHex(registers[registerNumber]).Replace("0x", "");
+            return UnitConverter.ByteToHex((byte)registers[registerNumber]).Replace("0x", "");
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Assembler.Microprocessor
 
             IsValidData(hexadecimalValue);
 
-            registers[registerNumber] = (sbyte) UnitConverter.HexToDecimal(hexadecimalValue);
+            registers[registerNumber] = (sbyte) UnitConverter.HexToInt(hexadecimalValue);
         }
 
         /// <summary>
@@ -80,13 +80,14 @@ namespace Assembler.Microprocessor
         /// <exception cref="InvalidCastException">If the data is invalid for the size of the register</exception>
         private void IsValidData(string hexValue)
         {
-            int decimalValue = UnitConverter.HexToDecimal(hexValue);
-
-            if (decimalValue > maxValue || decimalValue < minValue)
+            try
             {
-                throw new InvalidCastException($"The passed value '0x{hexValue}', " +
-                    $"'Decimal:{decimalValue}' is invalid for this register of " +
-                    $"{registerByteSize*8}-Bits.");
+                sbyte decimalValue = UnitConverter.HexToSByte(hexValue);
+            } catch(OverflowException)
+            {
+                throw new OverflowException($"The passed value '0x{hexValue}', " +
+                       $"'{UnitConverter.HexToBinary(hexValue)}' is invalid for this register of " +
+                       $"{registerByteSize * 8}-Bits.");
             }
         }
 

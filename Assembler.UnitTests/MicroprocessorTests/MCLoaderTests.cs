@@ -66,8 +66,8 @@ namespace Assembler.UnitTests.MicroprocessorTests
             {
                 IMCInstruction instruction = l.NextInstruction();
 
-                if (OpCodesInfo.IsJump(UnitConverter.DecimalToBinary(instruction.OpCode, 5))) {
-                    micro.ProgramCounter = (ushort) UnitConverter.HexToDecimal(
+                if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(instruction.OpCode, 5))) {
+                    micro.ProgramCounter = (ushort) UnitConverter.HexToInt(
                         ((MCInstructionF3)instruction).AddressParamHex);
                 } else
                 {
