@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assembler.Microprocessor.InstructionFormats;
+using System;
 
 namespace Assembler.Microprocessor
 {
@@ -9,6 +10,8 @@ namespace Assembler.Microprocessor
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
+
+        public IMCInstruction currentInstruction, previousInstruction;
 
 
         public MicroSimulator(VirtualMemory virtualMemory)
@@ -24,7 +27,7 @@ namespace Assembler.Microprocessor
 
         public VirtualMemory MicroVirtualMemory { get; }
 
-        public ushort StackPointer { get; set;}
+        public ushort StackPointer { get; set; }
 
         public ushort ProgramCounter
         {
@@ -46,5 +49,12 @@ namespace Assembler.Microprocessor
         {
             return $"Microprocessor[PC={ProgramCounter}, CondBit={(ConditionalBit ? 1 : 0)}]";
         }
+
+        public void NextInstruction()
+        {
+            previousInstruction = currentInstruction;
+            currentInstruction = _mcLoader.NextInstruction();
+        }
+
     }
 }
