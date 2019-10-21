@@ -78,13 +78,33 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         [TestMethod]
         public void DataMovOperationsTests_PUSH_Success()
         {
-            Assert.Inconclusive();
+            //init
+            micro.StackPointer = 100;
+            micro.MicroRegisters.SetRegisterValue(2, "FF");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00100", "010", null);
+            ushort SPNewValue = 99;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("FF", micro.MicroVirtualMemory.GetContentsInHex(micro.StackPointer));
         }
 
         [TestMethod]
         public void DataMovOperationsTests_POP_Success()
         {
-            Assert.Inconclusive();
+            //init
+            micro.StackPointer = 100;
+            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
+            ushort SPNewValue= 101;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1,micro);
+
+            Assert.AreEqual(SPNewValue,micro.StackPointer);
+            Assert.AreEqual("FF",micro.MicroRegisters.GetRegisterValue(2));
         }
 
         [TestMethod]

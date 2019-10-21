@@ -405,5 +405,41 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 
             Assert.AreEqual(result, micro.ConditionalBit);
         }
+
+
+        [TestMethod]
+        public void FlowControlOperationsTests_CALL_Success()
+        {
+            //init
+            micro.StackPointer = 100;
+            micro.ProgramCounter = 12;
+            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            MCInstructionF3 i1 = new MCInstructionF3(30, "11110", "010");
+            ushort SPNewValue = 98;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("0C", micro.MicroVirtualMemory.GetContentsInHex(micro.StackPointer));
+            Assert.AreEqual(micro.ProgramCounter, (ushort)UnitConverter.HexToInt(i1.AddressParamHex));
+        }
+
+        [TestMethod]
+        public void FlowControlOperationsTests_RETURN_Success()
+        {
+            //init
+            micro.StackPointer = 100;
+            micro.ProgramCounter = 12;
+            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            MCInstructionF3 i1 = new MCInstructionF3(31, "11111", null);
+            ushort SPNewValue = 102;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("FF",UnitConverter.IntToHex(micro.ProgramCounter));
+        }
     }
 }

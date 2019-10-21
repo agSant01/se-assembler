@@ -10,6 +10,7 @@ namespace Assembler.Microprocessor
 
         private ushort _programCounter = 0;
 
+
         public MicroSimulator(VirtualMemory virtualMemory)
         {
             MicroVirtualMemory = virtualMemory;
@@ -22,6 +23,8 @@ namespace Assembler.Microprocessor
         public Registers MicroRegisters { get; }
 
         public VirtualMemory MicroVirtualMemory { get; }
+
+        public ushort StackPointer { get; set;}
 
         public ushort ProgramCounter
         {

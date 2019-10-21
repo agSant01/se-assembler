@@ -33,7 +33,10 @@ namespace Assembler.Microprocessor
                     return true;
                 }},
                 { "00010",     (IMCInstruction instruction, MicroSimulator micro) => {
-                   //TODO: implement POP
+                   //F2; POP Ra
+                    MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
+                    micro.MicroRegisters.SetRegisterValue(instructionF2.Ra,micro.MicroVirtualMemory.GetContentsInHex(micro.StackPointer));
+                    micro.StackPointer++;
                     return true; }},
                 { "00011",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // STORE mem, Ra  {F2} [mem] <- R[Ra]
@@ -45,7 +48,10 @@ namespace Assembler.Microprocessor
                     return true;
                 }},
                 { "00100",     (IMCInstruction instruction, MicroSimulator micro) => {
-                    //TODO: implement PUSH
+                    //F2; PUSH Ra
+                    MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
+                    micro.StackPointer--;
+                    micro.MicroVirtualMemory.SetContentInMemory(micro.StackPointer,micro.MicroRegisters.GetRegisterValue(instructionF2.Ra));
                     return true; }},
                 { "00101",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // LOADRIND Ra,Rb  {F1} R[Ra] <- mem[R[Rb]]
@@ -406,13 +412,18 @@ namespace Assembler.Microprocessor
                     // CALL address {F3} 
                     // SP <- SP - 2 
                     // mem[SP] <- PC 
-                    // PC <- address 
+                    // PC <- address
+                    MCInstructionF3 instructionF3 = (MCInstructionF3) instruction;
+                    micro.StackPointer -= 2;
+                    micro.MicroVirtualMemory.SetContentInMemory(micro.StackPointer, UnitConverter.IntToHex(micro.ProgramCounter));
+                    micro.ProgramCounter = (ushort)UnitConverter.HexToInt(instructionF3.AddressParamHex);
                     return true; }},
                 { "11111",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // RETURN 
                     // PC <- mem[SP] 
                     // SP <- SP + 2  
-                    
+                    micro.ProgramCounter = (ushort)micro.MicroVirtualMemory.GetContentsInDecimal(UnitConverter.IntToHex(micro.StackPointer));
+                    micro.StackPointer+=2;
                     return true; }}
            };
 
