@@ -1,0 +1,85 @@
+﻿using Assembler.Microprocessor;
+using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+
+namespace Assembler.UnitTests.MicroprocessorTests
+{
+    [TestClass]
+    public class MCLoaderTests
+    {
+        private readonly string machineCodeFile = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"MicroprocessorTests\TestFiles\assembly_test_OBJ_FILE.txt");
+
+        [TestMethod]
+        public void MCLoaderTests_ExecuteOneInstruction_Success()
+        {
+            string expected = "MCInstructionF3[InstructionAddressDecimal: (decimal)'0', opcode:'21', AddressParamHex:'06']";
+
+            VirtualMemory vm = new VirtualMemory(new string[] { "A8 06" });
+
+            MCLoader l = new MCLoader(vm, new MicroSimulator(vm));
+
+            IMCInstruction i = l.NextInstruction();
+
+            Console.WriteLine(i);
+
+            Assert.AreEqual(expected, i.ToString());
+        }
+
+        [TestMethod]
+        public void MCLoaderTests_LoadObjectFile_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            string[] expected =
+            {
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'0', opcode:'21', AddressParamHex:'06']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'6', opcode:'0', Ra:'2', AddressParamHex:'01']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'8', opcode:'0', Ra:'4', AddressParamHex:'02']",
+                "MCInstructionF1[InstructionAddressDecimal: (decimal)'10', opcode:'25', Ra:'2', Rb:'2', Rc:'0']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'12', opcode:'21', AddressParamHex:'12']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'18', opcode:'3', Ra:'2', AddressParamHex:'19']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'20', opcode:'1', Ra:'6', AddressParamHex:'0B']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
+                "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']"
+            };
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            Console.WriteLine(vm);
+
+            MicroSimulator micro = new MicroSimulator(vm);
+
+            MCLoader l = new MCLoader(vm, micro);
+
+            int i = 0;
+            while (i < 10)
+            {
+                IMCInstruction instruction = l.NextInstruction();
+
+                if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(instruction.OpCode, 5))) {
+                    micro.ProgramCounter = (ushort) UnitConverter.HexToInt(
+                        ((MCInstructionF3)instruction).AddressParamHex);
+                } else
+                {
+                    micro.ProgramCounter += 2;
+                }
+
+                Console.WriteLine(instruction);
+
+                Assert.AreEqual(expected[i], instruction.ToString());
+
+                i++;
+            }
+        }
+    }
+}
