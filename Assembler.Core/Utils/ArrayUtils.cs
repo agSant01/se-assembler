@@ -18,8 +18,15 @@ namespace Assembler.Utils
             StringBuilder builder = new StringBuilder();
 
             builder.Append("[");
-
-            builder.AppendJoin(",", arr);
+            for (var i = 0; i < arr.Length; i++)
+            {
+                if (i > 0)
+                { 
+                    builder.Append(", ");
+                }
+                builder.Append(arr[i]);
+            }
+           // builder.AppendJoin(",", arr);
 
             builder.Append("]");
 
@@ -31,8 +38,15 @@ namespace Assembler.Utils
             StringBuilder builder = new StringBuilder();
 
             builder.Append("[");
-
-            builder.AppendJoin(",", arr);
+            for (var i = 0; i < arr.Length; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append(", ");
+                }
+                builder.Append(arr[i]);
+            }
+          //  builder.AppendJoin(",", arr);
 
             builder.Append("]");
 

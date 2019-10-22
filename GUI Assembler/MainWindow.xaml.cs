@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assembler.Core;
+using Assembler.Microprocessor;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,12 +23,12 @@ namespace GUI_Assembler
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MicroSimulator micro;
+
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -38,24 +40,25 @@ namespace GUI_Assembler
             {
                 try
                 {
+                    var path = ofd.FileName;
                     fileLines.ItemsSource = File.ReadAllLines(ofd.FileName);
+                  
+                    var shell = new Shell(path);
+                    shell.ExportFiles();
+                    var lines = shell.compiler.GetOutput();
+
+                    VirtualMemory vm = new VirtualMemory(lines);
+
+                    micro = new MicroSimulator(vm);
+                    memoryString.Content = micro.MicroVirtualMemory.ToString();
+                    registersString.Content = micro.MicroRegisters.ToString();
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
                     //TODO: Create log with error
                     MessageBox.Show("There was a problem reading the file.");
                 }
             }
-        }
-
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void fileTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-           
         }
 
         private void fileLines_SelectionChanged(object sender, SelectionChangedEventArgs e)
