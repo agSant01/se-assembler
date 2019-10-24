@@ -1,4 +1,5 @@
 ﻿using Assembler.Microprocessor;
+using Assembler.Microprocessor.InstructionFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -168,11 +169,21 @@ namespace Simulator_UI
             }
         }
 
+        private void ListBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void UpdateInstructionBox(string current, string previous)
         {
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Curr: {current}");
             instructionsBox.Items.Add($"Prev: {previous}");
+        }
+
+        private String getPretyInst(IMCInstruction i)
+        {
+            return "";
         }
     }
 }
