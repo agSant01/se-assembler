@@ -30,6 +30,7 @@ namespace Simulator_UI
         public MainWindow()
         {
             InitializeComponent();
+            statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
         }
 
 
@@ -50,11 +51,13 @@ namespace Simulator_UI
                 try
                 {
                     fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    statusLabel.Content = "Status: File Loaded";
                 }
                 catch (Exception ex)
                 {
                     //TODO: Create log with error
                     MessageBox.Show(ex.Message, "There was a problem reading the file.");
+                    statusLabel.Content = "Status: File not found or open somewhere else";
                 }
                 Init();
             }
@@ -136,6 +139,7 @@ namespace Simulator_UI
                     MessageBox.Show("Bad format on Stack Pointer Range");
                 }
                 else micro.StackPointer = spMax;
+                statusLabel.Content = "Status: Ready";
             }
             catch (Exception ex)
             {
