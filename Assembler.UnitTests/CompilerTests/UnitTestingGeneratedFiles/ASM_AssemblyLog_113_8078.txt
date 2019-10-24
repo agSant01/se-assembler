@@ -1,0 +1,4 @@
+[STATUS] Started Assembly Log ASM_AssemblyLog_113_8078 at 10/8/2019 9:01:56 PM
+[STATUS] Started Parsing.
+[WARNING] Memory Overwrite. Address 0x45 overwrite [content: '3524'] at line 54
+[ERROR] Wrong syntax at line 34. Cause: JUMP

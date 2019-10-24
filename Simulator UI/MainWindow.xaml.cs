@@ -1,5 +1,5 @@
-﻿using Assembler.Core;
-using Assembler.Microprocessor;
+﻿using Assembler.Microprocessor;
+using Assembler.Microprocessor.InstructionFormats;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,15 +16,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace GUI_Assembler
+namespace Simulator_UI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private MicroSimulator micro;
         private VirtualMemory vm;
+        private bool stopRun;
 
         //stack pointer 
         ushort spMax, spMin;
@@ -33,6 +31,7 @@ namespace GUI_Assembler
         public MainWindow()
         {
             InitializeComponent();
+            statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
         }
 
 
@@ -53,11 +52,13 @@ namespace GUI_Assembler
                 try
                 {
                     fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    statusLabel.Content = "Status: File Loaded";
                 }
                 catch (Exception ex)
                 {
                     //TODO: Create log with error
                     MessageBox.Show(ex.Message, "There was a problem reading the file.");
+                    statusLabel.Content = "Status: File not found or open somewhere else";
                 }
                 Init();
             }
@@ -95,6 +96,17 @@ namespace GUI_Assembler
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
+            stopRun = !stopRun;
+            runAllBtn.Header = stopRun ? "Run All" : "Stop";
+            for(int i = 0; i<100 && !stopRun; i++)
+            {
+                micro.NextInstruction();
+                UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
+                LoadMemory();
+                UpdateRegisters();
+                instructionsHistoryBox.Items.Add(micro.currentInstruction);
+            }
+            
 
         }
 
@@ -115,7 +127,7 @@ namespace GUI_Assembler
         {
             //UI Elements
 
-
+            stopRun = true;
             //Micro simulator setup
             vm = new VirtualMemory(lines);
             micro = new MicroSimulator(vm);
@@ -128,6 +140,7 @@ namespace GUI_Assembler
                     MessageBox.Show("Bad format on Stack Pointer Range");
                 }
                 else micro.StackPointer = spMax;
+                statusLabel.Content = "Status: Ready";
             }
             catch (Exception ex)
             {
@@ -139,18 +152,26 @@ namespace GUI_Assembler
 
         private void LoadMemory()
         {
+            memoryBox.Items.Clear();
             string a = "";
-            for (int i = 0; i < 100; i++)
+            int size = 50;
+            Int32.TryParse(memorySizeBox.Text,out size);
+            for (int i = 0; i < size; i++)
             {
                 if (i % 2 == 0)
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)} ";
+                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
                 else
                 {
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)} ";
+                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
                     memoryBox.Items.Add(a);
                     a = "";
                 }
             }
+        }
+
+        private void ListBoxItem_Selected(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void UpdateInstructionBox(string current, string previous)
@@ -158,6 +179,11 @@ namespace GUI_Assembler
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Curr: {current}");
             instructionsBox.Items.Add($"Prev: {previous}");
+        }
+
+        private String getPretyInst(IMCInstruction i)
+        {
+            return "";
         }
     }
 }

@@ -5,14 +5,60 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI_Assembler"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Background="#FF2D2D30"
+        Title="MicroSimulator" Height="648" Width="975.5" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
     <Grid>
-        <ListBox x:Name="memory" HorizontalAlignment="Left" Height="401" Margin="420,10,0,0" VerticalAlignment="Top" Width="363" SelectionChanged="ListBox_SelectionChanged"/>
-        <Button x:Name="openFileBtn" Content="Open File" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" VerticalAlignment="Top" Width="140" Click="Button_Click"/>
-        <Button Content="Next Instruction" HorizontalAlignment="Left" Height="20" Margin="194,363,0,0" VerticalAlignment="Top" Width="92"/>
-        <Button Content="Run All" HorizontalAlignment="Left" Height="20" Margin="307,363,0,0" VerticalAlignment="Top" Width="92"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="559*"/>
+            <ColumnDefinition Width="410*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="memoryBox" HorizontalAlignment="Left" Height="477" Margin="120.5,88,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42"/>
         <!-- <TextBox x:Name="fileTextBox" HorizontalAlignment="Left" Height="312" Margin="10,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="389" IsReadOnly="True" TextChanged="fileTextBox_TextChanged"/> -->
-        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="293" Margin="10,51,0,0" VerticalAlignment="Top" Width="389"/>
+        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="477" Margin="11,88,0,0" VerticalAlignment="Top" Width="390" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42"/>
+        <Menu x:Name="menu" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="968" Grid.ColumnSpan="2" Background="#FF2D2D30" Foreground="White">
+            <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
+                <MenuItem Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
+
+            </MenuItem>
+        </Menu>
+        <Label x:Name="label" Content="File Preview" HorizontalAlignment="Left" Margin="11,62,0,0" VerticalAlignment="Top" Width="390" Foreground="White"/>
+        <Label x:Name="label_Copy" Content="Memory" HorizontalAlignment="Left" Margin="120.5,62,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White"/>
+        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,-23,0" VerticalAlignment="Top" Width="991" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
+            <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click"/>
+            <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click"/>
+            <MenuItem x:Name="resetBtn" Header="Reset
+" Icon="" Click="ResetBtn_Click"/>
+        </ToolBar>
+        <StatusBar HorizontalAlignment="Left" Height="30" Margin="0,574,0,0" VerticalAlignment="Top" Width="968" Background="#FF026128" Grid.ColumnSpan="2">
+            <Label x:Name="statusLabel" Content="Label" Foreground="White"/>
+        </StatusBar>
+        <Label x:Name="label1" Content="Stack Pointer" Foreground="White" HorizontalAlignment="Left" Margin="433,111,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="stackPointerBox" HorizontalAlignment="Left" Height="23" Margin="550,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.ColumnSpan="2" IsReadOnly="True"/>
+        <Label x:Name="label1_Copy" Content="Program Counter" Foreground="White" HorizontalAlignment="Left" Margin="432,141,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="programCounterBox" HorizontalAlignment="Left" Height="23" Margin="551,144,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.ColumnSpan="2" IsReadOnly="True"/>
+        <Label x:Name="label1_Copy1" Content="Conditional Bit" Foreground="White" HorizontalAlignment="Left" Margin="433,172,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="conditionalBitBox" HorizontalAlignment="Left" Height="23" Margin="550,174,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.ColumnSpan="2" IsReadOnly="True"/>
+        <Label x:Name="label1_Copy2" Content="Program Counter" Foreground="White" HorizontalAlignment="Left" Margin="432,264,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="registersBox" HorizontalAlignment="Left" Height="167" Margin="540,208,0,0" VerticalAlignment="Top" Width="125" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2">
+            <ListBoxItem Content="R0:"/>
+            <ListBoxItem Content="R1:"/>
+            <ListBoxItem Content="R2:"/>
+            <ListBoxItem Content="R3:"/>
+            <ListBoxItem Content="R4:"/>
+            <ListBoxItem Content="R5:"/>
+            <ListBoxItem Content="R6:"/>
+            <ListBoxItem Content="R7:"/>
+        </ListBox>
+        <ListBox x:Name="instructionsHistoryBox" HorizontalAlignment="Left" Height="79" Margin="416,486,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_Copy1" Content="Instructions History" HorizontalAlignment="Left" Margin="416,460,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Grid.ColumnSpan="2"/>
+        <ListBox x:Name="instructionsBox" HorizontalAlignment="Left" Height="47" Margin="416,408,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2">
+            <ListBoxItem Content="Curr:"/>
+            <ListBoxItem Content="Prev:"/>
+        </ListBox>
+        <Label x:Name="label_Copy2" Content="Instructions" HorizontalAlignment="Left" Margin="416,382,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Grid.ColumnSpan="2"/>
+        <Label x:Name="label1_Copy3" Content="ex: 12 - 100" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="40,80,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <Label x:Name="label1_Copy4" Content="Stack Pointer Range" Foreground="White" HorizontalAlignment="Left" Margin="433,80,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="stackPointerRangeBox" HorizontalAlignment="Left" Height="23" Margin="550,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>
