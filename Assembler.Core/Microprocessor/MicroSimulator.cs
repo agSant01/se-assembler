@@ -1,4 +1,5 @@
 ﻿using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Utils;
 using System;
 
 namespace Assembler.Microprocessor
@@ -54,6 +55,16 @@ namespace Assembler.Microprocessor
         {
             previousInstruction = currentInstruction;
             currentInstruction = _mcLoader.NextInstruction();
+
+            if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(currentInstruction.OpCode, 5)))
+            {
+                this.ProgramCounter = (ushort)UnitConverter.HexToInt(
+                    ((MCInstructionF3)currentInstruction).AddressParamHex);
+            }
+            else
+            {
+                this.ProgramCounter += 2;
+            }
         }
 
     }

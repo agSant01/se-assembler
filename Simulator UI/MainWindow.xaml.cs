@@ -21,7 +21,7 @@ namespace Simulator_UI
     {
         private MicroSimulator micro;
         private VirtualMemory vm;
-        private MCLoader loader;
+        private bool stopRun;
 
         //stack pointer 
         ushort spMax, spMin;
@@ -62,11 +62,11 @@ namespace Simulator_UI
 
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            
-            instructionsHistoryBox.Items.Add(loader.NextInstruction());
+            micro.NextInstruction();
             UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
             LoadMemory();
             UpdateRegisters();
+            instructionsHistoryBox.Items.Add(micro.currentInstruction);
         }
 
         private void UpdateRegisters()
@@ -92,6 +92,17 @@ namespace Simulator_UI
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
+            stopRun = !stopRun;
+            runAllBtn.Header = stopRun ? "Run All" : "Stop";
+            while (!stopRun)
+            {
+                micro.NextInstruction();
+                UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
+                LoadMemory();
+                UpdateRegisters();
+                instructionsHistoryBox.Items.Add(micro.currentInstruction);
+            }
+            
 
         }
 
@@ -112,12 +123,10 @@ namespace Simulator_UI
         {
             //UI Elements
 
-
+            stopRun = true;
             //Micro simulator setup
             vm = new VirtualMemory(lines);
             micro = new MicroSimulator(vm);
-            loader = new MCLoader(vm,micro);
-
 
             try
             {
