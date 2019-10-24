@@ -38,18 +38,7 @@ namespace Assembler.Microprocessor.InstructionFormats
 
         public override int GetHashCode()
         {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hash = 17;
-                // Suitable nullity checks etc, of course :)
-                hash = hash * 23 + OpCode.GetHashCode();
-                hash = hash * 23 + Ra.GetHashCode();
-                hash = hash * 23 + Rb.GetHashCode();
-                hash = hash * 23 + Rc.GetHashCode();
-                hash = hash * 23 + InstructionAddressDecimal.GetHashCode();
-                return hash;
-            }
-           // return HashCode.Combine(OpCode, Ra, Rb, Rc, InstructionAddressDecimal);
+            return HashCode.Combine(OpCode, Ra, Rb, Rc, InstructionAddressDecimal);
         }
 
         public override string ToString()

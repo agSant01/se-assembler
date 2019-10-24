@@ -20,24 +20,24 @@ namespace Assembler.Microprocessor
             int requiredHexaChars = 16 / 4;
 
             // save lines to memory
-            for (int i = 0; i < lines.Length-1; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i].Replace(" ", "");
 
                 if (line.Length != requiredHexaChars && line.Length > 0)
                     throw new OverflowException($"Writing of memory exection. Invalid block size: {line.Length}");
+               
+                memoryBlocksInHexadecimal[i*2] = $"{line[0]}{line[1]}";
 
-                memoryBlocksInHexadecimal[i * 2] = $"{line[0]}{line[1]}";
-
-                memoryBlocksInHexadecimal[i * 2 + 1] = $"{line[2]}{line[3]}";
+                memoryBlocksInHexadecimal[i*2+1] = $"{line[2]}{line[3]}";
 
 
-                addressesUsed.Add((ushort)(i * 2));
-                addressesUsed.Add((ushort)(i * 2 + 1));
+                addressesUsed.Add((ushort) (i * 2));
+                addressesUsed.Add((ushort) (i * 2 + 1));
 
                 if (lastUsedAddressDecimal < i * 2 + 1)
                 {
-                    lastUsedAddressDecimal = (ushort)(i * 2 + 1);
+                    lastUsedAddressDecimal = (ushort) (i * 2 + 1);
                 }
             }
         }

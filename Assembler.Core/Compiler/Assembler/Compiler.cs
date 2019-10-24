@@ -139,7 +139,7 @@ namespace Assembler.Assembler
                 if (!parser.CurrentInstruction.IsValid)
                 {
                     AsmLogger.Error("Invalid syntax",lineCount.ToString(),$"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
-                }
+                };
                 lineCount++;
             }
             return false;
