@@ -97,7 +97,7 @@ namespace Simulator_UI
         {
             stopRun = !stopRun;
             runAllBtn.Header = stopRun ? "Run All" : "Stop";
-            while (!stopRun)
+            for(int i = 0; i<100 && !stopRun; i++)
             {
                 micro.NextInstruction();
                 UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
@@ -151,14 +151,17 @@ namespace Simulator_UI
 
         private void LoadMemory()
         {
+            memoryBox.Items.Clear();
             string a = "";
-            for (int i = 0; i < 100; i++)
+            int size = 50;
+            Int32.TryParse(memorySizeBox.Text,out size);
+            for (int i = 0; i < size; i++)
             {
                 if (i % 2 == 0)
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)} ";
+                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
                 else
                 {
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)} ";
+                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
                     memoryBox.Items.Add(a);
                     a = "";
                 }
