@@ -37,6 +37,7 @@ namespace Assembler.Parsing.InstructionItems
             foreach (Token t in values)
             {
                 hexas[idx] = new Hexa(t);
+                idx++;
             }
 
             return hexas;
