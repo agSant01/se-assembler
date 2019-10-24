@@ -48,16 +48,16 @@ namespace Assembler.Microprocessor
             string[] paramList = new string[3];
 
             IMCInstruction instructionToExecute = null;
-
+            
             switch (instructionFormat)
             {
                 case 1:
                     while (count < numberOfParams)
                     {
-                        paramList[count] = completeBlock.Substring(count * 3 + 6, 3);
+                        paramList[count] = completeBlock.Substring(count * 3 + 5, 3);
                         count++;
                     }
-                    
+
                     instructionToExecute = new MCInstructionF1(
                           decimalAddress: currProgramCounter,
                           opCodeBinary: opcode,
@@ -73,11 +73,11 @@ namespace Assembler.Microprocessor
                         if (count == 0)
                         {
                             // get 'Ra'
-                            paramList[count] = completeBlock.Substring(6, 3);
+                            paramList[count] = completeBlock.Substring(5, 3);
                         }
                         else if (count == 1)
                         {
-                            paramList[count] = evenBlock;
+                            paramList[count] = oddBlock;
                         }
 
                         count++;

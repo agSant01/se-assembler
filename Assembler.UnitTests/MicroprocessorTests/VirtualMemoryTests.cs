@@ -31,7 +31,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
                 "00", "00",
                 "01", "02",
                 "02", "03",
-                "c9", "24",
+                "c9", "40",
                 "a8", "12",
                 "1a", "04",
                 "a8", "16",

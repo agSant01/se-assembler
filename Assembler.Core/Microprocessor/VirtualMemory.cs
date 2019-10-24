@@ -26,6 +26,9 @@ namespace Assembler.Microprocessor
 
                 if (line.Length != requiredHexaChars && line.Length > 0)
                     throw new OverflowException($"Writing of memory exection. Invalid block size: {line.Length}");
+
+                if (line.Length == 0)
+                    continue;
                
                 memoryBlocksInHexadecimal[i*2] = $"{line[0]}{line[1]}";
 

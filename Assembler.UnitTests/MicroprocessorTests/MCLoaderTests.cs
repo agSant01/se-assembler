@@ -42,12 +42,12 @@ namespace Assembler.UnitTests.MicroprocessorTests
             string[] expected =
             {
                 "MCInstructionF3[InstructionAddressDecimal: (decimal)'0', opcode:'21', AddressParamHex:'06']",
-                "MCInstructionF2[InstructionAddressDecimal: (decimal)'6', opcode:'0', Ra:'2', AddressParamHex:'01']",
-                "MCInstructionF2[InstructionAddressDecimal: (decimal)'8', opcode:'0', Ra:'4', AddressParamHex:'02']",
-                "MCInstructionF1[InstructionAddressDecimal: (decimal)'10', opcode:'25', Ra:'2', Rb:'2', Rc:'0']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'6', opcode:'0', Ra:'1', AddressParamHex:'02']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'8', opcode:'0', Ra:'2', AddressParamHex:'03']",
+                "MCInstructionF1[InstructionAddressDecimal: (decimal)'10', opcode:'25', Ra:'1', Rb:'2', Rc:'0']",
                 "MCInstructionF3[InstructionAddressDecimal: (decimal)'12', opcode:'21', AddressParamHex:'12']",
-                "MCInstructionF2[InstructionAddressDecimal: (decimal)'18', opcode:'3', Ra:'2', AddressParamHex:'19']",
-                "MCInstructionF2[InstructionAddressDecimal: (decimal)'20', opcode:'1', Ra:'6', AddressParamHex:'0B']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'18', opcode:'3', Ra:'1', AddressParamHex:'04']",
+                "MCInstructionF2[InstructionAddressDecimal: (decimal)'20', opcode:'1', Ra:'3', AddressParamHex:'08']",
                 "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
                 "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']",
                 "MCInstructionF3[InstructionAddressDecimal: (decimal)'22', opcode:'21', AddressParamHex:'16']"

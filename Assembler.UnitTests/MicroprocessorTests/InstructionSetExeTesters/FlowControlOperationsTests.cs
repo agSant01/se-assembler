@@ -259,6 +259,43 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         }
 
         [TestMethod]
+        public void FlowControlOperationsTests_GRT_Success2()
+        {
+            // GRT Ra, Rb {F1} Cond <- R[Ra] > R[Rb]
+            string ra = "001"; // 1
+            string rb = "010"; // 2
+
+            string valInA = "00000101"; // 5
+            string valInB = "00000111"; // 7
+
+            bool result = false;
+
+            // set data in register
+            micro.MicroRegisters.SetRegisterValue(
+                (byte)UnitConverter.BinaryToInt(ra),
+                UnitConverter.BinaryToHex(valInA));
+
+            micro.MicroRegisters.SetRegisterValue(
+                (byte)UnitConverter.BinaryToInt(rb),
+                UnitConverter.BinaryToHex(valInB));
+
+            Console.WriteLine(micro.MicroRegisters);
+
+            Assert.AreEqual($"Registers[0,5,7,0,0,0,0,0]", micro.MicroRegisters.ToString());
+
+            // start instruction
+            MCInstructionF1 instructionF1 = new MCInstructionF1(4, "11001", ra, rb);
+
+            Console.WriteLine(instructionF1);
+
+            InstructionSetExe.ExecuteInstruction(instructionF1, micro);
+
+            Console.WriteLine(micro);
+
+            Assert.AreEqual(result, micro.ConditionalBit);
+        }
+
+        [TestMethod]
         public void FlowControlOperationsTests_GRTEQ_IsNotGreater()
         {
             // GRTEQ Ra, Rb {F1} Cond <- R[Ra] >= R[Rb]
