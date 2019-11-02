@@ -40,7 +40,7 @@ namespace Assembler.Parsing
                 // Flow Control
                 { "JMPRIND",        new int[] { 20, 1, 1 } },
                 { "JMPADDR",    new int[] { 21, 3, 1 } },
-                { "JCONDRIN",   new int[] { 22, 3, 1 } },
+                { "JCONDRIN",   new int[] { 22, 1, 1 } },
                 { "JCONDADDR",  new int[] { 23, 3, 1 } },
                 { "LOOP",       new int[] { 24, 2, 2 } },
                 { "GRT",        new int[] { 25, 1, 2 } },

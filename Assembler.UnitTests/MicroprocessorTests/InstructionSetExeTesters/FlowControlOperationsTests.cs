@@ -108,8 +108,8 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Assert.AreEqual($"Registers[0,{v1},0,{v2},0,0,0,0]", micro.MicroRegisters.ToString());
 
             // start instruction
-            MCInstructionF3 i1 = new MCInstructionF3(4, "10110", UnitConverter.ByteToBinary(ra));
-            MCInstructionF3 i2 = new MCInstructionF3(4, "10110", UnitConverter.ByteToBinary(rb));
+            MCInstructionF1 i1 = new MCInstructionF1(4, "10110", UnitConverter.ByteToBinary(ra));
+            MCInstructionF1 i2 = new MCInstructionF1(4, "10110", UnitConverter.ByteToBinary(rb));
 
             Console.WriteLine(i1);
             Console.WriteLine(i2);

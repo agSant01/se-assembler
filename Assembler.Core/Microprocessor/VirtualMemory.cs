@@ -200,7 +200,7 @@ namespace Assembler.Microprocessor
             for(int i = 0; i < lastUsedAddressDecimal; i+=2)
             {
                 builder.Append("\t");
-
+                builder.Append($"{i})  ");
                 builder.Append(memoryBlocksInHexadecimal[i]);
                 builder.Append(" ");
                 builder.Append(memoryBlocksInHexadecimal[i+1]);

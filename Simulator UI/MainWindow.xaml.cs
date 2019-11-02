@@ -67,10 +67,10 @@ namespace Simulator_UI
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
             micro.NextInstruction();
-            UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
+            UpdateInstructionBox(micro.CurrentInstruction?.ToString() ?? "", micro.PreviousInstruction?.ToString() ?? "");
             LoadMemory();
             UpdateRegisters();
-            instructionsHistoryBox.Items.Add(micro.currentInstruction);
+            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
         }
 
         private void UpdateRegisters()
@@ -101,10 +101,10 @@ namespace Simulator_UI
             for(int i = 0; i<100 && !stopRun; i++)
             {
                 micro.NextInstruction();
-                UpdateInstructionBox(micro.currentInstruction?.ToString() ?? "", micro.previousInstruction?.ToString() ?? "");
+                UpdateInstructionBox(micro.CurrentInstruction?.ToString() ?? "", micro.PreviousInstruction?.ToString() ?? "");
                 LoadMemory();
                 UpdateRegisters();
-                instructionsHistoryBox.Items.Add(micro.currentInstruction);
+                instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
             }
             
 

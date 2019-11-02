@@ -303,9 +303,9 @@ namespace Assembler.Microprocessor
 
                     if (micro.ConditionalBit)
                     {
-                        MCInstructionF3 instructionF3 = (MCInstructionF3) instruction;
+                        MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                        byte ra = UnitConverter.BinaryToByte(UnitConverter.HexToBinary(instructionF3.AddressParamHex));
+                        byte ra = instructionF1.Ra;
 
                         string hexaAddress = micro.MicroRegisters.GetRegisterValue(ra);
 

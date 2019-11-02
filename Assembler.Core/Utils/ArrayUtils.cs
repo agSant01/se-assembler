@@ -26,7 +26,20 @@ namespace Assembler.Utils
             return builder.ToString();
         }
 
-        internal static object ArrayToString(sbyte[] arr)
+        internal static string ArrayToString(sbyte[] arr)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.Append("[");
+
+            builder.AppendJoin(",", arr);
+
+            builder.Append("]");
+
+            return builder.ToString();
+        }
+
+        internal static string ArrayToString(int[] arr)
         {
             StringBuilder builder = new StringBuilder();
 
