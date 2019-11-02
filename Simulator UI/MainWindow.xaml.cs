@@ -159,10 +159,10 @@ namespace Simulator_UI
             for (int i = 0; i < size; i++)
             {
                 if (i % 2 == 0)
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
+                    a += $"{micro.ReadFromMemory(i)??"00"} ";
                 else
                 {
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
+                    a += $"{micro.ReadFromMemory(i)??"00"} ";
                     memoryBox.Items.Add(a);
                     a = "";
                 }

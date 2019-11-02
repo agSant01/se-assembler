@@ -8,13 +8,15 @@ namespace Assembler.Microprocessor
     {
         private readonly MCLoader _mcLoader;
 
+        private readonly VirtualMemory _virtualMemory;
+
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
                
         public MicroSimulator(VirtualMemory virtualMemory)
         {
-            MicroVirtualMemory = virtualMemory;
+            _virtualMemory = virtualMemory;
 
             MicroRegisters = new Registers();
 
@@ -22,8 +24,6 @@ namespace Assembler.Microprocessor
         }
 
         public Registers MicroRegisters { get; }
-
-        public VirtualMemory MicroVirtualMemory { get; }
 
         public ushort StackPointer { get; set; }
 
@@ -52,6 +52,26 @@ namespace Assembler.Microprocessor
             return $"Microprocessor[PC={ProgramCounter}, CondBit={(ConditionalBit ? 1 : 0)}]";
         }
 
+        /// <summary>
+        /// Write contents in hexadecimal to Micro memory
+        /// </summary>
+        /// <param name="decimalAddress">Decimal address to write contents</param>
+        /// <param name="contentInHex">Contents to write in Hexadecimal</param>
+        public void WriteToMemory(int decimalAddress, string contentInHex)
+        {
+            _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
+        }
+
+        /// <summary>
+        /// Read contents from Micro memory. Contents are returned in Hexadecimal
+        /// </summary>
+        /// <param name="decimalAddress">Decimal address to read content</param>
+        /// <returns></returns>
+        public string ReadFromMemory(int decimalAddress)
+        {
+            return _virtualMemory.GetContentsInHex(decimalAddress: decimalAddress);
+        }
+
         public void NextInstruction()
         {
             PreviousInstruction = CurrentInstruction;
@@ -62,11 +82,5 @@ namespace Assembler.Microprocessor
                 ProgramCounter += 2;
             }
         }
-
-        public void RunAll()
-        {
-            _mcLoader.RunAll();
-        }
-
     }
 }
