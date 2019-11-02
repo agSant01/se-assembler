@@ -19,9 +19,22 @@ namespace Assembler.UnitTests.CompilerTests
         private readonly string testFileSuccess = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test.txt");
+
         private readonly string testFileErrorToken = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test_syntax_error.txt");
+
+        private readonly string test1 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test1.txt");
+
+        private readonly string test2 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test2.txt");
+
+        private readonly string test3 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test3.txt");
 
         [TestMethod]
         public void CompilerTest_GetLabelsAndConstants()
@@ -87,19 +100,18 @@ namespace Assembler.UnitTests.CompilerTests
 
             string[] expectedLines =
             {
-                "A8 06 ",
-                "05 07 ",
-                "00 00 ",
-                "01 02 ",
-                "02 03 ",
-                "C9 40 ",
-                "A8 12 ",
-                "1A 04 ",
-                "A8 16 ",
-                "19 04 ",
-                "0B 08 ",
-                "A8 16 ",
-                null
+                "A8 06",
+                "05 07",
+                "00 00",
+                "01 02",
+                "02 03",
+                "C9 40",
+                "A8 12",
+                "1A 04",
+                "A8 16",
+                "19 04",
+                "0B 08",
+                "A8 16"
             };
 
             Assert.IsNotNull(lines, "File Not Found.");
@@ -116,8 +128,25 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string s in compiler.GetOutput())
             {
                 Console.WriteLine(s);
-                Assert.AreEqual(expectedLines[i++], s);
+
+                if (i < expectedLines.Length)
+                {
+                    Assert.AreEqual(expectedLines[i], s);
+                }
+                else
+                {
+                    if (i == (expectedLines.Length + 10))
+                    {
+                        break;
+                    }
+                }
+
+                i++;
             }
+
+            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length-1]}");
+
+            Assert.AreEqual("00 00", compiler.GetOutput()[compiler.GetOutput().Length - 1]);
 
             compiler.AsmLogger.Reset();
             while (compiler.AsmLogger.MoveNext())
@@ -133,17 +162,16 @@ namespace Assembler.UnitTests.CompilerTests
 
             string[] expectedLines =
             {
-                "A8 06 ",
-                "05 07 ",
-                "00 00 ",
-                "01 02 ",
-                "02 03 ",
-                "C9 40 ",
-                "1A 04 ",
-                "A8 12 ",
-                "0B 08 ",
-                "A8 12 ",
-                null
+                "A8 06",
+                "05 07",
+                "00 00",
+                "01 02",
+                "02 03",
+                "C9 40",
+                "1A 04",
+                "A8 12",
+                "0B 08",
+                "A8 12"
             };
 
             Assert.IsNotNull(lines, "File Not Found.");
@@ -160,14 +188,35 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string s in compiler.GetOutput())
             {
                 Console.WriteLine(s);
-                Assert.AreEqual(expectedLines[i++], s);
+
+                if (i < expectedLines.Length)
+                {
+                    Assert.AreEqual(expectedLines[i], s);
+                } else
+                {
+                    if (i == (expectedLines.Length + 10))
+                    {
+                        break;
+                    }
+                }
+
+                i++;
             }
+
+            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length - 1]}");
+            Assert.AreEqual("00 00", compiler.GetOutput()[compiler.GetOutput().Length - 1]);
 
             compiler.AsmLogger.Reset();
             while (compiler.AsmLogger.MoveNext())
             {
                 Console.WriteLine(compiler.AsmLogger.Current);
             }
+        }
+
+        [TestMethod]
+        public void CompilerTest_ProfTest1_Success()
+        {
+
         }
     }
 }

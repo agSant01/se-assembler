@@ -14,6 +14,8 @@ namespace Assembler.Assembler
         //address 
         private int currentAddress;
         private int size;
+        private int totalAddressesKB;
+
 
         //content mapping
         private Dictionary<string, int> constants;
@@ -35,26 +37,15 @@ namespace Assembler.Assembler
         /// Two pass Assembler
         /// <paramref name="parser"/>
         /// </summary>
-        public Compiler(Parser parser)
-        {
-            currentAddress = 0;
-            constants = new Dictionary<string, int>();
-            labels = new Dictionary<string, int>();
-            variables = new Dictionary<string, int>();
-            vMemory = new Dictionary<string, int>();
-            this.parser = parser;
-            decimalInstuctions = new int[10];
-            AsmLogger = new AssemblyLogger("ASM");
-            size = 0;
-
-        }
+        public Compiler(Parser parser, int sizeInKiloBytes = 4) : 
+            this(parser, new AssemblyLogger("ASM"), sizeInKiloBytes) { }
 
         /// <summary>
         /// Two pass Assembler
         /// <paramref name="parser"/>
         /// <paramref name="logger"/>
         /// </summary>
-        public Compiler(Parser parser, AssemblyLogger logger)
+        public Compiler(Parser parser, AssemblyLogger logger, int sizeInKiloBytes = 4)
         {
             currentAddress = 0;
             constants = new Dictionary<string, int>();
@@ -65,7 +56,7 @@ namespace Assembler.Assembler
             decimalInstuctions = new int[10];
             this.AsmLogger = logger;
             size = 0;
-
+            totalAddressesKB = sizeInKiloBytes * 1024;  // 1024 Equals 1KB
         }
 
 
@@ -240,16 +231,32 @@ namespace Assembler.Assembler
                 }
 
             }
+
             AsmLogger.StatusUpdate("Assembly process completed");
             AsmLogger.StatusUpdate("Generating of Object file");
 
-            compiledLines = new string[(size / 2) + 1];
-            int currentLine = 0;
-            for (int i = 0; i < size; i++)
-            {
-                compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0').ToUpper() + " ";
-                if (i % 2 != 0)
-                    currentLine += (currentLine < size / 2) ? 1 : 0;
+            compiledLines = new string[(totalAddressesKB / 2)];
+            int instruction = 0;
+            for (int currentLine = 0; currentLine < (totalAddressesKB / 2); currentLine++)
+            {   
+                if (instruction < decimalInstuctions.Length)
+                {
+                    compiledLines[currentLine] += Convert.ToString(decimalInstuctions[instruction], 16)
+                        .PadLeft(2, '0').ToUpper() + " ";
+                    instruction++;
+                    if (instruction < decimalInstuctions.Length)
+                    {
+                        compiledLines[currentLine] += Convert.ToString(decimalInstuctions[instruction], 16)
+                        .PadLeft(2, '0').ToUpper();
+                        instruction++;
+                    } else
+                    {
+                       compiledLines[currentLine] += "00";
+                    }
+                } else
+                {
+                    compiledLines[currentLine] += "00 00";
+                }
             }
 
             AsmLogger.StatusUpdate("Finished generating Object file");
