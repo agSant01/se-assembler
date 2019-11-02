@@ -1,6 +1,0 @@
-[STATUS] Started Assembly Log assembly_test_AssemblyLog_207_7863 at 10/17/2019 9:57:20 AM
-[STATUS] Assembling process started
-[ERROR] Invalid syntax at line 9. Cause: GRT is a syntax violation
-[STATUS] Writting Obj. file
-[STATUS] Writting obj. file completed.
-[STATUS] Writting assembly log file file Completed.
