@@ -19,9 +19,31 @@ namespace Assembler.UnitTests.CompilerTests
         private readonly string testFileSuccess = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test.txt");
+
         private readonly string testFileErrorToken = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test_syntax_error.txt");
+
+        private readonly string test1 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test1.txt");
+        private readonly string test1Comparison = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\AssemblerTestsComparisons\test1Comparison.txt");
+
+        private readonly string test2 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test2.txt");
+        private readonly string test2Comparison = Path.Combine(
+          Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+          @"CompilerTests\AssemblerTestsComparisons\test2Comparison.txt");
+
+        private readonly string test3 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test3.txt");
+        private readonly string test3Comparison = Path.Combine(
+          Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+          @"CompilerTests\AssemblerTestsComparisons\test3Comparison.txt");
 
         [TestMethod]
         public void CompilerTest_GetLabelsAndConstants()
@@ -87,19 +109,18 @@ namespace Assembler.UnitTests.CompilerTests
 
             string[] expectedLines =
             {
-                "A8 06 ",
-                "05 07 ",
-                "00 00 ",
-                "01 02 ",
-                "02 03 ",
-                "C9 40 ",
-                "A8 12 ",
-                "1A 04 ",
-                "A8 16 ",
-                "19 04 ",
-                "0B 08 ",
-                "A8 16 ",
-                null
+                "A8 06",
+                "05 07",
+                "00 00",
+                "01 02",
+                "02 03",
+                "C9 40",
+                "A8 12",
+                "1A 04",
+                "A8 16",
+                "19 04",
+                "0B 08",
+                "A8 16"
             };
 
             Assert.IsNotNull(lines, "File Not Found.");
@@ -116,8 +137,25 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string s in compiler.GetOutput())
             {
                 Console.WriteLine(s);
-                Assert.AreEqual(expectedLines[i++], s);
+
+                if (i < expectedLines.Length)
+                {
+                    Assert.AreEqual(expectedLines[i], s);
+                }
+                else
+                {
+                    if (i == (expectedLines.Length + 10))
+                    {
+                        break;
+                    }
+                }
+
+                i++;
             }
+
+            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length-1]}");
+
+            Assert.AreEqual("00 00", compiler.GetOutput()[compiler.GetOutput().Length - 1]);
 
             compiler.AsmLogger.Reset();
             while (compiler.AsmLogger.MoveNext())
@@ -133,17 +171,16 @@ namespace Assembler.UnitTests.CompilerTests
 
             string[] expectedLines =
             {
-                "A8 06 ",
-                "05 07 ",
-                "00 00 ",
-                "01 02 ",
-                "02 03 ",
-                "C9 40 ",
-                "1A 04 ",
-                "A8 12 ",
-                "0B 08 ",
-                "A8 12 ",
-                null
+                "A8 06",
+                "05 07",
+                "00 00",
+                "01 02",
+                "02 03",
+                "C9 40",
+                "1A 04",
+                "A8 12",
+                "0B 08",
+                "A8 12"
             };
 
             Assert.IsNotNull(lines, "File Not Found.");
@@ -160,13 +197,94 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string s in compiler.GetOutput())
             {
                 Console.WriteLine(s);
-                Assert.AreEqual(expectedLines[i++], s);
+
+                if (i < expectedLines.Length)
+                {
+                    Assert.AreEqual(expectedLines[i], s);
+                } else
+                {
+                    if (i == (expectedLines.Length + 10))
+                    {
+                        break;
+                    }
+                }
+
+                i++;
             }
+
+            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length - 1]}");
+            Assert.AreEqual("00 00", compiler.GetOutput()[compiler.GetOutput().Length - 1]);
 
             compiler.AsmLogger.Reset();
             while (compiler.AsmLogger.MoveNext())
             {
                 Console.WriteLine(compiler.AsmLogger.Current);
+            }
+        }
+
+        [TestMethod]
+        public void CompilerTest_ProfTest1_Success()
+        {
+            string[] asmLines = FileManager.Instance.ToReadFile(test1);
+            string[] expectedAsmLines = FileManager.Instance.ToReadFile(test1Comparison);
+
+            Lexer lexer = new Lexer(asmLines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+
+            int counter = 0;
+            foreach (string l in compiler.GetOutput())
+            {
+                Console.WriteLine(l);
+                //Assert.AreEqual(expectedAsmLines[counter++], l);
+            }
+        }
+
+        [TestMethod]
+        public void CompilerTest_ProfTest2_Success()
+        {
+            string[] asmLines = FileManager.Instance.ToReadFile(test2);
+            string[] expectedAsmLines = FileManager.Instance.ToReadFile(test2Comparison);
+
+            Lexer lexer = new Lexer(asmLines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+
+            int counter = 0;
+            foreach (string l in compiler.GetOutput())
+            {
+                Console.WriteLine(l);
+                Assert.AreEqual(expectedAsmLines[counter++], l);
+            }
+        }
+
+        [TestMethod]
+        public void CompilerTest_ProfTest3_Success()
+        {
+            string[] asmLines = FileManager.Instance.ToReadFile(test3);
+            string[] expectedAsmLines = FileManager.Instance.ToReadFile(test3Comparison);
+
+            Lexer lexer = new Lexer(asmLines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+
+            int counter = 0;
+            foreach (string l in compiler.GetOutput())
+            {
+                Console.WriteLine(l);
+                Assert.AreEqual(expectedAsmLines[counter++], l);
             }
         }
     }

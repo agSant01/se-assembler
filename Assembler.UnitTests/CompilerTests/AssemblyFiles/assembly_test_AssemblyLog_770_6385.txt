@@ -1,6 +1,0 @@
-[STATUS] Started Assembly Log assembly_test_AssemblyLog_770_6385 at 10/8/2019 1:38:45 PM
-[STATUS] Assembling process started
-[STATUS] Assembling completed
-[STATUS] Writting Obj. file
-[STATUS] Writting obj. file completed.
-[STATUS] Writting assembly log file file Completed.

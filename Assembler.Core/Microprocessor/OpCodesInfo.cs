@@ -40,7 +40,7 @@ namespace Assembler.Microprocessor
                 // Flow Control
                 { "10100",  new byte[] { 1, 1 }},     // JMPRIND
                 { "10101",  new byte[] { 3, 1 }},     // JMPADDR 
-                { "10110",  new byte[] { 3, 1 }},
+                { "10110",  new byte[] { 1, 1 }},
                 { "10111",  new byte[] { 3, 1 }},
                 { "11000",  new byte[] { 2, 2 }},
                 { "11001",  new byte[] { 1, 2 }},
@@ -59,7 +59,7 @@ namespace Assembler.Microprocessor
         /// <returns>True if string is any JMP instruction, false otherwise</returns>
         public static bool IsJump(string binaryOpcode)
         {
-            return binaryOpcode == "10100" || binaryOpcode == "10101";
+            return binaryOpcode == "10100" || binaryOpcode == "10101" || binaryOpcode == "10110" || binaryOpcode == "10111";
         }
 
         /// <summary>

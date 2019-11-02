@@ -70,7 +70,7 @@ namespace Assembler.Microprocessor
 
             IsValidData(hexadecimalValue);
 
-            registers[registerNumber] = (sbyte) UnitConverter.HexToInt(hexadecimalValue);
+            registers[registerNumber] = UnitConverter.HexToSByte(hexadecimalValue);
         }
 
         /// <summary>

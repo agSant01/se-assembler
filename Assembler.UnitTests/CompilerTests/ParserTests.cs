@@ -22,7 +22,27 @@ namespace Assembler.UnitTests.CompilerTests
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test_syntax_error.txt");
 
-        
+        private readonly string test1 = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\AssemblyFiles\test1.txt");
+        private readonly string test1Comparison = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\PaserTestsComparisons\test1.txt");
+
+        private readonly string test2 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test2.txt");
+        private readonly string test2Comparison = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\PaserTestsComparisons\test2.txt");
+
+        private readonly string test3 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test3.txt");
+        private readonly string test3Comparison = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\PaserTestsComparisons\test3.txt");
+
         [TestCleanup]
         public void TestCleanup()
         {
@@ -72,7 +92,7 @@ namespace Assembler.UnitTests.CompilerTests
         }
 
         [TestMethod]
-        public void LexicalAnalyzer_TokenizeAssemblyFile_WithErrorTokens()
+        public void ParserTests_TokenizeAssemblyFile_WithErrorTokens()
         {
             string[] lines = FileManager.Instance.ToReadFile(testFileErrorToken);
 
@@ -102,6 +122,69 @@ namespace Assembler.UnitTests.CompilerTests
 
             lexer = new Lexer(lines);
 
+            Parser parser = new Parser(lexer);
+
+            int index = 0;
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
+                Assert.AreEqual(expected[index], parser.CurrentInstruction.ToString());
+                index++;
+            }
+        }
+
+        [TestMethod]
+        public void ParserTests_ProfTest1_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test1);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            string[] expected = FileManager.Instance.ToReadFile(test1Comparison);
+
+            lexer = new Lexer(lines);
+            Parser parser = new Parser(lexer);
+
+            int index = 0;
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
+                Assert.AreEqual(expected[index], parser.CurrentInstruction.ToString());
+                index++;
+            }
+        }
+
+        [TestMethod]
+        public void ParserTests_ProfTest2_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test2);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            string[] expected = FileManager.Instance.ToReadFile(test2Comparison);
+
+            lexer = new Lexer(lines);
+            Parser parser = new Parser(lexer);
+
+            int index = 0;
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
+                Assert.AreEqual(expected[index], parser.CurrentInstruction.ToString());
+                index++;
+            }
+        }
+
+        [TestMethod]
+        public void ParserTests_ProfTest3_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test3);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            string[] expected = FileManager.Instance.ToReadFile(test3Comparison);
+
+            lexer = new Lexer(lines);
             Parser parser = new Parser(lexer);
 
             int index = 0;

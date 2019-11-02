@@ -11,10 +11,7 @@ namespace Assembler.Microprocessor
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
-
-        public IMCInstruction currentInstruction, previousInstruction;
-
-
+               
         public MicroSimulator(VirtualMemory virtualMemory)
         {
             MicroVirtualMemory = virtualMemory;
@@ -46,6 +43,10 @@ namespace Assembler.Microprocessor
 
         public bool ConditionalBit { get; set; } = false;
 
+        public IMCInstruction CurrentInstruction { get; private set; }
+
+        public IMCInstruction PreviousInstruction { get; private set; }
+
         public override string ToString()
         {
             return $"Microprocessor[PC={ProgramCounter}, CondBit={(ConditionalBit ? 1 : 0)}]";
@@ -53,18 +54,18 @@ namespace Assembler.Microprocessor
 
         public void NextInstruction()
         {
-            previousInstruction = currentInstruction;
-            currentInstruction = _mcLoader.NextInstruction();
+            PreviousInstruction = CurrentInstruction;
+            CurrentInstruction = _mcLoader.NextInstruction();
 
-            if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(currentInstruction.OpCode, 5)))
+            if (!OpCodesInfo.IsJump(UnitConverter.IntToBinary(CurrentInstruction.OpCode, 5)))
             {
-                this.ProgramCounter = (ushort)UnitConverter.HexToInt(
-                    ((MCInstructionF3)currentInstruction).AddressParamHex);
+                ProgramCounter += 2;
             }
-            else
-            {
-                this.ProgramCounter += 2;
-            }
+        }
+
+        public void RunAll()
+        {
+            _mcLoader.RunAll();
         }
 
     }

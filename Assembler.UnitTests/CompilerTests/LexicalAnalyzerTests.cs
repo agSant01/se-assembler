@@ -250,6 +250,27 @@ namespace Assembler.UnitTests.CompilerTests
             new Token(TokenType.NEW_LINE,"\\n"),
         };
 
+        private readonly string test1 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test1.txt");
+        private readonly string test1Comparison = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\LexicalAnalyzerTestComparisons\test1.txt");
+
+        private readonly string test2 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test2.txt");
+        private readonly string test2Comparison = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\LexicalAnalyzerTestComparisons\test2.txt");
+
+        private readonly string test3 = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\AssemblyFiles\test3.txt");
+        private readonly string test3Comparison = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\LexicalAnalyzerTestComparisons\test3.txt");
+
         [TestCleanup]
         public void TestCleanup()
         {
@@ -294,6 +315,72 @@ namespace Assembler.UnitTests.CompilerTests
             {
                 Console.WriteLine(lexer.CurrrentToken);
                 Assert.AreEqual<Token>(testErrorToken[counter], lexer.CurrrentToken);
+                counter++;
+            }
+        }
+
+        [TestMethod]
+        public void LexicalAnalyzer_TokenizeProfTest1_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test1);
+            string[] linesExpected = FileManager.Instance.ToReadFile(test1Comparison);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            lexer = new Lexer(lines)
+            {
+                SkipWhiteSpaces = true
+            };
+
+            int counter = 0;
+            while (lexer.MoveNext())
+            {
+                Console.WriteLine(lexer.CurrrentToken);
+                Assert.AreEqual(linesExpected[counter], lexer.CurrrentToken.ToString());
+                counter++;
+            }
+        }
+
+        [TestMethod]
+        public void LexicalAnalyzer_TokenizeProfTest2_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test2);
+            string[] linesExpected = FileManager.Instance.ToReadFile(test2Comparison);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            lexer = new Lexer(lines)
+            {
+                SkipWhiteSpaces = true
+            };
+
+            int counter = 0;
+            while (lexer.MoveNext())
+            {
+                Console.WriteLine(lexer.CurrrentToken);
+                Assert.AreEqual(linesExpected[counter], lexer.CurrrentToken.ToString());
+                counter++;
+            }
+        }
+
+        [TestMethod]
+        public void LexicalAnalyzer_TokenizeProfTest3_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test3);
+            string[] linesExpected = FileManager.Instance.ToReadFile(test3Comparison);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
+            lexer = new Lexer(lines)
+            {
+                SkipWhiteSpaces = true
+            };
+
+            int counter = 0;
+            while (lexer.MoveNext())
+            {
+                Console.WriteLine(lexer.CurrrentToken);
+                Assert.AreEqual(linesExpected[counter], lexer.CurrrentToken.ToString());
                 counter++;
             }
         }
