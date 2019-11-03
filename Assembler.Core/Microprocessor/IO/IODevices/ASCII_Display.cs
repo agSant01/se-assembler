@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Assembler.Core.IO_Devices
 {
-    public class ASCII_Display
+    public class ASCII_Display: IIODevice
     {
         //private readonly string[] ascii_chars = {"A","B","C","D","E","F","G","H" };
         private bool[] active;

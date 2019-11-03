@@ -2,7 +2,6 @@
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +17,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Assembler.Core.IO_Devices;
 
 namespace Simulator_UI
 {
@@ -27,11 +25,6 @@ namespace Simulator_UI
         private MicroSimulator micro;
         private VirtualMemory vm;
         private bool stopRun;
-
-        private ASCII_Display display;
-        //stack pointer 
-        ushort spMax, spMin;
-
 
         private string[] lines;
 
@@ -64,20 +57,8 @@ namespace Simulator_UI
             {
                 MessageBox.Show(ex.Message, "Invalid Stack Pointer. Using 0 as default.");
 
-            }
-        }
-
-        private void RunNextBtn_Click(object sender, RoutedEventArgs e)
-        {
-            micro.NextInstruction();
-            UpdateInstructionBox(micro.CurrentInstruction?.ToString() ?? "", micro.PreviousInstruction?.ToString() ?? "");
-            LoadMemory();
-            UpdateRegisters();
-            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
-            UpdateASCIIButtons();//TODO Maybe this doesnt work
-
                 stackPointerStart.Text = micro.StackPointer.ToString();
-
+            }
         }
 
         private void LoadMemory()
@@ -115,9 +96,6 @@ namespace Simulator_UI
             {
                 registersBox.Items.Add($"R{i}: {micro.MicroRegisters.GetRegisterValue((byte)i)}");
             }
-
-            //DONT KNOW IF I SHOULD PUT THESE HERE
-            //UpdateASCIIButtons();//TODO Maybe remove this crap
         }
 
         private void UpdateInstructionBox()
@@ -155,7 +133,7 @@ namespace Simulator_UI
                     Dispatcher.Invoke(() =>
                     {
                         UpdateInstructionBox();
-                    
+
                         LoadMemory();
 
                         UpdateRegisters();
@@ -164,33 +142,6 @@ namespace Simulator_UI
                     });
                 }
             }).Start();
-        }
-
-        private void UpdateASCIIButtons()
-        {
-            TextBox[] ASCII_Display  = { a, b,c ,d,e,f,g,h};
-            int[] reserved = display.ReservedAddresses();
-
-            ArrayList active = display.ActiveCharactersIndexes(vm);
-            foreach(int i in active)
-            {
-                //ASCII_Display[i].IsEnabled= true;
-                if (!ASCII_Display[i].IsVisible)
-                    ASCII_Display[i].Background = Brushes.White;
-                
-
-                else
-                {
-
-                    //Do nothing;
-                }
-            }
-
-            ArrayList inactive = display.InactiveCharactersIndexes(vm);
-            foreach (int i in inactive)
-            {
-                ASCII_Display[i].Background = Brushes.Transparent;
-            }
         }
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
@@ -221,16 +172,6 @@ namespace Simulator_UI
             };
 
             bool? result = ofd.ShowDialog();
-            try
-            {
-                display = new ASCII_Display(vm);
-            }
-
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message, "No Contiguous Memory Found For ASCII Display");
-            }
-
 
             if (result == true)
             {
@@ -248,34 +189,28 @@ namespace Simulator_UI
 
                 Init();
             }
-
         }
-        //private void RunNextBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (micro == null)
-        //    {
-        //        MessageBox.Show("Load an Object file before trying to execute instructions.");
-        //        return;
-        //    }
 
-        //    micro.NextInstruction();
-
-        //    UpdateInstructionBox();
-
-        //    LoadMemory();
-            
-        //    UpdateRegisters();
-
-        //    instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
-        //}
-
-        private void c_TextChanged(object sender, TextChangedEventArgs e)
+        private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (micro == null)
+            {
+                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                return;
+            }
 
+            micro.NextInstruction();
+
+            UpdateInstructionBox();
+
+            LoadMemory();
+
+            UpdateRegisters();
+
+            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
-
         {
             if (instruction == null)
                 return string.Empty;

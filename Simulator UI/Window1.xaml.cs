@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assembler.Core.Microprocessor;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -13,15 +14,26 @@ using System.Windows.Shapes;
 namespace Simulator_UI
 {
 
+    
    // Button a, b, c, d, e, f, g, h;
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class ASCII_DisplayGUI : Window
     {
-        public Window1()
+        private readonly IOManager _ioManager;
+        public ASCII_Display display;
+
+        public ASCII_DisplayGUI(IOManager ioManager, short port)
         {
+            _ioManager = ioManager;
+            display = new ASCII_Display();
             InitializeComponent();
+        }
+
+        private void InitializeComponent()
+        {
+           // throw new NotImplementedException();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
