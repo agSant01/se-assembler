@@ -6,7 +6,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class IOHexKeyboard : IIODevice
     {
-        private Queue<string> _buffer = new Queue<string>();
+        private readonly Queue<string> _buffer = new Queue<string>();
 
         public short IOPortLength => 1;
 
@@ -14,11 +14,20 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public byte BufferSize => (byte) _buffer.Count;
 
+        public short IOPort { get; }
+
+        public string DeviceName => "IO Hexadecimal Keyboard";
+
+        public IOHexKeyboard(short ioPort)
+        {
+            IOPort = ioPort;
+        }
+
         public string ReadFromPort(int port)
         {
             if (_buffer.Count == 0)
             {
-                return UnitConverter.ByteToBinary(0);
+                return UnitConverter.ByteToHex(0);
             }
 
             return _buffer.Dequeue();
@@ -40,13 +49,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (_buffer.Count < 4) 
             {
-                _buffer.Enqueue(UnitConverter.HexToBinary(hexChar + "1"));
+                _buffer.Enqueue(hexChar + "1");
             }
         }
 
         public override string ToString()
         {
-            return $"IOHexKeyboard[buffer: {String.Join(", ", _buffer.ToArray())}]";
+            return $"IOHexKeyboard[port: {IOPort}, buffer: {String.Join(", ", _buffer.ToArray())}]";
         }
     }
 }
