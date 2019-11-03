@@ -11,7 +11,7 @@ namespace Assembler.Microprocessor
         private string[] memoryBlocksInHexadecimal;
         private ushort lastUsedAddressDecimal = 0;
         private HashSet<ushort> addressesUsed = new HashSet<ushort>();
-
+        private readonly int MAX_MEMORY_ADDRESS = 4096;
         public VirtualMemory(string[] lines, int kiloBytes = 4)
         {
             memoryBlocksInHexadecimal = new string[kiloBytes * 1024];
@@ -25,7 +25,7 @@ namespace Assembler.Microprocessor
                 string line = lines[i].Replace(" ", "");
 
                 if (line.Length != requiredHexaChars && line.Length > 0)
-                    throw new OverflowException($"Writing of memory exection. Invalid block size: {line.Length}");
+                    throw new OverflowException($"Writing of memory execution. Invalid block size: {line.Length}");
 
                 if (line.Length == 0)
                     continue;
@@ -225,6 +225,11 @@ namespace Assembler.Microprocessor
             {
                 throw new IndexOutOfRangeException($"Invalid address: {UnitConverter.IntToHex(decimalAddress)}, Decimal[{decimalAddress}]");
             }
+        }
+
+        public int LastAddress()
+        {
+            return this.MAX_MEMORY_ADDRESS-1;
         }
     }
 }

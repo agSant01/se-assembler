@@ -1,6 +1,7 @@
 ﻿using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Assembler.Core.IO_Devices;
 
 namespace Simulator_UI
 {
@@ -23,7 +25,7 @@ namespace Simulator_UI
         private MicroSimulator micro;
         private VirtualMemory vm;
         private bool stopRun;
-
+        private ASCII_Display display;
         //stack pointer 
         ushort spMax, spMin;
 
@@ -71,6 +73,7 @@ namespace Simulator_UI
             LoadMemory();
             UpdateRegisters();
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+            UpdateASCIIButtons();//TODO Maybe this doesnt work
         }
 
         private void UpdateRegisters()
@@ -92,6 +95,9 @@ namespace Simulator_UI
             {
                 registersBox.Items.Add($"R{i}: {micro.MicroRegisters.GetRegisterValue((byte)i)}");
             }
+
+            //DONT KNOW IF I SHOULD PUT THESE HERE
+            //UpdateASCIIButtons();//TODO Maybe remove this crap
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -108,6 +114,33 @@ namespace Simulator_UI
             }
             
 
+        }
+
+        private void UpdateASCIIButtons()
+        {
+            TextBox[] ASCII_Display  = { a, b,c ,d,e,f,g,h};
+            int[] reserved = display.ReservedAddresses();
+
+            ArrayList active = display.ActiveCharactersIndexes(vm);
+            foreach(int i in active)
+            {
+                //ASCII_Display[i].IsEnabled= true;
+                if (!ASCII_Display[i].IsVisible)
+                    ASCII_Display[i].Background = Brushes.White;
+                
+
+                else
+                {
+
+                    //Do nothing;
+                }
+            }
+
+            ArrayList inactive = display.InactiveCharactersIndexes(vm);
+            foreach (int i in inactive)
+            {
+                ASCII_Display[i].Background = Brushes.Transparent;
+            }
         }
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
@@ -131,6 +164,16 @@ namespace Simulator_UI
             //Micro simulator setup
             vm = new VirtualMemory(lines);
             micro = new MicroSimulator(vm);
+
+            try {
+                display = new ASCII_Display(vm);
+            }
+
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "No Contiguous Memory Found For ASCII Display");
+            }
+            
 
             try
             {
@@ -179,6 +222,11 @@ namespace Simulator_UI
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Curr: {current}");
             instructionsBox.Items.Add($"Prev: {previous}");
+        }
+
+        private void c_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
 
         private String getPretyInst(IMCInstruction i)
