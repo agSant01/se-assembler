@@ -1,11 +1,13 @@
 ﻿using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,47 +27,45 @@ namespace Simulator_UI
         private MicroSimulator micro;
         private VirtualMemory vm;
         private bool stopRun;
+<<<<<<< HEAD
         private ASCII_Display display;
         //stack pointer 
         ushort spMax, spMin;
+=======
+>>>>>>> IOManager_Gabriel
 
         private string[] lines;
+
         public MainWindow()
         {
             InitializeComponent();
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
         }
 
-
-        private void fileLines_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Init()
         {
-            var index = fileLines.SelectedIndex;
-            var lineString = fileLines.SelectedItem as string;
-        }
+            //UI Elements
+            stopRun = true;
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.DefaultExt = ".txt";
-            ofd.Filter = "Text Document (.txt)|*.txt";
-            Nullable<bool> result = ofd.ShowDialog();
-            if (result == true)
+            //Micro simulator setup
+            vm = new VirtualMemory(lines);
+
+            micro = new MicroSimulator(vm);
+
+            // Set instructions print mode to ASM Text
+            IMCInstruction.AsmTextPrint = true;
+
+            try
             {
-                try
-                {
-                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
-                    statusLabel.Content = "Status: File Loaded";
-                }
-                catch (Exception ex)
-                {
-                    //TODO: Create log with error
-                    MessageBox.Show(ex.Message, "There was a problem reading the file.");
-                    statusLabel.Content = "Status: File not found or open somewhere else";
-                }
-                Init();
-            }
-        }
+                string stackPointer = stackPointerStart.Text.Trim();
 
+                micro.StackPointer = Convert.ToUInt16(stackPointer);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Invalid Stack Pointer. Using 0 as default.");
+
+<<<<<<< HEAD
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
             micro.NextInstruction();
@@ -74,23 +74,43 @@ namespace Simulator_UI
             UpdateRegisters();
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
             UpdateASCIIButtons();//TODO Maybe this doesnt work
+=======
+                stackPointerStart.Text = micro.StackPointer.ToString();
+            }
+>>>>>>> IOManager_Gabriel
+        }
+
+        private void LoadMemory()
+        {
+            memoryBox.Items.Clear();
+
+            memoryBox.Items.Add($"Address\t| EvenColumn\t| OddColumn");
+
+            if (!int.TryParse(memorySizeBox.Text, out int lines))
+            {
+                MessageBox.Show("Invalid number of memory blocks to show. Setting default to 50.", "Invalid Input");
+                memorySizeBox.Text = "50";
+                lines = 50;
+            }
+
+            for (int i = 0; i < lines; i += 2)
+            {
+                memoryBox.Items.Add($"{i}) {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+            }
         }
 
         private void UpdateRegisters()
         {
-            if (micro.StackPointer >= spMin && micro.StackPointer <= spMax)
-            {
-                stackPointerBox.Text = micro.StackPointer.ToString();
-            }
-            else
-            {
-                MessageBox.Show("Stack out of range or stack overflow");
-            }
+            stackPointerBox.Text = micro.StackPointer.ToString();
+
             programCounterBox.Text = micro.ProgramCounter.ToString();
+
             conditionalBitBox.Text = micro.ConditionalBit ? "1" : "0";
 
             registersBox.Items.Clear();
+
             registersBox.Items.Add("R0: 00");
+
             for (int i = 1; i < 8; i++)
             {
                 registersBox.Items.Add($"R{i}: {micro.MicroRegisters.GetRegisterValue((byte)i)}");
@@ -100,20 +120,50 @@ namespace Simulator_UI
             //UpdateASCIIButtons();//TODO Maybe remove this crap
         }
 
+        private void UpdateInstructionBox()
+        {
+            instructionsBox.Items.Clear();
+            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro.PreviousInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro.CurrentInstruction)}");
+        }
+
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            stopRun = !stopRun;
-            runAllBtn.Header = stopRun ? "Run All" : "Stop";
-            for(int i = 0; i<100 && !stopRun; i++)
+            if (micro == null)
             {
-                micro.NextInstruction();
-                UpdateInstructionBox(micro.CurrentInstruction?.ToString() ?? "", micro.PreviousInstruction?.ToString() ?? "");
-                LoadMemory();
-                UpdateRegisters();
-                instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                return;
             }
-            
 
+            stopRun = !stopRun;
+
+            runAllBtn.Header = stopRun ? "Run All" : "Stop";
+
+            if (stopRun)
+            {
+                return;
+            }
+
+            new Thread(() =>
+            {
+                while (!stopRun)
+                {
+                    Thread.Sleep(100);
+
+                    micro.NextInstruction();
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        UpdateInstructionBox();
+                    
+                        LoadMemory();
+
+                        UpdateRegisters();
+
+                        instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                    });
+                }
+            }).Start();
         }
 
         private void UpdateASCIIButtons()
@@ -145,26 +195,34 @@ namespace Simulator_UI
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
+            stopRun = true;
+
+            runAllBtn.Header = "Run All";
+
             stackPointerBox.Clear();
-            stackPointerRangeBox.Clear();
+            stackPointerStart.Text = "0";
             programCounterBox.Clear();
             conditionalBitBox.Clear();
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
-            UpdateInstructionBox("", "");
+            UpdateInstructionBox();
+
             Init();
         }
 
-        private void Init()
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //UI Elements
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
 
-            stopRun = true;
-            //Micro simulator setup
-            vm = new VirtualMemory(lines);
-            micro = new MicroSimulator(vm);
+            bool? result = ofd.ShowDialog();
 
+<<<<<<< HEAD
             try {
                 display = new ASCII_Display(vm);
             }
@@ -176,62 +234,65 @@ namespace Simulator_UI
             
 
             try
+=======
+            if (result == true)
+>>>>>>> IOManager_Gabriel
             {
-                string[] spRange = stackPointerRangeBox.Text.ToString().Split('-');
-                if (!ushort.TryParse(spRange[0], out spMin) || !ushort.TryParse(spRange[1], out spMax))
+                try
                 {
-                    MessageBox.Show("Bad format on Stack Pointer Range");
+                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    statusLabel.Content = "Status: File Loaded";
                 }
-                else micro.StackPointer = spMax;
-                statusLabel.Content = "Status: Ready";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "format error on Stack Pointer Range");
-            }
-
-
-        }
-
-        private void LoadMemory()
-        {
-            memoryBox.Items.Clear();
-            string a = "";
-            int size = 50;
-            Int32.TryParse(memorySizeBox.Text,out size);
-            for (int i = 0; i < size; i++)
-            {
-                if (i % 2 == 0)
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
-                else
+                catch (Exception ex)
                 {
-                    a += $"{micro.MicroVirtualMemory.GetContentsInHex(i)??"00"} ";
-                    memoryBox.Items.Add(a);
-                    a = "";
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
                 }
+
+                Init();
             }
         }
 
-        private void ListBoxItem_Selected(object sender, RoutedEventArgs e)
+        private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (micro == null)
+            {
+                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                return;
+            }
 
+            micro.NextInstruction();
+
+            UpdateInstructionBox();
+
+            LoadMemory();
+            
+            UpdateRegisters();
+
+            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
         }
 
-        private void UpdateInstructionBox(string current, string previous)
-        {
-            instructionsBox.Items.Clear();
-            instructionsBox.Items.Add($"Curr: {current}");
-            instructionsBox.Items.Add($"Prev: {previous}");
-        }
-
+<<<<<<< HEAD
         private void c_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
 
         private String getPretyInst(IMCInstruction i)
+=======
+        private string GetPrettyInstruction(IMCInstruction instruction)
+>>>>>>> IOManager_Gabriel
         {
-            return "";
+            if (instruction == null)
+                return string.Empty;
+
+            string addressHex = UnitConverter.IntToHex(instruction.InstructionAddressDecimal, defaultWidth: 3);
+
+            string contentHex = vm.GetContentsInHex(instruction.InstructionAddressDecimal) +
+                vm.GetContentsInHex(instruction.InstructionAddressDecimal + 1);
+
+            return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
     }
 }

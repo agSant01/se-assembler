@@ -43,6 +43,16 @@ namespace Assembler.Microprocessor.InstructionFormats
 
         public override string ToString()
         {
+            if (IMCInstruction.AsmTextPrint)
+            {
+                string itr = $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} R{Ra}";
+
+                if (Rb != 0) itr += $" R{Rb}";
+
+                if (Rc != 0) itr += $" R{Rc}";
+                
+                return itr;
+            }
             return $"MCInstructionF1[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', Rb:'{Rb}', Rc:'{Rc}']";
         }
     }

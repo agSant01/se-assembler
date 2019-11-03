@@ -9,5 +9,7 @@ namespace Assembler.Microprocessor.InstructionFormats
         byte OpCode { get; }
 
         ushort InstructionAddressDecimal { get; }
+
+        public static bool AsmTextPrint { get; set; } = false;
     }
 }

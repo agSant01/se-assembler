@@ -240,7 +240,7 @@ namespace Assembler.UnitTests.CompilerTests
             foreach (string l in compiler.GetOutput())
             {
                 Console.WriteLine(l);
-                //Assert.AreEqual(expectedAsmLines[counter++], l);
+                Assert.AreEqual(expectedAsmLines[counter++], l);
             }
         }
 
