@@ -28,25 +28,25 @@ namespace Assembler.UnitTests.MicroprocessorTests
         }
     }
 
-    class Device : IODevice
+    class Device : IIODevice
     {
         public int Id { get; set; }
 
-        short IODevice.IOPortLength => 1;
+        short IIODevice.IOPortLength => 1;
 
-        bool IODevice.HasData => true;
+        bool IIODevice.HasData => true;
 
-        string IODevice.ReadFromPort(int port)
+        string IIODevice.ReadFromPort(int port)
         {
             return "01100110";
         }
 
-        bool IODevice.Reset()
+        bool IIODevice.Reset()
         {
             return true;
         }
 
-        bool IODevice.WriteInPort(int port, string contentInHex)
+        bool IIODevice.WriteInPort(int port, string contentInHex)
         {
             return true;
         }

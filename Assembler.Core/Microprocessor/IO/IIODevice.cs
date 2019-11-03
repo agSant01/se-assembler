@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO
 {
-    public interface IODevice
+    public interface IIODevice
     {
         public short IOPortLength { get; }
 

@@ -9,18 +9,13 @@ namespace Assembler.Core.Microprocessor
     {
         private readonly Dictionary<short, short> _portsAndDevices = new Dictionary<short, short>();
 
-        private readonly Dictionary<short, IODevice> _devicesAndIds = new Dictionary<short, IODevice>();
+        private readonly Dictionary<short, IIODevice> _devicesAndIds = new Dictionary<short, IIODevice>();
 
         private short _deviceId = 0;
 
         public short ConnectedDevices => (short) _devicesAndIds.Count;
 
-        public void AddIODevice(int v, Func<object> p)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddIODevice(short port, IODevice device)
+        public void AddIODevice(short port, IIODevice device)
         {
             _devicesAndIds.Add(_deviceId, device);
 
@@ -36,7 +31,7 @@ namespace Assembler.Core.Microprocessor
         {
             if (_portsAndDevices.TryGetValue(port, out short deviceId))
             {
-                IODevice device = _devicesAndIds[deviceId];
+                IIODevice device = _devicesAndIds[deviceId];
 
                 _devicesAndIds.Remove(deviceId);
 
@@ -84,7 +79,7 @@ namespace Assembler.Core.Microprocessor
 
             builder.AppendLine("IOManager[");
 
-            foreach (KeyValuePair<short, IODevice> pair in _devicesAndIds)
+            foreach (KeyValuePair<short, IIODevice> pair in _devicesAndIds)
             {
                 builder.Append("\t");
 
