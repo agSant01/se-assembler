@@ -35,6 +35,10 @@ namespace Assembler.Microprocessor.InstructionFormats
 
         public override string ToString()
         {
+            if (IMCInstruction.AsmTextPrint)
+            {
+                return $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} {AddressParamHex}";
+            }
             return $"MCInstructionF3[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', AddressParamHex:'{AddressParamHex}']";
         }
     }

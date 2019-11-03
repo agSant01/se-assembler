@@ -29,8 +29,8 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         [TestMethod]
         public void DataMovOperationsTests_LoadVMValueToRegister_Success()
         {
-            micro.MicroVirtualMemory.SetContentInMemory(2, "05");
-            micro.MicroVirtualMemory.SetContentInMemory(3, "07");
+            micro.WriteToMemory(2, "05");
+            micro.WriteToMemory(3, "07");
 
             // LOAD R2 02
             MCInstructionF2 i1 = new MCInstructionF2(3, "00000", "010", "00000010");
@@ -88,7 +88,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(i1, micro);
 
             Assert.AreEqual(SPNewValue, micro.StackPointer);
-            Assert.AreEqual("FF", micro.MicroVirtualMemory.GetContentsInHex(micro.StackPointer));
+            Assert.AreEqual("FF", micro.ReadFromMemory(micro.StackPointer));
         }
 
         [TestMethod]
@@ -96,7 +96,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         {
             //init
             micro.StackPointer = 100;
-            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            micro.WriteToMemory(100, "FF");
             MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
             ushort SPNewValue= 101;
 
@@ -132,16 +132,16 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(i2, micro);
 
             Console.WriteLine($"VirtualMemory #{UnitConverter.BinaryToInt(memoryAddress1)}: " +
-                $"{micro.MicroVirtualMemory.GetContentsInDecimal(UnitConverter.BinaryToHex(memoryAddress1))}");
+                $"{UnitConverter.HexToInt(micro.ReadFromMemory(UnitConverter.BinaryToInt(memoryAddress1)))}");
             Console.WriteLine($"VirtualMemory #{UnitConverter.BinaryToInt(memoryAddress2)}: " +
-                $"{micro.MicroVirtualMemory.GetContentsInDecimal(UnitConverter.BinaryToHex(memoryAddress2))}");
+                $"{UnitConverter.HexToInt(micro.ReadFromMemory(UnitConverter.BinaryToInt(memoryAddress2)))}");
 
-            Assert.AreEqual(4, micro.MicroVirtualMemory.GetContentsInDecimal(
-                UnitConverter.BinaryToHex(memoryAddress1)
-                ));
-            Assert.AreEqual(16, micro.MicroVirtualMemory.GetContentsInDecimal(
-                UnitConverter.BinaryToHex(memoryAddress2)
-                ));
+            Assert.AreEqual(4, UnitConverter.HexToInt(micro.ReadFromMemory(
+                UnitConverter.BinaryToInt(memoryAddress1)
+                )));
+            Assert.AreEqual(16, UnitConverter.HexToInt(micro.ReadFromMemory(
+                UnitConverter.BinaryToInt(memoryAddress2)
+                )));
         }
 
         [TestMethod] 
@@ -157,9 +157,10 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             string valueInMemory = UnitConverter.IntToHex(52);
 
             // setting Registers and Memory values
-            micro.MicroVirtualMemory.SetContentInMemory(dataHexRb, valueInMemory);
+            micro.WriteToMemory(
+                UnitConverter.HexToInt(dataHexRb), valueInMemory);
             
-            Assert.AreEqual(valueInMemory, micro.MicroVirtualMemory.GetContentsInHex(dataHexRb));
+            Assert.AreEqual(valueInMemory, micro.ReadFromMemory(UnitConverter.HexToInt(dataHexRb)));
 
             micro.MicroRegisters.SetRegisterValue(Ra, dataHexRa);
             micro.MicroRegisters.SetRegisterValue(Rb, dataHexRb);
@@ -186,20 +187,20 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             // STORERIND Ra,Rb  {F1} R[Rb] <- mem[R[Ra]] 
 
             string valueInMem = UnitConverter.IntToHex(40);
-            string dataInRegisterAHex = UnitConverter.IntToHex(110);
+            int dataInRegisterAHex = 110;
 
             byte registerA = 3;
             byte registerB = 7;
 
 
             // set data in register and VM
-            micro.MicroVirtualMemory.SetContentInMemory(dataInRegisterAHex, valueInMem);
-            micro.MicroRegisters.SetRegisterValue(registerA, dataInRegisterAHex);
+            micro.WriteToMemory(dataInRegisterAHex, valueInMem);
+            micro.MicroRegisters.SetRegisterValue(registerA, UnitConverter.IntToHex(dataInRegisterAHex));
 
             Console.WriteLine(micro.MicroRegisters);
 
-            Assert.AreEqual(valueInMem, micro.MicroVirtualMemory.GetContentsInHex(dataInRegisterAHex));
-            Assert.AreEqual(dataInRegisterAHex, micro.MicroRegisters.GetRegisterValue(registerA));
+            Assert.AreEqual(valueInMem, micro.ReadFromMemory(dataInRegisterAHex));
+            Assert.AreEqual(UnitConverter.IntToHex(dataInRegisterAHex), micro.MicroRegisters.GetRegisterValue(registerA));
 
             // set instruction
             MCInstructionF1 instructionF1 = new MCInstructionF1(4, "00110",
@@ -210,7 +211,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(instructionF1, micro);
 
             Console.WriteLine($"After execution: {micro.MicroRegisters}");
-            Console.WriteLine($"Value in address {UnitConverter.HexToInt(dataInRegisterAHex)}: {UnitConverter.HexToInt(valueInMem)}");
+            Console.WriteLine($"Value in address {dataInRegisterAHex}: {UnitConverter.HexToInt(valueInMem)}");
             Assert.AreEqual(
                 valueInMem,
                 micro.MicroRegisters.GetRegisterValue(registerB)

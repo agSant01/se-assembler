@@ -28,6 +28,21 @@
             <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click"/>
             <MenuItem x:Name="resetBtn" Header="Reset
 " Icon="" Click="ResetBtn_Click"/>
+            <TextBox x:Name="a"   HorizontalAlignment="Left" Text="a" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Visibility="Visible" MaxLines="2"/>
+            <TextBox x:Name="b"   HorizontalAlignment="Left" Text="b" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <TextBox x:Name="c"   HorizontalAlignment="Left" Text="c" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" TextChanged="c_TextChanged"/>
+            <TextBox x:Name="d"   HorizontalAlignment="Left" Text="d" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <TextBox x:Name="e"   HorizontalAlignment="Left" Text="e" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <TextBox x:Name="f"   HorizontalAlignment="Left" Text="f" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <TextBox x:Name="g"   HorizontalAlignment="Left" Text="g" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <TextBox x:Name="h"   HorizontalAlignment="Left" Text="h" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False"/>
+            <Menu x:Name="menu_Copy" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="968" Background="#FF2D2D30" Foreground="White">
+                <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
+                    <MenuItem Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
+
+                </MenuItem>
+            </Menu>
+           
         </ToolBar>
         <StatusBar HorizontalAlignment="Left" Height="30" Margin="0,574,0,0" VerticalAlignment="Top" Width="968" Background="#FF026128" Grid.ColumnSpan="2">
             <Label x:Name="statusLabel" Content="Label" Foreground="White"/>
@@ -56,9 +71,8 @@
             <ListBoxItem Content="Prev:"/>
         </ListBox>
         <Label x:Name="label_Copy2" Content="Instructions" HorizontalAlignment="Left" Margin="291,365,0,0" VerticalAlignment="Top" Width="249" Foreground="White"/>
-        <Label x:Name="label1_Copy3" Content="ex: 12 - 100" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="478,80,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1_Copy4" Content="Stack Pointer Range" Foreground="White" HorizontalAlignment="Left" Margin="308,80,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stackPointerRangeBox" HorizontalAlignment="Left" Height="23" Margin="425,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White"/>
+        <Label x:Name="label1_Copy4" Content="Stack Pointer Start" Foreground="White" HorizontalAlignment="Left" Margin="308,80,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="stackPointerStart" HorizontalAlignment="Left" Height="23" Margin="425,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White"/>
         <Label x:Name="label1_Copy5" Content="bytes" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="327,60,0,0" VerticalAlignment="Top" Grid.Column="1"/>
         <TextBox x:Name="memorySizeBox" HorizontalAlignment="Left" Height="23" Margin="274,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1" Text="50"/>
 

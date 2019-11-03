@@ -64,6 +64,11 @@ namespace Assembler.Utils
             return Convert.ToSByte(hexNumber, 16);
         }
 
+        public static byte HexToByte(string hexNumber)
+        {
+            return Convert.ToByte(hexNumber, 16);
+        }
+
         public static string HexToBinary(string hexNumber, byte defaultWidth = 8)
         {
             return Convert.ToString(Convert.ToInt32(hexNumber, 16), 2).PadLeft(defaultWidth, '0');
