@@ -38,11 +38,12 @@ namespace Simulator_UI
         public MainWindow()
         {
             InitializeComponent();
+
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
+            
+            Init();
 
             UpdateInstructionBox();
-
-            Init();
         }
 
         private void Init()
@@ -57,9 +58,9 @@ namespace Simulator_UI
 
             ioManager = new IOManager(vm.VirtualMemorySize);
 
-            CheckIOs();
-
             micro = new MicroSimulator(vm, ioManager);
+
+            SetIOs();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
@@ -175,9 +176,9 @@ namespace Simulator_UI
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
-            UpdateInstructionBox();
-
             Init();
+
+            UpdateInstructionBox();
         }
 
 
@@ -249,7 +250,9 @@ namespace Simulator_UI
             if (ioManager == null)
             {
                 cbHexkeyboard.IsChecked = false;
-                
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
                 return;
             }
 
@@ -261,17 +264,16 @@ namespace Simulator_UI
             if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
             {
                 window.Close();
+                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
             }
-            else
-            {
-                IOHexKeyboardUI hexKeyboardUI = new IOHexKeyboardUI(ioManager);
 
-                hexKeyboardUI.Activate();
+            IOHexKeyboardUI hexKeyboardUI = new IOHexKeyboardUI(ioManager);
 
-                hexKeyboardUI.Show();
+            hexKeyboardUI.Activate();
 
-                _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, hexKeyboardUI);
-            }
+            hexKeyboardUI.Show();
+
+            _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, hexKeyboardUI);
         }
 
         private void Unchecked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
@@ -284,7 +286,7 @@ namespace Simulator_UI
             }
         }
 
-        private void CheckIOs()
+        private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
         }

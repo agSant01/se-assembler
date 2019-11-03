@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Simulator_UI
 {
@@ -25,15 +26,21 @@ namespace Simulator_UI
             InitializeComponent();
 
             _ioManager = ioManager;
+
+            MouseDown += delegate { DragMove(); };
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (activeToggle.IsChecked == false)
+            {
+                MessageBox.Show("Activate IO Device before writing in the Keyboard", "Inactive IO");
+                return;
+            }
+
             Button button = (Button) sender;
 
             string hexChar = button.Content.ToString();
-
-            MessageBox.Show(hexChar);
 
             Keyboard?.KeyPress(hexChar);
         }
@@ -60,7 +67,10 @@ namespace Simulator_UI
                     _ioManager.AddIODevice((short)port, Keyboard);
 
                     // change text of toggle text
-                    toggle.Content = "Deactivate";
+                    toggle.Content = "Active";
+
+                    toggle.Background = Brushes.Green;
+
                 }
                 catch (Exception err)
                 {
@@ -74,8 +84,9 @@ namespace Simulator_UI
             {
                 // no port selected
                 MessageBox.Show("Select a port before activating the IO Device");
-            }
 
+                toggle.IsChecked = false;
+            }
         }
 
         private void Toggle_Deactivate(object sender, RoutedEventArgs e)
@@ -83,7 +94,9 @@ namespace Simulator_UI
             ToggleButton toggle = (ToggleButton)sender;
 
             // change text of toggle text
-            toggle.Content = "Activate";
+            toggle.Content = "Inactive";
+
+            toggle.Background = Brushes.Red;
 
             // remove IO from IO Manager
             if (Keyboard != null)

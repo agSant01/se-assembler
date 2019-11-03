@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
-        Title="IOHexKeyboard" Height="446" Width="430" WindowStyle="SingleBorderWindow" ResizeMode="CanMinimize">
+        Title="IOHexKeyboard" Height="446" Width="430" WindowStyle="None" ResizeMode="CanMinimize">
     <Grid Background="Black">
         <Button Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="81" Width="95"    Click="Button_Click" Margin="27,82,0,0"/>
         <Button Content="1" HorizontalAlignment="Left" Margin="121,82,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
@@ -28,6 +28,18 @@
         <TextBox Name="tbPort" Margin="123,31,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
                  VerticalAlignment="Top" Width="95" Height="29" FontSize="14" AcceptsReturn="True" 
                   SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
-        <ToggleButton Content="Activate" Checked="Toggle_Activate" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True"/>
+        <ToggleButton Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Background" Value="Green"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
     </Grid>
 </Window>
