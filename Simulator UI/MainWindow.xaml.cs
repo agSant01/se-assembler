@@ -1,4 +1,5 @@
-﻿using Assembler.Microprocessor;
+﻿using Assembler.Core.Microprocessor.IO.IODevices;
+using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
@@ -25,13 +26,27 @@ namespace Simulator_UI
         private MicroSimulator micro;
         private VirtualMemory vm;
         private bool stopRun;
-
+        private System.Windows.Threading.DispatcherTimer sevenSegmentDisplayTimer;
         private string[] lines;
 
         public MainWindow()
         {
             InitializeComponent();
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
+
+            sevenSegmentDisplayTimer = new System.Windows.Threading.DispatcherTimer();
+            sevenSegmentDisplayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            sevenSegmentDisplayTimer.Tick += sevenSegmentDisplayTimer_Tick;
+        }
+
+        private void sevenSegmentDisplayTimer_Tick(object sender, EventArgs e)
+        {
+            if(micro != null)
+            {
+                //micro.WriteToMemory(MicroSimulator.SEGMENT_IO_PORT, "F6");
+                var binary = micro.ReadFromMemory(MicroSimulator.SEGMENT_IO_PORT);
+                SegmentDisplay.SetBinaryNumber(binary);
+            }
         }
 
         private void Init()
@@ -43,6 +58,10 @@ namespace Simulator_UI
             vm = new VirtualMemory(lines);
 
             micro = new MicroSimulator(vm);
+            micro.AddDevice(MicroSimulator.SEGMENT_IO_PORT, new IOSevenSegmentDisplay());
+
+            sevenSegmentDisplayTimer.Stop();
+            sevenSegmentDisplayTimer.Start();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
@@ -162,7 +181,6 @@ namespace Simulator_UI
             Init();
         }
 
-
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
@@ -222,5 +240,7 @@ namespace Simulator_UI
 
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
+
+
     }
 }

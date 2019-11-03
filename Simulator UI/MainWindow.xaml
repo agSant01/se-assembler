@@ -61,5 +61,7 @@
         <Label x:Name="label1_Copy5" Content="bytes" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="327,60,0,0" VerticalAlignment="Top" Grid.Column="1"/>
         <TextBox x:Name="memorySizeBox" HorizontalAlignment="Left" Height="23" Margin="274,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1" Text="50"/>
 
+
+        <local:SevenSegmentDisplay x:Name="SegmentDisplay" Grid.ColumnSpan="2" Margin="496,54,310,447" />
     </Grid>
 </Window>

@@ -1,4 +1,5 @@
 ﻿using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
@@ -7,6 +8,9 @@ namespace Assembler.Microprocessor
 {
     public class MicroSimulator
     {
+        public static readonly short SEGMENT_IO_PORT = 0;
+        
+        
         private readonly MCLoader _mcLoader;
 
         private readonly VirtualMemory _virtualMemory;
@@ -90,6 +94,19 @@ namespace Assembler.Microprocessor
                 return _ioManager.ReadFromIO((short)decimalAddress);
             }
             return _virtualMemory.GetContentsInHex(decimalAddress: decimalAddress);
+        }
+
+        /// <summary>
+        /// Tries to connect an IO Device to the micro
+        /// </summary>
+        /// <returns>Whether the device was connected</returns>
+        public bool AddDevice(short port, IIODevice device)
+        {
+            if (_ioManager.IsUsedPort(port))
+                return false;
+            _ioManager.AddIODevice(port, device);
+            return true;
+            
         }
 
         public void NextInstruction()
