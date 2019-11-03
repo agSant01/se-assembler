@@ -1,4 +1,5 @@
-﻿using Assembler.Microprocessor.InstructionFormats;
+﻿using Assembler.Core.Microprocessor;
+using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
 
@@ -10,17 +11,27 @@ namespace Assembler.Microprocessor
 
         private readonly VirtualMemory _virtualMemory;
 
+        private readonly IOManager _ioManager;
+
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
                
         public MicroSimulator(VirtualMemory virtualMemory)
         {
-            _virtualMemory = virtualMemory;
-
             MicroRegisters = new Registers();
 
+            _virtualMemory = virtualMemory;
+
             _mcLoader = new MCLoader(virtualMemory, this);
+
+            _ioManager = new IOManager();
+        }
+
+        public MicroSimulator(VirtualMemory virtualMemory, IOManager iOManager) 
+            : this(virtualMemory)
+        {
+            _ioManager = iOManager;
         }
 
         public Registers MicroRegisters { get; }
@@ -59,7 +70,12 @@ namespace Assembler.Microprocessor
         /// <param name="contentInHex">Contents to write in Hexadecimal</param>
         public void WriteToMemory(int decimalAddress, string contentInHex)
         {
-            _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
+            if (_ioManager.IsUsedPort((short)decimalAddress))
+            {
+                _ioManager.WriteToIO((short)decimalAddress, contentInHex);
+            } else { 
+               _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
+            }
         }
 
         /// <summary>
@@ -69,6 +85,10 @@ namespace Assembler.Microprocessor
         /// <returns></returns>
         public string ReadFromMemory(int decimalAddress)
         {
+            if (_ioManager.IsUsedPort((short)decimalAddress))
+            {
+                return _ioManager.ReadFromIO((short)decimalAddress);
+            }
             return _virtualMemory.GetContentsInHex(decimalAddress: decimalAddress);
         }
 

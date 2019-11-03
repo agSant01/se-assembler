@@ -137,6 +137,11 @@ namespace Assembler.Microprocessor
                 LastAddressDecimal = (ushort) decimalAddress;
             }
 
+            if (UnitConverter.HexToBinary(hexContent).Length > 8)
+            {
+                throw new OverflowException("Invalid data to store in memory");
+            }
+            
             memoryBlocksInHexadecimal[decimalAddress] = hexContent;
         }
 

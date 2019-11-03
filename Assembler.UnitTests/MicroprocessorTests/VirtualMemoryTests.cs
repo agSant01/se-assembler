@@ -130,5 +130,18 @@ namespace Assembler.UnitTests.MicroprocessorTests
 
             Console.WriteLine($"Expected: {expected}, Result: {result}");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException), "Invalid Hexadecimal Address")]
+        public void VirtualMemoryTest_InvalidData_InvalidHexAddress()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(machineCodeFile);
+
+            Assert.IsNotNull(lines);
+
+            VirtualMemory vm = new VirtualMemory(lines);
+
+            vm.SetContentInMemory(45, "1194");
+        }
     }
 }
