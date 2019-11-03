@@ -38,7 +38,7 @@ namespace Assembler.Parsing
                 { "ROTAR",      new int[] { 18, 1, 3 } },
                 { "ROTAL",      new int[] { 19, 1, 3 } },
                 // Flow Control
-                { "JMPRIND",        new int[] { 20, 1, 1 } },
+                { "JMPRIND",    new int[] { 20, 1, 1 } },
                 { "JMPADDR",    new int[] { 21, 3, 1 } },
                 { "JCONDRIN",   new int[] { 22, 1, 1 } },
                 { "JCONDADDR",  new int[] { 23, 3, 1 } },

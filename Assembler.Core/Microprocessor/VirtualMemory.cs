@@ -9,6 +9,7 @@ namespace Assembler.Microprocessor
     public class VirtualMemory
     {
         private readonly string[] memoryBlocksInHexadecimal;
+
         private readonly HashSet<ushort> addressesUsed = new HashSet<ushort>();
 
         public VirtualMemory(string[] lines, int kiloBytes = 4)
@@ -45,6 +46,8 @@ namespace Assembler.Microprocessor
         }
 
         public ushort LastAddressDecimal { get; private set; } = 0;
+
+        public int VirtualMemorySize => memoryBlocksInHexadecimal.Length;
 
         public string LastAddressHex
         {
