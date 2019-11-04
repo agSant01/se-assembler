@@ -245,6 +245,11 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
+        private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
             if (ioManager == null)
@@ -290,5 +295,7 @@ namespace Simulator_UI
         {
             Checked_IOHexaKeyBoard(null, null);
         }
+
+       
     }
 }
