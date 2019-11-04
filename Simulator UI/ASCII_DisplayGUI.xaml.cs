@@ -42,5 +42,33 @@ namespace Simulator_UI
         {
             //Does nothing, all we wanna do is let them listen for the changes to the byte array
         }
+
+        private void Update_ASCII_Display(ASCII_Display display)
+        {
+            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+            int[] actives = display.ActiveCharactersIndexes();
+            int[] inactives = display.InactiveCharactersIndexes();
+
+            foreach (int i in actives)
+            {
+                ascii_display[i].Background = Brushes.White;
+            }
+            foreach (int i in inactives)
+            {
+                ascii_display[i].Background = Brushes.Black;
+            }
+
+        }
+
+        private void ResetASCII_Display()
+        {
+            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+
+            foreach (TextBox i in ascii_display)
+            {
+                i.Background = Brushes.White;
+            }
+
+        }
     }
 }
