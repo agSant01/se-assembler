@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assembler.Core.Microprocessor
+namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class ASCII_Display: IIODevice
     {
@@ -125,10 +125,10 @@ namespace Assembler.Core.Microprocessor
         public int[] ActiveCharactersIndexes()
         {
             ArrayList active = new ArrayList();
-            int[] reserved = this.ReservedAddresses();
-            for(int i=0; i <reserved.Length ; i++)
+            //int[] reserved = this.ReservedAddresses();
+            for(int i=0; i <characters.Length ; i++)
             {
-                if(this.mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
+                if(characters[i] != DEFAULT)//checks if reserved memory is now in use
                     active.Add(i);//add to active index list
             }
 
@@ -145,10 +145,10 @@ namespace Assembler.Core.Microprocessor
         public int[] InactiveCharactersIndexes()
         {
             ArrayList inactive = new ArrayList();
-            int[] reserved = this.ReservedAddresses();
-            for (int i = 0; i < reserved.Length; i++)
+            //int[] reserved = this.ReservedAddresses();
+            for (int i = 0; i < characters.Length; i++)
             {
-                if (!this.mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
+                if (characters[i] == DEFAULT)//checks if reserved memory is now in use
                     inactive.Add(i);//add to active index list
             }
 
@@ -162,34 +162,27 @@ namespace Assembler.Core.Microprocessor
             return res;
         }
 
-        public string ReadFromPort(int port)
+        public string[] ReadFromPort(int port)
         {
-            if (_buffer.Count == 0)
+            if (HasData)
             {
-                return UnitConverter.ByteToBinary(0);
+                return UnitConverter.ByteToBinary(this.characters);
             }
-
-            return _buffer.Dequeue();
+            string[] def ={$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}"};
+            return def;
         }
 
         public bool Reset()
         {
-            _buffer.Clear();
-
+            //_buffer.Clear();
+            this.characters = new byte[8];
             return true;
         }
 
-        public bool WriteInPort(int port, string contentInHex)
+        public bool WriteInPort(int port, string[] contentInHex)
         {
-            throw new InvalidOperationException("This port is reserved for read-only operations");
-        }
-
-        public void KeyPress(string hexChar)
-        {
-            if (_buffer.Count < 4)
-            {
-                _buffer.Enqueue(UnitConverter.HexToBinary(hexChar + "1"));
-            }
+                characters = contentInHex;
+            return true;
         }
 
         public override string ToString()
