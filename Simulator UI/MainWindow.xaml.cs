@@ -1,4 +1,6 @@
-﻿using Assembler.Microprocessor;
+﻿using Assembler.Core.Microprocessor.IO;
+using Assembler.Core.Microprocessor;
+using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
@@ -24,6 +26,7 @@ namespace Simulator_UI
     {
         private MicroSimulator micro;
         private VirtualMemory vm;
+        private ASCII_Display display;
         private bool stopRun;
 
         private string[] lines;
@@ -43,7 +46,7 @@ namespace Simulator_UI
             vm = new VirtualMemory(lines);
 
             micro = new MicroSimulator(vm);
-
+            display = new ASCII_Display(vm);
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
 
@@ -139,6 +142,7 @@ namespace Simulator_UI
                         UpdateRegisters();
 
                         instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                        Update_ASCII_Display(display);
                     });
                 }
             }).Start();
@@ -160,6 +164,8 @@ namespace Simulator_UI
             UpdateInstructionBox();
 
             Init();
+            ResetASCII_Display();
+            Console.WriteLine(display);
         }
 
 
@@ -208,6 +214,25 @@ namespace Simulator_UI
             UpdateRegisters();
 
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+
+            Update_ASCII_Display(display);
+        }
+
+        private void Update_ASCII_Display(ASCII_Display display)
+        {
+            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+            int[] actives = display.ActiveCharactersIndexes();
+            int[] inactives = display.InactiveCharactersIndexes();
+
+            foreach (int i in actives)
+            {
+                ascii_display[i].Background = Brushes.White;
+            }
+            foreach (int i in inactives)
+            {
+                ascii_display[i].Background = Brushes.Black;
+            }
+
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
@@ -221,6 +246,17 @@ namespace Simulator_UI
                 vm.GetContentsInHex(instruction.InstructionAddressDecimal + 1);
 
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
+        }
+
+        private void ResetASCII_Display()
+        {
+            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+
+            foreach (TextBox i in ascii_display)
+            {
+                i.Background = Brushes.White;
+            }
+
         }
     }
 }

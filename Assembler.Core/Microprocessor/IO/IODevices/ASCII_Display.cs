@@ -1,10 +1,13 @@
-﻿using Assembler.Microprocessor;
+﻿using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO;
+using Assembler.Microprocessor;
+using Assembler.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Assembler.Core.IO_Devices
+namespace Assembler.Core.Microprocessor
 {
     public class ASCII_Display: IIODevice
     {
@@ -13,21 +16,31 @@ namespace Assembler.Core.IO_Devices
         private readonly int[] reserved_addresses;
         private readonly byte DEFAULT = 0;
         private byte[] characters;//these need to be mapped contigously on VirtualMemory
+        private VirtualMemory mem;
+        private Queue<string> _buffer = new Queue<string>();
+
+        public short IOPortLength => 8;//bytes
+
+        public bool HasData => _buffer.Count > 0;
+
+        public byte BufferSize => (byte)_buffer.Count;
+
         public ASCII_Display(VirtualMemory mem)
         {
             //We need to find 8 memory locations in virutal memory to reserve the bytes...
-            reserved_addresses = ReserveMemory(mem);
+            this.mem = mem;
+            reserved_addresses = ReserveMemory();
             this.characters = new byte[8];
             this.active = new bool[8];
         }
 
 
-        private int[] ReserveMemory(VirtualMemory mem)
+        private int[] ReserveMemory()
         {
             int[] addresses_to_use = new int[8];
             ArrayList addresses = new ArrayList();
             int curr = 0;
-            for(int i =1; i <= mem.VirtualMemorySize ; i++)//avoid using first address... may have a bug here cause we reach Last -1
+            for(int i =1; i <= this.mem.VirtualMemorySize ; i++)//avoid using first address... may have a bug here cause we reach Last -1
             {
                 if(!mem.IsInUse(i))
                 {
@@ -109,32 +122,80 @@ namespace Assembler.Core.IO_Devices
             return this.reserved_addresses;
         }
 
-        public ArrayList ActiveCharactersIndexes(VirtualMemory mem)
+        public int[] ActiveCharactersIndexes()
         {
             ArrayList active = new ArrayList();
             int[] reserved = this.ReservedAddresses();
             for(int i=0; i <reserved.Length ; i++)
             {
-                if(mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
+                if(this.mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
                     active.Add(i);//add to active index list
             }
-            
 
-            return active;
+            int size = active.Count;
+            int[] res = new int[size];
+            int k = 0;
+            foreach(int j in active)
+            {
+                res[k++] = j;
+            }
+            return res;
         }
 
-        public ArrayList InactiveCharactersIndexes(VirtualMemory mem)
+        public int[] InactiveCharactersIndexes()
         {
             ArrayList inactive = new ArrayList();
             int[] reserved = this.ReservedAddresses();
             for (int i = 0; i < reserved.Length; i++)
             {
-                if (!mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
+                if (!this.mem.IsInUse(reserved[i]))//checks if reserved memory is now in use
                     inactive.Add(i);//add to active index list
             }
 
-
-            return inactive;
+            int size = inactive.Count;
+            int[] res = new int[size];
+            int k = 0;
+            foreach (int j in inactive)
+            {
+                res[k++] = j;
+            }
+            return res;
         }
+
+        public string ReadFromPort(int port)
+        {
+            if (_buffer.Count == 0)
+            {
+                return UnitConverter.ByteToBinary(0);
+            }
+
+            return _buffer.Dequeue();
+        }
+
+        public bool Reset()
+        {
+            _buffer.Clear();
+
+            return true;
+        }
+
+        public bool WriteInPort(int port, string contentInHex)
+        {
+            throw new InvalidOperationException("This port is reserved for read-only operations");
+        }
+
+        public void KeyPress(string hexChar)
+        {
+            if (_buffer.Count < 4)
+            {
+                _buffer.Enqueue(UnitConverter.HexToBinary(hexChar + "1"));
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"ASCII_Display[reserved memory: {String.Join(", ",reserved_addresses)}]";
+        }
+
     }
 }

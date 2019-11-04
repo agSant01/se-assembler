@@ -1,4 +1,6 @@
-﻿using Assembler.Core.Microprocessor;
+﻿
+using Assembler.Core.Microprocessor;
+using Assembler.Microprocessor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,10 +26,10 @@ namespace Simulator_UI
         private readonly IOManager _ioManager;
         public ASCII_Display display;
 
-        public ASCII_DisplayGUI(IOManager ioManager, short port)
+        public ASCII_DisplayGUI(IOManager ioManager, VirtualMemory mem,short port)
         {
             _ioManager = ioManager;
-            display = new ASCII_Display();
+            display = new ASCII_Display(mem);
             InitializeComponent();
         }
 
