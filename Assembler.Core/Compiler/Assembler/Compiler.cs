@@ -6,6 +6,7 @@ using Assembler.Interfaces;
 using Assembler.Parsing.InstructionFormats;
 using Assembler.Parsing.InstructionItems;
 using System.Text.RegularExpressions;
+using Assembler.Utils;
 
 namespace Assembler.Assembler
 {
@@ -14,6 +15,8 @@ namespace Assembler.Assembler
         //address 
         private int currentAddress;
         private int size;
+        private int totalAddressesKB;
+
 
         //content mapping
         private Dictionary<string, int> constants;
@@ -35,26 +38,15 @@ namespace Assembler.Assembler
         /// Two pass Assembler
         /// <paramref name="parser"/>
         /// </summary>
-        public Compiler(Parser parser)
-        {
-            currentAddress = 0;
-            constants = new Dictionary<string, int>();
-            labels = new Dictionary<string, int>();
-            variables = new Dictionary<string, int>();
-            vMemory = new Dictionary<string, int>();
-            this.parser = parser;
-            decimalInstuctions = new int[10];
-            AsmLogger = new AssemblyLogger("ASM");
-            size = 0;
-
-        }
+        public Compiler(Parser parser, int sizeInKiloBytes = 4) : 
+            this(parser, new AssemblyLogger("ASM"), sizeInKiloBytes) { }
 
         /// <summary>
         /// Two pass Assembler
         /// <paramref name="parser"/>
         /// <paramref name="logger"/>
         /// </summary>
-        public Compiler(Parser parser, AssemblyLogger logger)
+        public Compiler(Parser parser, AssemblyLogger logger, int sizeInKiloBytes = 4)
         {
             currentAddress = 0;
             constants = new Dictionary<string, int>();
@@ -65,7 +57,7 @@ namespace Assembler.Assembler
             decimalInstuctions = new int[10];
             this.AsmLogger = logger;
             size = 0;
-
+            totalAddressesKB = sizeInKiloBytes * 1024;  // 1024 Equals 1KB
         }
 
 
@@ -82,6 +74,7 @@ namespace Assembler.Assembler
 
             while (parser.MoveNext())
             {
+                
                 if (parser.CurrentInstruction.Operator == null && parser.CurrentInstruction.GetType().Name == "Label")
                 {
                     //Load Labels and check if next element is an instruction
@@ -96,7 +89,6 @@ namespace Assembler.Assembler
                 {
                     constants.Add(((ConstantAssign)parser.CurrentInstruction).Name.ToString(),
                         Convert.ToInt32(((ConstantAssign)parser.CurrentInstruction).Value.ToString(), 16));
-
                 }
                 else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                 {
@@ -113,7 +105,7 @@ namespace Assembler.Assembler
                         vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString() + ofset, Convert.ToInt32(variable.ToString(), 16));
                         ofset += "0";
                     }
-                    //vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values[0].ToString(),16));
+                    //vMemory.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), Convert.ToInt32(((VariableAssign)parser.CurrentInstruction).Values[0].ToString(), 16));
                 }
                 else if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
                 {
@@ -121,7 +113,6 @@ namespace Assembler.Assembler
                     currentAddress += (currentAddress % 2 == 0) ? 1 : 2;
                     currentAddress++;
                 }
-
 
                 lineCount++;
             }
@@ -148,12 +139,12 @@ namespace Assembler.Assembler
         private void AddInstruction(int decimalInstruction)
         {
             // verify size of token array and increment if necessary
-            if (size >= decimalInstuctions.Length / 2)
+            if (currentAddress >= decimalInstuctions.Length)
             {
                 Array.Resize(ref decimalInstuctions, decimalInstuctions.Length * 2);
             }
 
-            decimalInstuctions[size] = decimalInstruction;
+            decimalInstuctions[currentAddress] = decimalInstruction;
             size++;
         }
 
@@ -213,18 +204,12 @@ namespace Assembler.Assembler
                     {
                         if (parser.CurrentInstruction.Operator.Type == TokenType.OPERATOR)
                         {
-                            if((currentAddress % 2 == 0))
+                            if(currentAddress % 2 == 1)
                             {
                                 currentAddress += 1;
                             }
-                            else
-                            {
-                                AddInstruction(0);//TODO: FIX THIS, HARDCODED TO WRITE 0 INTO MEM ON ODD ADDRESSES
-                                currentAddress += 2;
-                            }
 
                             AddOperator(parser.CurrentInstruction);
-                            currentAddress++;
                         }
                         else if (parser.CurrentInstruction.Operator.Type == TokenType.VARIABLE_ASSIGN)
                         {
@@ -240,16 +225,33 @@ namespace Assembler.Assembler
                 }
 
             }
+
             AsmLogger.StatusUpdate("Assembly process completed");
             AsmLogger.StatusUpdate("Generating of Object file");
 
-            compiledLines = new string[(size / 2) + 1];
-            int currentLine = 0;
-            for (int i = 0; i < size; i++)
-            {
-                compiledLines[currentLine] += Convert.ToString(decimalInstuctions[i], 16).PadLeft(2, '0').ToUpper() + " ";
-                if (i % 2 != 0)
-                    currentLine += (currentLine < size / 2) ? 1 : 0;
+            compiledLines = new string[(totalAddressesKB / 2)];
+
+            int instruction = 0;
+            for (int currentLine = 0; currentLine < (totalAddressesKB / 2); currentLine++)
+            {   
+                if (instruction < decimalInstuctions.Length)
+                {
+                    compiledLines[currentLine] += Convert.ToString(decimalInstuctions[instruction], 16)
+                        .PadLeft(2, '0').ToUpper() + " ";
+                    instruction++;
+                    if (instruction < decimalInstuctions.Length)
+                    {
+                        compiledLines[currentLine] += Convert.ToString(decimalInstuctions[instruction], 16)
+                        .PadLeft(2, '0').ToUpper();
+                        instruction++;
+                    } else
+                    {
+                       compiledLines[currentLine] += "00";
+                    }
+                } else
+                {
+                    compiledLines[currentLine] += "00 00";
+                }
             }
 
             AsmLogger.StatusUpdate("Finished generating Object file");
@@ -270,17 +272,17 @@ namespace Assembler.Assembler
 
             if(binInstruction.Length != 16)
             {
-                AsmLogger.Error("invalid bites",size.ToString(),"program crashed please report :)");
+                AsmLogger.Error("invalid bites",size.ToString(),"program crashed please report");
                 throw new Exception("invalid bytes");
             }
 
             string firstByte = binInstruction.Substring(0,8);
             AddInstruction(Convert.ToInt32(firstByte, 2));
+            currentAddress++;
+
             string secondByte = binInstruction.Substring(8, 8);
             AddInstruction(Convert.ToInt32(secondByte, 2));
-
-            
-
+            currentAddress++;
         }
 
         /// <summary>
@@ -316,7 +318,6 @@ namespace Assembler.Assembler
                         InstructionFormat2 format = (InstructionFormat2)_operator;
                         int Ra = (format.RegisterA.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
 
-
                         int constOrAddr = 0;
                         if (constants.ContainsKey(format.ConstOrAddress.ToString()))
                             constOrAddr = constants[format.ConstOrAddress.ToString()];
@@ -339,7 +340,6 @@ namespace Assembler.Assembler
                             }
                         }
 
-                        
                         return $"{Convert.ToString(opcode, 2).PadLeft(5, '0')}" +
                             $"{Convert.ToString(Ra, 2).PadLeft(3, '0')}" +
                             $"{Convert.ToString(constOrAddr, 2).PadLeft(8, '0')}";

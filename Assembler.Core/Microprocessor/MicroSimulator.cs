@@ -1,4 +1,5 @@
-﻿using Assembler.Microprocessor.InstructionFormats;
+﻿using Assembler.Core.Microprocessor;
+using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
 
@@ -8,25 +9,32 @@ namespace Assembler.Microprocessor
     {
         private readonly MCLoader _mcLoader;
 
+        private readonly VirtualMemory _virtualMemory;
+
+        private readonly IOManager _ioManager;
+
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
-
-        public IMCInstruction currentInstruction, previousInstruction;
-
-
+               
         public MicroSimulator(VirtualMemory virtualMemory)
         {
-            MicroVirtualMemory = virtualMemory;
-
             MicroRegisters = new Registers();
 
+            _virtualMemory = virtualMemory;
+
             _mcLoader = new MCLoader(virtualMemory, this);
+
+            _ioManager = new IOManager(_virtualMemory.VirtualMemorySize);
+        }
+
+        public MicroSimulator(VirtualMemory virtualMemory, IOManager iOManager) 
+            : this(virtualMemory)
+        {
+            _ioManager = iOManager;
         }
 
         public Registers MicroRegisters { get; }
-
-        public VirtualMemory MicroVirtualMemory { get; }
 
         public ushort StackPointer { get; set; }
 
@@ -46,26 +54,53 @@ namespace Assembler.Microprocessor
 
         public bool ConditionalBit { get; set; } = false;
 
+        public IMCInstruction CurrentInstruction { get; private set; }
+
+        public IMCInstruction PreviousInstruction { get; private set; }
+
         public override string ToString()
         {
             return $"Microprocessor[PC={ProgramCounter}, CondBit={(ConditionalBit ? 1 : 0)}]";
         }
 
-        public void NextInstruction()
+        /// <summary>
+        /// Write contents in hexadecimal to Micro memory
+        /// </summary>
+        /// <param name="decimalAddress">Decimal address to write contents</param>
+        /// <param name="contentInHex">Contents to write in Hexadecimal</param>
+        public void WriteToMemory(int decimalAddress, string contentInHex)
         {
-            previousInstruction = currentInstruction;
-            currentInstruction = _mcLoader.NextInstruction();
-
-            if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(currentInstruction.OpCode, 5)))
+            if (_ioManager.IsUsedPort((short)decimalAddress))
             {
-                this.ProgramCounter = (ushort)UnitConverter.HexToInt(
-                    ((MCInstructionF3)currentInstruction).AddressParamHex);
-            }
-            else
-            {
-                this.ProgramCounter += 2;
+                _ioManager.WriteToIO((short)decimalAddress, contentInHex);
+            } else { 
+               _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
             }
         }
 
+        /// <summary>
+        /// Read contents from Micro memory. Contents are returned in Hexadecimal
+        /// </summary>
+        /// <param name="decimalAddress">Decimal address to read content</param>
+        /// <returns></returns>
+        public string ReadFromMemory(int decimalAddress)
+        {
+            if (_ioManager.IsUsedPort((short)decimalAddress))
+            {
+                return _ioManager.ReadFromIO((short)decimalAddress);
+            }
+            return _virtualMemory.GetContentsInHex(decimalAddress: decimalAddress);
+        }
+
+        public void NextInstruction()
+        {
+            PreviousInstruction = CurrentInstruction;
+            CurrentInstruction = _mcLoader.NextInstruction();
+
+            if (!OpCodesInfo.IsJump(UnitConverter.IntToBinary(CurrentInstruction.OpCode, 5)))
+            {
+                ProgramCounter += 2;
+            }
+        }
     }
 }

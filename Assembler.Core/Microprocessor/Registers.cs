@@ -16,27 +16,10 @@ namespace Assembler.Microprocessor
         /// The size of each register in Bytes
         /// </summary>
         private readonly byte registerByteSize;
-
-        /// <summary>
-        /// Maximum value that can be stored in register
-        /// </summary>
-        private readonly sbyte maxValue;
-
-        /// <summary>
-        /// Minimum value that can be stored in the register
-        /// </summary>
-        private readonly sbyte minValue;
-
         public Registers(int numberOfRegisters = 8, byte registerBytes = 1)
         {
             registers = new sbyte[numberOfRegisters];
             registerByteSize = registerBytes;
-
-            double N = Convert.ToDouble(registerByteSize * 8.0);
-
-            maxValue = (sbyte)(Math.Pow(2.0, N - 1) - 1);
-
-            minValue = (sbyte)(-1 * Math.Pow(2, N - 1));
         }
 
         /// <summary>
@@ -70,7 +53,7 @@ namespace Assembler.Microprocessor
 
             IsValidData(hexadecimalValue);
 
-            registers[registerNumber] = (sbyte) UnitConverter.HexToInt(hexadecimalValue);
+            registers[registerNumber] = UnitConverter.HexToSByte(hexadecimalValue);
         }
 
         /// <summary>

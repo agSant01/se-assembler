@@ -8,9 +8,9 @@ namespace Assembler.Microprocessor
 
     public class VirtualMemory
     {
-        private string[] memoryBlocksInHexadecimal;
-        private ushort lastUsedAddressDecimal = 0;
-        private HashSet<ushort> addressesUsed = new HashSet<ushort>();
+        private readonly string[] memoryBlocksInHexadecimal;
+
+        private readonly HashSet<ushort> addressesUsed = new HashSet<ushort>();
 
         public VirtualMemory(string[] lines, int kiloBytes = 4)
         {
@@ -38,26 +38,22 @@ namespace Assembler.Microprocessor
                 addressesUsed.Add((ushort) (i * 2));
                 addressesUsed.Add((ushort) (i * 2 + 1));
 
-                if (lastUsedAddressDecimal < i * 2 + 1)
+                if (LastAddressDecimal < i * 2 + 1)
                 {
-                    lastUsedAddressDecimal = (ushort) (i * 2 + 1);
+                    LastAddressDecimal = (ushort) (i * 2 + 1);
                 }
             }
         }
 
-        public ushort LastAddressDecimal
-        {
-            get
-            {
-                return lastUsedAddressDecimal;
-            }
-        }
+        public ushort LastAddressDecimal { get; private set; } = 0;
+
+        public int VirtualMemorySize => memoryBlocksInHexadecimal.Length;
 
         public string LastAddressHex
         {
             get
             {
-                return UnitConverter.IntToHex(lastUsedAddressDecimal);
+                return UnitConverter.IntToHex(LastAddressDecimal);
             }
         }
 
@@ -139,11 +135,16 @@ namespace Assembler.Microprocessor
         {
             IsValidAddress(decimalAddress);
 
-            if (lastUsedAddressDecimal < decimalAddress)
+            if (LastAddressDecimal < decimalAddress)
             {
-                lastUsedAddressDecimal = (ushort) decimalAddress;
+                LastAddressDecimal = (ushort) decimalAddress;
             }
 
+            if (UnitConverter.HexToBinary(hexContent).Length > 8)
+            {
+                throw new OverflowException("Invalid data to store in memory");
+            }
+            
             memoryBlocksInHexadecimal[decimalAddress] = hexContent;
         }
 
@@ -197,10 +198,10 @@ namespace Assembler.Microprocessor
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("VirtualMemory[");
-            for(int i = 0; i < lastUsedAddressDecimal; i+=2)
+            for(int i = 0; i < LastAddressDecimal; i+=2)
             {
                 builder.Append("\t");
-
+                builder.Append($"{i})  ");
                 builder.Append(memoryBlocksInHexadecimal[i]);
                 builder.Append(" ");
                 builder.Append(memoryBlocksInHexadecimal[i+1]);

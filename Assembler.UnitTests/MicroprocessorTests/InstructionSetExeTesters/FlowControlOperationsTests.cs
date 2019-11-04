@@ -108,8 +108,8 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Assert.AreEqual($"Registers[0,{v1},0,{v2},0,0,0,0]", micro.MicroRegisters.ToString());
 
             // start instruction
-            MCInstructionF3 i1 = new MCInstructionF3(4, "10110", UnitConverter.ByteToBinary(ra));
-            MCInstructionF3 i2 = new MCInstructionF3(4, "10110", UnitConverter.ByteToBinary(rb));
+            MCInstructionF1 i1 = new MCInstructionF1(4, "10110", UnitConverter.ByteToBinary(ra));
+            MCInstructionF1 i2 = new MCInstructionF1(4, "10110", UnitConverter.ByteToBinary(rb));
 
             Console.WriteLine(i1);
             Console.WriteLine(i2);
@@ -450,7 +450,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             //init
             micro.StackPointer = 100;
             micro.ProgramCounter = 12;
-            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            micro.WriteToMemory(100, "FF");
             MCInstructionF3 i1 = new MCInstructionF3(30, "11110", "010");
             ushort SPNewValue = 98;
 
@@ -458,7 +458,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(i1, micro);
 
             Assert.AreEqual(SPNewValue, micro.StackPointer);
-            Assert.AreEqual("0C", micro.MicroVirtualMemory.GetContentsInHex(micro.StackPointer));
+            Assert.AreEqual("0C", micro.ReadFromMemory(micro.StackPointer));
             Assert.AreEqual(micro.ProgramCounter, (ushort)UnitConverter.HexToInt(i1.AddressParamHex));
         }
 
@@ -468,7 +468,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             //init
             micro.StackPointer = 100;
             micro.ProgramCounter = 12;
-            micro.MicroVirtualMemory.SetContentInMemory(100, "FF");
+            micro.WriteToMemory(100, "FF");
             MCInstructionF3 i1 = new MCInstructionF3(31, "11111", null);
             ushort SPNewValue = 102;
 
