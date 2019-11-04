@@ -1,4 +1,5 @@
 ﻿using Assembler.Core.Microprocessor.IO;
+using Assembler.Microprocessor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,10 +14,19 @@ namespace Assembler.Core.Microprocessor
 
         private short _deviceId = 0;
 
+        private int _maxPort;
+
         public short ConnectedDevices => (short) _devicesAndIds.Count;
+
+        public IOManager(int maxPort)
+        {
+            _maxPort = maxPort;
+        }
 
         public void AddIODevice(short port, IIODevice device)
         {
+            IsValidPort(port, device);
+
             _devicesAndIds.Add(_deviceId, device);
 
             for(short i = 0; i < device.IOPortLength; i++)
@@ -45,9 +55,16 @@ namespace Assembler.Core.Microprocessor
 
             return false;
         }
-
+        
+        /// <summary>
+        /// Contents returned in Hexadeciml
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns>hexadecimal data representation</returns>
         public string ReadFromIO(short port)
         {
+            IsValidPort(port, null);
+
             if (_portsAndDevices.TryGetValue(port, out short deviceId))
             {
                 return _devicesAndIds[deviceId].ReadFromPort(port);
@@ -58,6 +75,8 @@ namespace Assembler.Core.Microprocessor
 
         public bool WriteToIO(short port, string contentInHex)
         {
+            IsValidPort(port, null);
+
             if (_portsAndDevices.TryGetValue(port, out short deviceId))
             {
                 _devicesAndIds[deviceId].WriteInPort(port, contentInHex);
@@ -72,6 +91,20 @@ namespace Assembler.Core.Microprocessor
         {
             return _portsAndDevices.ContainsKey((short) port);
         }
+
+        private void IsValidPort(short port, IIODevice device)
+        {
+            if (port < 0 || port > _maxPort)
+            {
+                throw new OverflowException($"Invalid port address: {port} (0x{Convert.ToString(port, 16).PadLeft(3, '0').ToUpper()}), for '{device.DeviceName}'.");
+            }
+
+            if (port + device?.IOPortLength >= _maxPort)
+            {
+                throw new OverflowException($"Invalid port address: {port} (0x{Convert.ToString(port, 16).PadLeft(3, '0').ToUpper()}), for '{device.DeviceName}'. " +
+                    $"This device requires {device.IOPortLength} ports to work properly.");
+            }
+        } 
 
         public override string ToString()
         {

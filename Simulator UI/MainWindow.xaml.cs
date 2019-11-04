@@ -1,5 +1,5 @@
-﻿using Assembler.Core.Microprocessor.IO;
-using Assembler.Core.Microprocessor;
+﻿using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
@@ -24,17 +24,26 @@ namespace Simulator_UI
 {
     public partial class MainWindow : Window
     {
+        private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
+
         private MicroSimulator micro;
+        private IOManager ioManager;
         private VirtualMemory vm;
-        private ASCII_Display display;
+
         private bool stopRun;
 
         private string[] lines;
 
+
         public MainWindow()
         {
             InitializeComponent();
+
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
+            
+            Init();
+
+            UpdateInstructionBox();
         }
 
         private void Init()
@@ -42,11 +51,17 @@ namespace Simulator_UI
             //UI Elements
             stopRun = true;
 
+            if (lines == null) return;
+
             //Micro simulator setup
             vm = new VirtualMemory(lines);
 
-            micro = new MicroSimulator(vm);
-            display = new ASCII_Display(vm);
+            ioManager = new IOManager(vm.VirtualMemorySize);
+
+            micro = new MicroSimulator(vm, ioManager);
+
+            SetIOs();
+
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
 
@@ -62,6 +77,7 @@ namespace Simulator_UI
 
                 stackPointerStart.Text = micro.StackPointer.ToString();
             }
+
         }
 
         private void LoadMemory()
@@ -97,15 +113,15 @@ namespace Simulator_UI
 
             for (int i = 1; i < 8; i++)
             {
-                registersBox.Items.Add($"R{i}: {micro.MicroRegisters.GetRegisterValue((byte)i)}");
+                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i)}");
             }
         }
 
         private void UpdateInstructionBox()
         {
             instructionsBox.Items.Clear();
-            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -136,13 +152,12 @@ namespace Simulator_UI
                     Dispatcher.Invoke(() =>
                     {
                         UpdateInstructionBox();
-
+                    
                         LoadMemory();
 
                         UpdateRegisters();
 
                         instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
-                        Update_ASCII_Display(display);
                     });
                 }
             }).Start();
@@ -161,11 +176,9 @@ namespace Simulator_UI
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
-            UpdateInstructionBox();
-
             Init();
-            ResetASCII_Display();
-            Console.WriteLine(display);
+
+            UpdateInstructionBox();
         }
 
 
@@ -203,36 +216,20 @@ namespace Simulator_UI
             {
                 MessageBox.Show("Load an Object file before trying to execute instructions.");
                 return;
+
             }
+
+            MessageBox.Show(ioManager.ToString());
 
             micro.NextInstruction();
 
             UpdateInstructionBox();
 
             LoadMemory();
-
+            
             UpdateRegisters();
 
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
-
-            Update_ASCII_Display(display);
-        }
-
-        private void Update_ASCII_Display(ASCII_Display display)
-        {
-            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
-            int[] actives = display.ActiveCharactersIndexes();
-            int[] inactives = display.InactiveCharactersIndexes();
-
-            foreach (int i in actives)
-            {
-                ascii_display[i].Background = Brushes.White;
-            }
-            foreach (int i in inactives)
-            {
-                ascii_display[i].Background = Brushes.Black;
-            }
-
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
@@ -248,15 +245,50 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
-        private void ResetASCII_Display()
+        private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
-
-            foreach (TextBox i in ascii_display)
+            if (ioManager == null)
             {
-                i.Background = Brushes.White;
+                cbHexkeyboard.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return;
             }
 
+            if (cbHexkeyboard.IsChecked == false)
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
+            }
+
+            IOHexKeyboardUI hexKeyboardUI = new IOHexKeyboardUI(ioManager);
+
+            hexKeyboardUI.Activate();
+
+            hexKeyboardUI.Show();
+
+            _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, hexKeyboardUI);
+        }
+
+        private void Unchecked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
+        private void SetIOs()
+        {
+            Checked_IOHexaKeyBoard(null, null);
         }
     }
 }

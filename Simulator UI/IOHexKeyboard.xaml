@@ -1,0 +1,45 @@
+﻿<Window x:Class="Simulator_UI.IOHexKeyboardUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simulator_UI"
+        mc:Ignorable="d"
+        Title="IOHexKeyboard" Height="446" Width="430" WindowStyle="None" ResizeMode="CanMinimize">
+    <Grid Background="Black">
+        <Button Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="81" Width="95"    Click="Button_Click" Margin="27,82,0,0"/>
+        <Button Content="1" HorizontalAlignment="Left" Margin="121,82,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="2" HorizontalAlignment="Left" Margin="215,82,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="3" HorizontalAlignment="Left" Margin="309,82,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click" />
+        <Button Content="4" HorizontalAlignment="Left" Margin="27,161,0,0" VerticalAlignment="Top" Height="81" Width="95"     Click="Button_Click"/>
+        <Button Content="4" HorizontalAlignment="Left" Margin="27,161,0,0" VerticalAlignment="Top" Height="81" Width="95"     Click="Button_Click"/>
+        <Button Content="5" HorizontalAlignment="Left" Margin="121,161,0,0" VerticalAlignment="Top" Height="81" Width="95"   Click="Button_Click"/>
+        <Button Content="6" HorizontalAlignment="Left" Margin="215,161,0,0" VerticalAlignment="Top" Height="81" Width="95"   Click="Button_Click"/>
+        <Button Content="7" HorizontalAlignment="Left" Margin="309,161,0,0" VerticalAlignment="Top" Height="81" Width="95"   Click="Button_Click" />
+        <Button Content="8" HorizontalAlignment="Left" Margin="27,242,0,0" VerticalAlignment="Top" Height="81" Width="95"    Click="Button_Click"/>
+        <Button Content="9" HorizontalAlignment="Left" Margin="121,242,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="A" HorizontalAlignment="Left" Margin="215,242,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="B" HorizontalAlignment="Left" Margin="309,242,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="C" HorizontalAlignment="Left" Margin="27,322,0,0" VerticalAlignment="Top" Height="81" Width="95"    Click="Button_Click" />
+        <Button Content="D" HorizontalAlignment="Left" Margin="121,322,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click" />
+        <Button Content="E" HorizontalAlignment="Left" Margin="215,322,0,0" VerticalAlignment="Top" Height="81" Width="95"  Click="Button_Click"/>
+        <Button Content="F" Margin="309,322,0,0"  Click="Button_Click" Height="81" VerticalAlignment="Top" HorizontalAlignment="Left" Width="95"/>
+        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="24,31,0,0" VerticalAlignment="Top" Width="107" Background="Black" FontSize="14"/>
+        <TextBox Name="tbPort" Margin="123,31,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
+                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14" AcceptsReturn="True" 
+                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
+        <ToggleButton Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Background" Value="Green"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
+    </Grid>
+</Window>
