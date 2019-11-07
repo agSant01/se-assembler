@@ -56,7 +56,8 @@ namespace Simulator_UI
             //Micro simulator setup
             vm = new VirtualMemory(lines);
 
-            ioManager = new IOManager(vm.VirtualMemorySize);
+            // state the last port for the micro
+            ioManager = new IOManager(vm.VirtualMemorySize - 1);
 
             micro = new MicroSimulator(vm, ioManager);
 
