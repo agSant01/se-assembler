@@ -289,6 +289,11 @@ namespace Simulator_UI
         /// <returns>True if state is valid</returns>
         private bool ValidIDEState(CheckBox cb)
         {
+            if (cb == null)
+            {
+                return false;
+            }
+
             if (ioManager == null)
             {
                 cb.IsChecked = false;
