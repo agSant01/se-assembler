@@ -26,8 +26,10 @@ namespace Simulator_UI
             InitializeComponent();
 
             _ioManager = ioManager;
-
-            MouseDown += delegate { DragMove(); };
+            try
+            {
+                MouseDown += delegate { DragMove(); };
+            } catch(Exception) { }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
