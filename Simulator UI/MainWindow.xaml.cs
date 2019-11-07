@@ -247,16 +247,7 @@ namespace Simulator_UI
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if (ioManager == null)
-            {
-                cbHexkeyboard.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
-
-                return;
-            }
-
-            if (cbHexkeyboard.IsChecked == false)
+            if(!ValidIDEState((CheckBox) sender))
             {
                 return;
             }
@@ -289,6 +280,30 @@ namespace Simulator_UI
         private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
+        }
+
+        /// <summary>
+        /// Helper method for verifying state of the IDE microprocessor and IOManager
+        /// </summary>
+        /// <param name="cb">Checkbox instance</param>
+        /// <returns>True if state is valid</returns>
+        private bool ValidIDEState(CheckBox cb)
+        {
+            if (ioManager == null)
+            {
+                cb.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return false;
+            }
+
+            if (cb.IsChecked == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
