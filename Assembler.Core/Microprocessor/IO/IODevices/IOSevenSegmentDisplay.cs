@@ -16,6 +16,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public byte BufferSize => (byte)1;
 
+        public short IOPort => throw new NotImplementedException();
+
+        public string DeviceName => throw new NotImplementedException();
+
         public bool WriteInPort(int port, string contentInHex)
         {
             _buffer = contentInHex;

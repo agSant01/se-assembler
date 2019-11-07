@@ -1,5 +1,6 @@
 ﻿
 using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Simulator_UI
     public partial class ASCII_DisplayGUI : Window
     {
         private readonly IOManager _ioManager;
-        public ASCII_Display display;
+        public Assembler.Core.Microprocessor.IO.IODevices.ASCII_Display display;
 
         public ASCII_DisplayGUI(IOManager ioManager, VirtualMemory mem,short port)
         {
@@ -45,7 +46,7 @@ namespace Simulator_UI
 
         private void Update_ASCII_Display(ASCII_Display display)
         {
-            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+            /*TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
             int[] actives = display.ActiveCharactersIndexes();
             int[] inactives = display.InactiveCharactersIndexes();
 
@@ -57,17 +58,17 @@ namespace Simulator_UI
             {
                 ascii_display[i].Background = Brushes.Black;
             }
-
+            */
         }
 
         private void ResetASCII_Display()
         {
-            TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
+            /*TextBox[] ascii_display = { a, b, c, d, e, f, g, h };
 
             foreach (TextBox i in ascii_display)
             {
                 i.Background = Brushes.White;
-            }
+            }*/
 
         }
     }

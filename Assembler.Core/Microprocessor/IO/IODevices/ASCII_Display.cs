@@ -25,6 +25,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public byte BufferSize => (byte)_buffer.Count;
 
+        public short IOPort => 88;
+
+        public string DeviceName => "ASCII Display";
+
         public ASCII_Display(VirtualMemory mem)
         {
             //We need to find 8 memory locations in virutal memory to reserve the bytes...
@@ -164,10 +168,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public string[] ReadFromPort(int port)
         {
-            if (HasData)
+            /*if (HasData)
             {
                 return UnitConverter.ByteToBinary(this.characters);
-            }
+            }*/
             string[] def ={$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}"};
             return def;
         }
@@ -181,7 +185,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool WriteInPort(int port, string[] contentInHex)
         {
-                characters = contentInHex;
+               // characters = contentInHex;
             return true;
         }
 
@@ -190,5 +194,14 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return $"ASCII_Display[reserved memory: {String.Join(", ",reserved_addresses)}]";
         }
 
+        public bool WriteInPort(int port, string contentInHex)
+        {
+            throw new NotImplementedException();
+        }
+
+        string IIODevice.ReadFromPort(int port)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
