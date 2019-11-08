@@ -38,7 +38,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             //reserved_addresses = ReserveMemory();
             this.IOPort = port;
             this.characters = new string[8];
-            this.active = new bool[8];
+            //this.active = new bool[8];
         }
 
 

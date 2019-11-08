@@ -42,12 +42,20 @@ namespace Simulator_UI
                 return;
             }
 
-            Button button = (Button) sender;
+           // Button button = (Button) sender;
 
             //string hexChar = button.Content.ToString();
-            string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
+            //string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
             //ADD ASCII DISPLAY HERE
-            
+
+            //if (hexcontent.ToCharArray().Length == 8)
+            //    foreach (char c in hexcontent)
+            //        display?.WriteInPort(port, c);
+            else
+            {
+                MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
+                return;
+            }
             //display = new ASCII_Display();
             //short port = port_number.Text
             //display?.ReadFromPort();
@@ -125,11 +133,17 @@ namespace Simulator_UI
             base.OnClosing(e);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void Button_Click_1(object sender, RoutedEventArgs ev)
         {
+            if(activeButton.IsChecked == false)
+            {
+                MessageBox.Show("Activate IO Device before writing in the ASCII Display", "Inactive IO");
+                return;
+            }
+
+            TextBox[] boxes = { a, b, c, d, e, f, g, h };
+
             Button send = (Button)sender;
-            //if(int.TryParse(port_number.Text, out int port))
-            //display?.WriteInPort( ,user_input.Text.ToString());
 
             // verify if a port was selected
             if (int.TryParse(port_number.Text, out int port))
@@ -148,6 +162,34 @@ namespace Simulator_UI
 
                     send.Background = Brushes.Green;
 
+                    //string hexChar = button.Content.ToString();
+                    string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
+                                                                   //ADD ASCII DISPLAY HERE
+
+                    if (hexcontent.ToCharArray().Length <= 8)
+                    {
+                        foreach (char c in hexcontent)
+                            display?.WriteInPort(port, c.ToString());
+
+                        string[] chars = display.ReadFromPort(port);
+
+                        if(chars.Length > 0)
+                            for(int i = 0; i < chars.Length; i++)
+                            {
+                                boxes[i].Text = chars[i];
+                            }
+                        user_input.Text = "";
+
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
+                        user_input.Text = "";
+                        display = null;
+                        return;
+                    }
+
                 }
                 catch (Exception err)
                 {
@@ -162,7 +204,7 @@ namespace Simulator_UI
             {
                 // no port selected
                 MessageBox.Show("Select a port before activating the IO Device");
-
+                user_input.Text = "";
                 //send.IsEnabled(false);
             }
         }

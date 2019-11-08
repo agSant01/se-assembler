@@ -273,7 +273,7 @@ namespace Simulator_UI
 
             display_GUI.Show();
 
-            _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, display_GUI);
+            _ioDevicesWindows.Add(Display_GUI.DeviceID, display_GUI);
         }
 
         private void Unchecked_IOAsciiDisplay(object sender, RoutedEventArgs e)
