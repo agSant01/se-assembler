@@ -30,7 +30,7 @@ namespace Simulator_UI
         public ASCII_DisplayGUI(IOManager ioManager, VirtualMemory mem,short port)
         {
             _ioManager = ioManager;
-            display = new ASCII_Display(mem);
+            //display = new ASCII_Display(mem);
             InitializeComponent();
         }
 

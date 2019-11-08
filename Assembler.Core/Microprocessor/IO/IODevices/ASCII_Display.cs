@@ -9,32 +9,35 @@ using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
-    public class ASCII_Display: IIODevice
+    public class ASCII_Display : IIODevice
     {
         //private readonly string[] ascii_chars = {"A","B","C","D","E","F","G","H" };
+        private int current_byte = 0;
         private bool[] active;
         private readonly int[] reserved_addresses;
         private readonly byte DEFAULT = 0;
-        private byte[] characters;//these need to be mapped contigously on VirtualMemory
+        private string[] characters;//these need to be mapped contigously on VirtualMemory
         private VirtualMemory mem;
         private Queue<string> _buffer = new Queue<string>();
 
         public short IOPortLength => 8;//bytes
 
-        public bool HasData => _buffer.Count > 0;
+        public bool HasData => characters.Length > 0;
 
         public byte BufferSize => (byte)_buffer.Count;
 
-        public short IOPort => 88;
+        public short IOPort {get;}
 
         public string DeviceName => "ASCII Display";
 
-        public ASCII_Display(VirtualMemory mem)
+      //  public ASCII_Display(VirtualMemory mem)
+        public ASCII_Display(short port)
         {
             //We need to find 8 memory locations in virutal memory to reserve the bytes...
-            this.mem = mem;
-            reserved_addresses = ReserveMemory();
-            this.characters = new byte[8];
+            // this.mem = mem;
+            //reserved_addresses = ReserveMemory();
+            this.IOPort = port;
+            this.characters = new string[8];
             this.active = new bool[8];
         }
 
@@ -73,21 +76,21 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return addresses_to_use;
         }
 
-        public void AddCharacter(int idx, byte b)
-        {
-            if (!IsValidIndex(idx))
-                return;
+        //public void AddCharacter(int idx, byte b)
+        //{
+        //    if (!IsValidIndex(idx))
+        //        return;
 
-            this.characters[idx] = b;
-        }
+        //    this.characters[idx] = b;
+        //}
 
-        public void RemoveCharacter(int idx)
-        {
-            if (!IsValidIndex(idx))
-                return;
+        //public void RemoveCharacter(int idx)
+        //{
+        //    if (!IsValidIndex(idx))
+        //        return;
 
-            this.characters[idx] = DEFAULT;//Sets to default value when deleting
-        }
+        //    this.characters[idx] = DEFAULT;//Sets to default value when deleting
+        //}
 
         private bool IsValidIndex(int idx)
         {
@@ -101,25 +104,25 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (!IsValidIndex(idx))
                 return "";
 
-            byte res = GetByte(idx);
-            if ( res == DEFAULT)
-            {
-                return "";
-            }
+            //byte res = GetByte(idx);
+            //if ( res == DEFAULT)
+            //{
+            //    return "";
+            //}
 
             else
             {
-                return res.ToString();
+                return this.characters[idx];
             }
         }
 
-        public byte GetByte(int idx)
-        {
-            if (!IsValidIndex(idx))
-                return DEFAULT;
+        //public byte GetByte(int idx)
+        //{
+        //    if (!IsValidIndex(idx))
+        //        return DEFAULT;
 
-            return this.characters[idx];
-        }
+        //    return this.characters[idx];
+        //}
 
         public int[] ReservedAddresses()
         {
@@ -132,7 +135,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             //int[] reserved = this.ReservedAddresses();
             for(int i=0; i <characters.Length ; i++)
             {
-                if(characters[i] != DEFAULT)//checks if reserved memory is now in use
+                if(characters[i] != "")//checks if reserved memory is now in use
                     active.Add(i);//add to active index list
             }
 
@@ -152,7 +155,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             //int[] reserved = this.ReservedAddresses();
             for (int i = 0; i < characters.Length; i++)
             {
-                if (characters[i] == DEFAULT)//checks if reserved memory is now in use
+                if (characters[i] == "")//checks if reserved memory is now in use
                     inactive.Add(i);//add to active index list
             }
 
@@ -166,26 +169,47 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return res;
         }
 
+        private bool IsValidPort(int port)
+        {
+            if (port == IOPort || port == IOPort + 7)
+                return true;
+
+            return false;
+        }
+
         public string[] ReadFromPort(int port)
         {
+            if (!IsValidPort(port))
+                throw new ArgumentException($"Invalid port:{port}\n");
             /*if (HasData)
             {
                 return UnitConverter.ByteToBinary(this.characters);
             }*/
-            string[] def ={$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}"};
-            return def;
+            //string[] def ={$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}"};
+            return this.characters;
         }
 
         public bool Reset()
         {
             //_buffer.Clear();
-            this.characters = new byte[8];
+            this.characters = new string[8];
             return true;
         }
 
         public bool WriteInPort(int port, string[] contentInHex)
         {
                // characters = contentInHex;
+            if(!IsValidPort(port))
+            {
+                throw new ArgumentException($"Invalid port:{port}\n");
+                //return false;
+            }
+
+            for(int i=0; i < this.characters.Length;i++ )
+            {
+                this.characters[i] = contentInHex[i];
+            }
+
             return true;
         }
 
@@ -196,12 +220,45 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool WriteInPort(int port, string contentInHex)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            if (!IsValidPort(port))
+                return false;
+            //    throw new ArgumentException($"Invalid port:{port}\n");
+            this.characters[current_byte] = contentInHex;
+            
+            //This will wrap around to the start if end is reached...
+            current_byte = current_byte + 1 % 7;//might need to use 7 instead of 8
+            return true;
+
+            //return true;
         }
+
+        /*string[] IIODevice.ReadFromPort(int port)
+        {
+            //throw new NotImplementedException();
+            if(port == IOPort)
+            {
+                return this.characters;
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid port number {port}");
+            }
+        }*/
 
         string IIODevice.ReadFromPort(int port)
         {
-            throw new NotImplementedException();
+            if (IsValidPort(port))
+            {
+                return this.characters.ToString();//this doesn't make sense because we won't know which character to display in the TextBox
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid port number {port}");
+            }
         }
+
+
     }
 }
