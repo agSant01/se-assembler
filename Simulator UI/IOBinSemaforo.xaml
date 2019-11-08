@@ -1,0 +1,38 @@
+﻿<Window x:Class="Simulator_UI.IOBinSemaforo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simulator_UI"
+        mc:Ignorable="d"
+        Title="IOBinSemaforo" Height="307" Width="383">
+    <Grid Background="#FF252526">
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Margin="117,10,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="116"/>
+
+
+        <ToggleButton Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="272,10,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Background" Value="Green"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+            </ToggleButton.Style>
+        </ToggleButton>
+        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="107" Background="#FF252526" FontSize="14"/>
+        <Rectangle HorizontalAlignment="Left" Height="195" Margin="90,62,0,0" Stroke="Black" VerticalAlignment="Top" Width="82"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="106,78,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="106,134,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="106,190,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+        <Rectangle HorizontalAlignment="Left" Height="195" Margin="211,62,0,0" Stroke="Black" VerticalAlignment="Top" Width="82"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="227,78,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="227,134,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+        <Ellipse HorizontalAlignment="Left" Height="51" Margin="227,190,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
+
+
+    </Grid>
+</Window>
