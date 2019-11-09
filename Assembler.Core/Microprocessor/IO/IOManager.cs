@@ -185,7 +185,7 @@ namespace Assembler.Core.Microprocessor
             {
                 builder.Append("\t");
 
-                builder.Append($"Id: {pair.Key}, Device: {pair.Value.ToString()}");
+                builder.Append($"ID: {pair.Key}, Device: {pair.Value.ToString()}");
 
                 builder.Append("\n");
             }

@@ -1,0 +1,50 @@
+﻿<Window x:Class="Simulator_UI.Display_GUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simulator_UI"
+        mc:Ignorable="d"
+        Title="ASCII Display" Height="446" Width="430" WindowStyle="None" ResizeMode="CanMinimize">
+
+
+    <Grid Background="Black">
+
+        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="24,31,0,0" VerticalAlignment="Top" Width="107" Background="Black" FontSize="14"/>
+        <TextBox Name="port_number" Margin="123,31,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
+                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14" AcceptsReturn="True" 
+                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
+
+        <TextBox Name="user_input" Margin="123,205,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
+                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14" AcceptsReturn="True" 
+                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
+
+        <ToggleButton Name="activeButton"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="303,28,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
+
+            <ToggleButton.Style>
+                <Style TargetType="{x:Type ToggleButton}">
+                    <Setter Property="Background" Value="Green"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked" Value="true">
+                            <Setter Property="Background" Value="Green"/>
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+            </ToggleButton.Style>
+
+        </ToggleButton>
+
+        <TextBox x:Name="a"   HorizontalAlignment="Left" Text="a" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="53,144,0,0"/>
+        <TextBox x:Name="b"   HorizontalAlignment="Left" Text="b" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="91,144,0,0"/>
+        <TextBox x:Name="c"   HorizontalAlignment="Left" Text="c" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="129,144,0,0" />
+        <TextBox x:Name="d"   HorizontalAlignment="Left" Text="d" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="168,144,0,0"/>
+        <TextBox x:Name="e"   HorizontalAlignment="Left" Text="e" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="206,144,0,0"/>
+        <TextBox x:Name="f"   HorizontalAlignment="Left" Text="f" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="245,144,0,0"/>
+        <TextBox x:Name="g"   HorizontalAlignment="Left" Text="g" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="283,144,0,0"/>
+        <TextBox x:Name="h"   Text="h" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" HorizontalAlignment="Left" Width="38" Margin="321,144,0,0"/>
+        <Button Content="Send" HorizontalAlignment="Left" Margin="262,210,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
+
+
+    </Grid>
+</Window>

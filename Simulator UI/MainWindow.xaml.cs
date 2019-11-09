@@ -246,6 +246,47 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
+        private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
+        {
+            if (ioManager == null)
+            {
+                cbAsciiDisplay.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return;
+            }
+
+            if (cbAsciiDisplay.IsChecked == false)
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
+            }
+
+            Display_GUI display_GUI = new Display_GUI(ioManager);
+
+            display_GUI.Activate();
+
+            display_GUI.Show();
+
+            _ioDevicesWindows.Add(Display_GUI.DeviceID, display_GUI);
+        }
+
+        private void Unchecked_IOAsciiDisplay(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
             if(!ValidIDEState((CheckBox) sender))
@@ -278,41 +319,10 @@ namespace Simulator_UI
             }
         }
 
-        private void Checked_IO7SegmentDisplay (object sender, RoutedEventArgs e)
-        {
-            if (!ValidIDEState((CheckBox) sender))
-            {
-                return;
-            }
-
-            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
-            {
-                window.Close();
-                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
-            }
-
-            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow();
-
-            sevenSegmentDisplay.Activate();
-
-            sevenSegmentDisplay.Show();
-
-            _ioDevicesWindows.Add(SevenSegmentDisplay.DeviceID, sevenSegmentDisplay);
-        }
-
-        private void Unchecked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
-        {
-            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
-            {
-                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
-                window.Close();
-                MessageBox.Show("Closed");
-            }
-        }
         private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
-            Checked_IO7SegmentDisplay(null, null);
+            Checked_IOASCIIDisplay(null, null);
         }
 
         /// <summary>
