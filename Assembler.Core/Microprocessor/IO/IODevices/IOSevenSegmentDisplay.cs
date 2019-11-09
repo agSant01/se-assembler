@@ -7,7 +7,12 @@ using System.Text;
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
    public class IOSevenSegmentDisplay : IIODevice
+
     {
+        public short IOPort { get; }
+
+        public string DeviceName => "IO 7-Segment Display";
+
         private string _buffer = string.Empty;
 
         public short IOPortLength => 1;
@@ -27,7 +32,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (HasData)
                 return UnitConverter.HexToBinary(_buffer);
             else
-                return "00000000";
+                return "00";
         }
 
         public bool Reset()

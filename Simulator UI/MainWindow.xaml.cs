@@ -278,9 +278,41 @@ namespace Simulator_UI
             }
         }
 
+        private void Checked_IO7SegmentDisplay (object sender, RoutedEventArgs e)
+        {
+            if (!ValidIDEState((CheckBox) sender))
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
+            }
+
+            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow();
+
+            sevenSegmentDisplay.Activate();
+
+            sevenSegmentDisplay.Show();
+
+            _ioDevicesWindows.Add(SevenSegmentDisplay.DeviceID, sevenSegmentDisplay);
+        }
+
+        private void Unchecked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
         private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
+            Checked_IO7SegmentDisplay(null, null);
         }
 
         /// <summary>
