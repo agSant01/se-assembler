@@ -150,13 +150,17 @@ namespace Simulator_UI
 
             if (hexcontent.ToCharArray().Length <= 8)
             {
+                int i = 0;
                 foreach (char c in hexcontent)
-                    display?.WriteInPort((int)display?.IOPort, c.ToString());
+                {
+                    display?.WriteInPort((int)display?.IOPort +i, c.ToString());
+                    i = i + 1 % 7;//Fixed this, but could be problematic later on
+                }
 
                 string[] chars = display.ReadAllFromPort((int)display?.IOPort);
 
                 if (chars.Length > 0)
-                    for (int i = 0; i < chars.Length; i++)
+                    for ( i = 0; i < chars.Length; i++)
                     {
                         boxes[i].Text = chars[i];
                     }
