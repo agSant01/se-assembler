@@ -145,68 +145,95 @@ namespace Simulator_UI
 
             Button send = (Button)sender;
 
-            // verify if a port was selected
-            if (int.TryParse(port_number.Text, out int port))
+            string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
+                                                           //ADD ASCII DISPLAY HERE
+
+            if (hexcontent.ToCharArray().Length <= 8)
             {
-                // initialize IO Device
-                display = new ASCII_Display((short)port);
+                foreach (char c in hexcontent)
+                    display?.WriteInPort((int)display?.IOPort, c.ToString());
 
-                try
-                {
-                    // try to add to IO Manager
-                    // exception wil be thrown if invalid port is selected
-                    _ioManager.AddIODevice((short)port, display);
+                string[] chars = display.ReadFromPort((int)display?.IOPort);
 
-                    // change text of toggle text
-                    //toggle.Content = "Active";
-
-                    send.Background = Brushes.Green;
-
-                    //string hexChar = button.Content.ToString();
-                    string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
-                                                                   //ADD ASCII DISPLAY HERE
-
-                    if (hexcontent.ToCharArray().Length <= 8)
+                if (chars.Length > 0)
+                    for (int i = 0; i < chars.Length; i++)
                     {
-                        foreach (char c in hexcontent)
-                            display?.WriteInPort(port, c.ToString());
-
-                        string[] chars = display.ReadFromPort(port);
-
-                        if(chars.Length > 0)
-                            for(int i = 0; i < chars.Length; i++)
-                            {
-                                boxes[i].Text = chars[i];
-                            }
-                        user_input.Text = "";
-
+                        boxes[i].Text = chars[i];
                     }
+                user_input.Text = "";
 
-                    else
-                    {
-                        MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
-                        user_input.Text = "";
-                        display = null;
-                        return;
-                    }
-
-                }
-                catch (Exception err)
-                {
-                    // error message
-                    MessageBox.Show(err.Message, "Error assigning port.");
-                    //toggle.IsChecked = false;
-                    user_input.Text = "";
-                    display = null;
-                }
             }
+
             else
             {
-                // no port selected
-                MessageBox.Show("Select a port before activating the IO Device");
+                MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
                 user_input.Text = "";
-                //send.IsEnabled(false);
+                display = null;
+                return;
             }
+
+            //// verify if a port was selected
+            //if (int.TryParse(port_number.Text, out int port))
+            //{
+            //    // initialize IO Device
+            //    display = new ASCII_Display((short)port);
+
+            //    try
+            //    {
+            //        // try to add to IO Manager
+            //        // exception wil be thrown if invalid port is selected
+            //        _ioManager.AddIODevice((short)port, display);
+
+            //        // change text of toggle text
+            //        //toggle.Content = "Active";
+
+            //        send.Background = Brushes.Green;
+
+            //        //string hexChar = button.Content.ToString();
+            //        string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
+            //                                                       //ADD ASCII DISPLAY HERE
+
+            //        if (hexcontent.ToCharArray().Length <= 8)
+            //        {
+            //            foreach (char c in hexcontent)
+            //                display?.WriteInPort(port, c.ToString());
+
+            //            string[] chars = display.ReadFromPort(port);
+
+            //            if(chars.Length > 0)
+            //                for(int i = 0; i < chars.Length; i++)
+            //                { 
+            //                    boxes[i].Text = chars[i];
+            //                }
+            //            user_input.Text = "";
+
+            //        }
+
+            //        else
+            //        {
+            //            MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
+            //            user_input.Text = "";
+            //            display = null;
+            //            return;
+            //        }
+
+            //    }
+            //    catch (Exception err)
+            //    {
+            //        // error message
+            //        MessageBox.Show(err.Message, "Error assigning port.");
+            //        //toggle.IsChecked = false;
+            //        user_input.Text = "";
+            //        display = null;
+            //    }
+            //}
+            //else
+            //{
+            //    // no port selected
+            //    MessageBox.Show("Select a port before activating the IO Device");
+            //    user_input.Text = "";
+            //    //send.IsEnabled(false);
+            //}
         }
     }
 }

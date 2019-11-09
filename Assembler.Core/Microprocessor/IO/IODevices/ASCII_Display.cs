@@ -171,7 +171,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         private bool IsValidPort(int port)
         {
-            if (port == IOPort || port == IOPort + 7)
+            if (port == IOPort || port == IOPort + 1  || port == IOPort + 2 || port == IOPort + 3 || port == IOPort + 4 || port==IOPort + 5 || port == IOPort + 6 || port == IOPort + 7)
                 return true;
 
             return false;
@@ -196,6 +196,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return true;
         }
 
+        /*
         public bool WriteInPort(int port, string[] contentInHex)
         {
                // characters = contentInHex;
@@ -211,6 +212,17 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             }
 
             return true;
+        }*/
+
+        private int ConvertPortToIndex(short port)
+        {
+            if (!IsValidPort(port))
+                throw new ArgumentException($"Invalid port number {port}");
+
+            else
+            {
+                return port % IOPort; //Returns index corresponding to appropriate character
+            }
         }
 
         public override string ToString()
@@ -225,10 +237,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (!IsValidPort(port))
                 return false;
             //    throw new ArgumentException($"Invalid port:{port}\n");
-            this.characters[current_byte] = contentInHex;
+            this.characters[ConvertPortToIndex((short)port)] = contentInHex;
             
             //This will wrap around to the start if end is reached...
-            current_byte = current_byte + 1 % 7;//might need to use 7 instead of 8
+            //current_byte = current_byte + 1 % 7;//might need to use 7 instead of 8
             return true;
 
             //return true;
@@ -251,7 +263,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (IsValidPort(port))
             {
-                return this.characters.ToString();//this doesn't make sense because we won't know which character to display in the TextBox
+                return this.characters[ConvertPortToIndex((short)port)];//this doesn't make sense because we won't know which character to display in the TextBox
             }
             else
             {
