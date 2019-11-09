@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
-using Assembler.Core.IO_Devices;
+using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Utils;
 
@@ -19,12 +19,12 @@ namespace Assembler.UnitTests.IO_DevicesTests
         [TestInitialize]
         public void TestInit()
         {
-            string[] lines = manager.ToReadFile("C:\\Users\\Alejandro Natal\\Documents\\" +
-                                                "GitHub\\se-assembler\\Assembler.UnitTests" +
-                                                "\\CompilerTests\\AssemblyFiles\\assembly_test.txt");
-            //string[] lines = { };
-            mem = new VirtualMemory(lines);
-            display = new ASCII_Display(mem);
+            //string[] lines = manager.ToReadFile("C:\\Users\\Alejandro Natal\\Documents\\" +
+            //                                    "GitHub\\se-assembler\\Assembler.UnitTests" +
+            //                                    "\\CompilerTests\\AssemblyFiles\\assembly_test.txt");
+            ////string[] lines = { };
+            //mem = new VirtualMemory(lines);
+            //display = new ASCII_Display(mem);
 
         }
 

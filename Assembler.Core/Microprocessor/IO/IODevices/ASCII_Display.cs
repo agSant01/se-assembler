@@ -177,10 +177,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return false;
         }
 
-        public string[] ReadFromPort(int port)
+        public string[] ReadAllFromPort(int port)
         {
             if (!IsValidPort(port))
-                throw new ArgumentException($"Invalid port:{port}\n");
+                throw new ArgumentException($"Invalid port \n");
             /*if (HasData)
             {
                 return UnitConverter.ByteToBinary(this.characters);
@@ -217,7 +217,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         private int ConvertPortToIndex(short port)
         {
             if (!IsValidPort(port))
-                throw new ArgumentException($"Invalid port number {port}");
+                throw new ArgumentException($"Invalid port \n");
 
             else
             {
@@ -227,7 +227,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public override string ToString()
         {
-            return $"ASCII_Display[reserved memory: {String.Join(", ",reserved_addresses)}]";
+            return $"ASCII_Display[characters: {String.Join(", ",characters)}]";
         }
 
         public bool WriteInPort(int port, string contentInHex)
@@ -259,7 +259,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             }
         }*/
 
-        string IIODevice.ReadFromPort(int port)
+        public string ReadFromPort(int port)
         {
             if (IsValidPort(port))
             {
@@ -267,10 +267,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             }
             else
             {
-                throw new ArgumentException($"Invalid port number {port}");
+                throw new ArgumentException($"Invalid port \n");
             }
         }
 
-
+        string IIODevice.ReadFromPort(int port)
+        {
+           return ReadFromPort(port);
+        }
     }
 }

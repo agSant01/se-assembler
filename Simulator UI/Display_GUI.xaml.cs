@@ -153,7 +153,7 @@ namespace Simulator_UI
                 foreach (char c in hexcontent)
                     display?.WriteInPort((int)display?.IOPort, c.ToString());
 
-                string[] chars = display.ReadFromPort((int)display?.IOPort);
+                string[] chars = display.ReadAllFromPort((int)display?.IOPort);
 
                 if (chars.Length > 0)
                     for (int i = 0; i < chars.Length; i++)
