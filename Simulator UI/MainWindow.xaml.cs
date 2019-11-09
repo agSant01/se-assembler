@@ -56,7 +56,8 @@ namespace Simulator_UI
             //Micro simulator setup
             vm = new VirtualMemory(lines);
 
-            ioManager = new IOManager(vm.VirtualMemorySize);
+            // state the last port for the micro
+            ioManager = new IOManager(vm.VirtualMemorySize - 1);
 
             micro = new MicroSimulator(vm, ioManager);
 
@@ -288,16 +289,7 @@ namespace Simulator_UI
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if (ioManager == null)
-            {
-                cbHexkeyboard.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
-
-                return;
-            }
-
-            if (cbHexkeyboard.IsChecked == false)
+            if(!ValidIDEState((CheckBox) sender))
             {
                 return;
             }
@@ -333,6 +325,33 @@ namespace Simulator_UI
             Checked_IOASCIIDisplay(null, null);
         }
 
-       
+        /// <summary>
+        /// Helper method for verifying state of the IDE microprocessor and IOManager
+        /// </summary>
+        /// <param name="cb">Checkbox instance</param>
+        /// <returns>True if state is valid</returns>
+        private bool ValidIDEState(CheckBox cb)
+        {
+            if (cb == null)
+            {
+                return false;
+            }
+
+            if (ioManager == null)
+            {
+                cb.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return false;
+            }
+
+            if (cb.IsChecked == false)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
