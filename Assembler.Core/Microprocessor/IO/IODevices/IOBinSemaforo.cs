@@ -4,40 +4,55 @@ using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
-    class IOBinSemaforo: IIODevice
+    public class IOBinSemaforo: IIODevice , IObservable<char[]>
     {
         public short IOPort { get; }
 
         public short IOPortLength => 1;
 
-        public bool HasData => _bitContent == null;
+        public bool HasData => BitContent == null;
 
         public string DeviceName => "IO Bin Semaforo";
 
-        private char[] _bitContent;
+        private string content = "";
+
+        public char[] BitContent { get; set; }
+
+        public Action GotBinContent;
 
         public IOBinSemaforo(short ioPort)
         {
             IOPort = ioPort;
         }
 
-
         public bool WriteInPort(int port, string contentInHex)
         {
             string binVal = Utils.UnitConverter.HexToBinary(contentInHex);
-            _bitContent = binVal.ToCharArray();
+            BitContent = binVal.ToCharArray();
+            content = contentInHex;
+            GotBinContent();
             return true;
         }
 
         public bool Reset()
         {
-            _bitContent = null;
+            BitContent = null;
             return true;
         }
 
         public string ReadFromPort(int port)
         {
             throw new InvalidOperationException("Invalid call on a write only device");
+        }
+
+        public IDisposable Subscribe(IObserver<char[]> observer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            return $"IOBinSemaforo[port: {IOPort}, binary content: {content}]";
         }
     }
 }
