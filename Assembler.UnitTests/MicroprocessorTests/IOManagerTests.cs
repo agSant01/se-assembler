@@ -15,7 +15,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         [TestMethod]
         public void IOManagerTests_AddAnIODevice_Success()
         {
-            IOManager io = new IOManager();
+            IOManager io = new IOManager(100);
 
             io.AddIODevice(80, new Device() { Id = 1 });
             io.AddIODevice(82, new Device() { Id = 2 });
@@ -32,7 +32,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         [TestMethod]
         public void IOManagerTests_WriteToIODevice_Success()
         {
-            IOManager io = new IOManager();
+            IOManager io = new IOManager(100);
 
             Device d1 = new Device() { Id = 1 };
             Device d2 = new Device() { Id = 2 };
@@ -68,6 +68,10 @@ namespace Assembler.UnitTests.MicroprocessorTests
         short IIODevice.IOPortLength => 1;
 
         bool IIODevice.HasData => true;
+
+        public short IOPort => throw new NotImplementedException();
+
+        public string DeviceName => throw new NotImplementedException();
 
         string IIODevice.ReadFromPort(int port)
         {

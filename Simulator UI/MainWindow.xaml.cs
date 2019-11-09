@@ -1,4 +1,5 @@
-﻿using Assembler.Core.Microprocessor.IO.IODevices;
+﻿using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
@@ -23,30 +24,26 @@ namespace Simulator_UI
 {
     public partial class MainWindow : Window
     {
+        private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
+
         private MicroSimulator micro;
+        private IOManager ioManager;
         private VirtualMemory vm;
+
         private bool stopRun;
-        private System.Windows.Threading.DispatcherTimer sevenSegmentDisplayTimer;
+
         private string[] lines;
+
 
         public MainWindow()
         {
             InitializeComponent();
+
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
+            
+            Init();
 
-            sevenSegmentDisplayTimer = new System.Windows.Threading.DispatcherTimer();
-            sevenSegmentDisplayTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            sevenSegmentDisplayTimer.Tick += sevenSegmentDisplayTimer_Tick;
-        }
-
-        private void sevenSegmentDisplayTimer_Tick(object sender, EventArgs e)
-        {
-            if(micro != null)
-            {
-                //micro.WriteToMemory(MicroSimulator.SEGMENT_IO_PORT, "F6");
-                var binary = micro.ReadFromMemory(MicroSimulator.SEGMENT_IO_PORT);
-                SegmentDisplay.SetBinaryNumber(binary);
-            }
+            UpdateInstructionBox();
         }
 
         private void Init()
@@ -54,14 +51,17 @@ namespace Simulator_UI
             //UI Elements
             stopRun = true;
 
+            if (lines == null) return;
+
             //Micro simulator setup
             vm = new VirtualMemory(lines);
 
-            micro = new MicroSimulator(vm);
-            micro.AddDevice(MicroSimulator.SEGMENT_IO_PORT, new IOSevenSegmentDisplay());
+            // state the last port for the micro
+            ioManager = new IOManager(vm.VirtualMemorySize - 1);
 
-            sevenSegmentDisplayTimer.Stop();
-            sevenSegmentDisplayTimer.Start();
+            micro = new MicroSimulator(vm, ioManager);
+
+            SetIOs();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
@@ -78,6 +78,7 @@ namespace Simulator_UI
 
                 stackPointerStart.Text = micro.StackPointer.ToString();
             }
+
         }
 
         private void LoadMemory()
@@ -113,15 +114,15 @@ namespace Simulator_UI
 
             for (int i = 1; i < 8; i++)
             {
-                registersBox.Items.Add($"R{i}: {micro.MicroRegisters.GetRegisterValue((byte)i)}");
+                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i)}");
             }
         }
 
         private void UpdateInstructionBox()
         {
             instructionsBox.Items.Clear();
-            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -176,10 +177,11 @@ namespace Simulator_UI
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
-            UpdateInstructionBox();
-
             Init();
+
+            UpdateInstructionBox();
         }
+
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -215,7 +217,10 @@ namespace Simulator_UI
             {
                 MessageBox.Show("Load an Object file before trying to execute instructions.");
                 return;
+
             }
+
+            MessageBox.Show(ioManager.ToString());
 
             micro.NextInstruction();
 
@@ -241,6 +246,70 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
+        private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        {
+            if(!ValidIDEState((CheckBox) sender))
+            {
+                return;
+            }
 
+            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
+            }
+
+            IOHexKeyboardUI hexKeyboardUI = new IOHexKeyboardUI(ioManager);
+
+            hexKeyboardUI.Activate();
+
+            hexKeyboardUI.Show();
+
+            _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, hexKeyboardUI);
+        }
+
+        private void Unchecked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
+        private void SetIOs()
+        {
+            Checked_IOHexaKeyBoard(null, null);
+        }
+
+        /// <summary>
+        /// Helper method for verifying state of the IDE microprocessor and IOManager
+        /// </summary>
+        /// <param name="cb">Checkbox instance</param>
+        /// <returns>True if state is valid</returns>
+        private bool ValidIDEState(CheckBox cb)
+        {
+            if (cb == null)
+            {
+                return false;
+            }
+
+            if (ioManager == null)
+            {
+                cb.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return false;
+            }
+
+            if (cb.IsChecked == false)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

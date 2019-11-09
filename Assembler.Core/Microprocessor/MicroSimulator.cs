@@ -29,7 +29,7 @@ namespace Assembler.Microprocessor
 
             _mcLoader = new MCLoader(virtualMemory, this);
 
-            _ioManager = new IOManager();
+            _ioManager = new IOManager(_virtualMemory.VirtualMemorySize);
         }
 
         public MicroSimulator(VirtualMemory virtualMemory, IOManager iOManager) 
