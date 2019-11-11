@@ -40,7 +40,7 @@ namespace Simulator_UI
             InitializeComponent();
 
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
-            
+
             Init();
 
             UpdateInstructionBox();
@@ -153,7 +153,7 @@ namespace Simulator_UI
                     Dispatcher.Invoke(() =>
                     {
                         UpdateInstructionBox();
-                    
+
                         LoadMemory();
 
                         UpdateRegisters();
@@ -227,7 +227,7 @@ namespace Simulator_UI
             UpdateInstructionBox();
 
             LoadMemory();
-            
+
             UpdateRegisters();
 
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
@@ -352,6 +352,54 @@ namespace Simulator_UI
             }
 
             return true;
+            cbTrafficLight_Checked(null,null);
+        }
+
+        private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ioManager == null)
+            {
+                cbTrafficLight.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return;
+            }
+
+            if (cbTrafficLight.IsChecked == false)
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
+            }
+
+            IOBinSemaforoUI semaforo = new IOBinSemaforoUI(ioManager);
+
+            semaforo.Activate();
+
+            semaforo.Show();
+
+            _ioDevicesWindows.Add(IOBinSemaforoUI.DeviceID, semaforo);
+        }
+        private void cbTrafficLight_Unhecked(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            foreach (Window w in _ioDevicesWindows.Values)
+                w.Close();
+            base.OnClosed(e);
         }
     }
 }
