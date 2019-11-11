@@ -83,7 +83,13 @@ namespace Simulator_UI
                     // try to add to IO Manager
                     // exception wil be thrown if invalid port is selected
                     _ioManager.AddIODevice((short)port, display);
-
+                    _ioManager.AddIODevice((short)(port + 1), display);
+                    _ioManager.AddIODevice((short)(port + 2), display);
+                    _ioManager.AddIODevice((short)(port + 3), display);
+                    _ioManager.AddIODevice((short)(port + 4), display);
+                    _ioManager.AddIODevice((short)(port + 5), display);
+                    _ioManager.AddIODevice((short)(port + 6), display);
+                    _ioManager.AddIODevice((short)(port + 7), display);
                     // change text of toggle text
                     toggle.Content = "Active";
 
@@ -120,6 +126,19 @@ namespace Simulator_UI
             if (display != null)
             {
                 _ioManager?.RemoveIODevice(display.IOPort);
+                _ioManager?.RemoveIODevice((short)(display.IOPort+1));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 2));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 3));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 4));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 5));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 6));
+
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 7));
             }
         }
 
@@ -133,6 +152,9 @@ namespace Simulator_UI
             base.OnClosing(e);
         }
 
+
+
+        /*
         private void Button_Click_1(object sender, RoutedEventArgs ev)
         {
             if(activeButton.IsChecked == false)
@@ -238,6 +260,6 @@ namespace Simulator_UI
             //    user_input.Text = "";
             //    //send.IsEnabled(false);
             //}
-        }
+        }*/
     }
 }
