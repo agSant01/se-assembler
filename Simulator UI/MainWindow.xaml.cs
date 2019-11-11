@@ -322,6 +322,7 @@ namespace Simulator_UI
         private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
+            cbTrafficLight_Checked(null, null);
             Checked_IOASCIIDisplay(null, null);
         }
 
@@ -354,7 +355,6 @@ namespace Simulator_UI
             return true;
             cbTrafficLight_Checked(null,null);
         }
-
         private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
         {
             if (ioManager == null)
@@ -393,6 +393,35 @@ namespace Simulator_UI
                 window.Close();
                 MessageBox.Show("Closed");
             }
+        }
+
+        /// <summary>
+        /// Helper method for verifying state of the IDE microprocessor and IOManager
+        /// </summary>
+        /// <param name="cb">Checkbox instance</param>
+        /// <returns>True if state is valid</returns>
+        private bool ValidIDEState(CheckBox cb)
+        {
+            if (cb == null)
+            {
+                return false;
+            }
+
+            if (ioManager == null)
+            {
+                cb.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return false;
+            }
+
+            if (cb.IsChecked == false)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         protected override void OnClosed(EventArgs e)
