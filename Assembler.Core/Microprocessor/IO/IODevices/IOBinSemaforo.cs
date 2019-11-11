@@ -10,7 +10,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public short IOPortLength => 1;
 
-        public bool HasData => BitContent == null;
+        public bool HasData => BitContent != null;
 
         public string DeviceName => "IO Bin Semaforo";
 
@@ -20,9 +20,19 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public Action GotBinContent;
 
+        private bool _debug;
+
         public IOBinSemaforo(short ioPort)
         {
             IOPort = ioPort;
+            _debug = false;
+        }
+
+        public IOBinSemaforo(short ioPort, string debug)
+        {
+            IOPort = ioPort;
+            if(debug == "#Debug")
+                _debug = true; 
         }
 
         public bool WriteInPort(int port, string contentInHex)
@@ -30,7 +40,8 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             string binVal = Utils.UnitConverter.HexToBinary(contentInHex);
             BitContent = binVal.ToCharArray();
             content = contentInHex;
-            GotBinContent();
+            if(!_debug)
+                GotBinContent();
             return true;
         }
 
