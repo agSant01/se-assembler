@@ -331,5 +331,12 @@ namespace Simulator_UI
                 MessageBox.Show("Closed");
             }
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            foreach (Window w in _ioDevicesWindows.Values)
+                w.Close();
+            base.OnClosed(e);
+        }
     }
 }
