@@ -83,13 +83,7 @@ namespace Simulator_UI
                     // try to add to IO Manager
                     // exception wil be thrown if invalid port is selected
                     _ioManager.AddIODevice((short)port, display);
-                    _ioManager.AddIODevice((short)(port + 1), display);
-                    _ioManager.AddIODevice((short)(port + 2), display);
-                    _ioManager.AddIODevice((short)(port + 3), display);
-                    _ioManager.AddIODevice((short)(port + 4), display);
-                    _ioManager.AddIODevice((short)(port + 5), display);
-                    _ioManager.AddIODevice((short)(port + 6), display);
-                    _ioManager.AddIODevice((short)(port + 7), display);
+                    
                     // change text of toggle text
                     toggle.Content = "Active";
 
