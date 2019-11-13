@@ -86,8 +86,6 @@ namespace Simulator_UI
         {
             memoryBox.Items.Clear();
 
-            memoryBox.Items.Add($"Address\t| EvenColumn\t| OddColumn");
-
             if (!int.TryParse(memorySizeBox.Text, out int lines))
             {
                 MessageBox.Show("Invalid number of memory blocks to show. Setting default to 50.", "Invalid Input");
@@ -97,7 +95,7 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{i}\t : \t{vm.GetContentsInHex(i)}\t| \t{vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth:3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
             }
         }
 
