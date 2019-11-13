@@ -96,7 +96,7 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{i}) {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{i}\t : \t{vm.GetContentsInHex(i)}\t| \t{vm.GetContentsInHex(i + 1)}");
             }
         }
 
@@ -123,6 +123,7 @@ namespace Simulator_UI
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
             instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction: {GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -179,6 +180,7 @@ namespace Simulator_UI
 
             Init();
 
+            instructionsBox.Items.Clear();
             UpdateInstructionBox();
         }
 
