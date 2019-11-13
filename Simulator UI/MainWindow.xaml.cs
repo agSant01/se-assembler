@@ -34,6 +34,7 @@ namespace Simulator_UI
 
         private string[] lines;
 
+        private string currFileName;
 
         public MainWindow()
         {
@@ -122,8 +123,8 @@ namespace Simulator_UI
         {
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
-            instructionsBox.Items.Add($"Next Instruction: {GetPrettyInstruction(micro?.PeekNextInstruction())}");
+            instructionsBox.Items.Add($"Current Instruction:  {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction:     {GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -199,6 +200,8 @@ namespace Simulator_UI
             {
                 try
                 {
+                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
+
                     fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
                     statusLabel.Content = "Status: File Loaded";
                 }
@@ -433,6 +436,43 @@ namespace Simulator_UI
             foreach (Window w in _ioDevicesWindows.Values)
                 w.Close();
             base.OnClosed(e);
+        }
+
+        private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
+        {
+            if (vm == null)
+            {
+                MessageBox.Show("Cannot export Memory Map if no Object file is uploaded.", "Invalid IDE State");
+
+                return;
+            }
+
+            string[] virtualMemoryState = vm.ExportVirtualMemory();
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_VM_MemoryMap.txt",
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, virtualMemoryState);
+
+                MessageBox.Show($"Exported Virtual Memory Map to: {saveFileDialog.FileName}.", "Exported successfuly");
+            } else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
+            }
         }
     }
 }
