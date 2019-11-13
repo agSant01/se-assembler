@@ -1,72 +1,58 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
-using Assembler.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for SevenSegmentWindow.xaml
     /// </summary>
-    public partial class IOHexKeyboardUI : Window
+    public partial class SevenSegmentWindow : Window
     {
         private readonly IOManager _ioManager;
+        public IOSevenSegmentDisplay SegmentDisplay { get; private set; }
 
-        public IOHexKeyboard Keyboard { get; private set; }
-
-        public readonly static string DeviceID = "V8dv83";
-
-        public IOHexKeyboardUI(IOManager ioManager)
+        public SevenSegmentWindow(IOManager ioManager)
         {
             InitializeComponent();
-
             _ioManager = ioManager;
-            try
-            {
-                MouseDown += delegate { DragMove(); };
-            } catch(Exception) { }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void UpdateDisplay()
         {
-            if (activeToggle.IsChecked == false)
+            if(SegmentDisplay != null)
             {
-                MessageBox.Show("Activate IO Device before writing in the Keyboard", "Inactive IO");
-                return;
+                Display.SetBinaryNumber(SegmentDisplay.Data);
             }
-
-            Button button = (Button) sender;
-
-            string hexChar = button.Content.ToString();
-
-            Keyboard?.KeyPress(hexChar);
         }
 
-        /// <summary>
-        /// Activate device and register in IOManager
-        /// </summary>
-        /// <param name="sender">UI Object</param>
-        /// <param name="e"></param>
         private void Toggle_Activate(object sender, RoutedEventArgs e)
         {
-            ToggleButton toggle = (ToggleButton) sender;
+            ToggleButton toggle = (ToggleButton)sender;
 
             // verify if a port was selected
             if (int.TryParse(tbPort.Text, out int port))
             {
                 // initialize IO Device
-                Keyboard = new IOHexKeyboard((short) port);
-
+                SegmentDisplay = new IOSevenSegmentDisplay((short)port);
+                SegmentDisplay.UpdateGui += UpdateDisplay;
                 try
                 {
                     // try to add to IO Manager
                     // exception wil be thrown if invalid port is selected
-                    _ioManager.AddIODevice((short)port, Keyboard);
+                    _ioManager.AddIODevice((short)port, SegmentDisplay);
 
                     // change text of toggle text
                     toggle.Content = "Active";
@@ -79,7 +65,7 @@ namespace Simulator_UI
                     // error message
                     MessageBox.Show(err.Message, "Error assigning port.");
                     toggle.IsChecked = false;
-                    Keyboard = null;
+                    SegmentDisplay = null;
                 }
             }
             else
@@ -101,18 +87,18 @@ namespace Simulator_UI
             toggle.Background = Brushes.Red;
 
             // remove IO from IO Manager
-            if (Keyboard != null)
+            if (SegmentDisplay != null)
             {
-                _ioManager?.RemoveIODevice(Keyboard.IOPort);
+                _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             // remove IO from IO Manager
-            if (Keyboard != null)
+            if (SegmentDisplay != null)
             {
-                _ioManager?.RemoveIODevice(Keyboard.IOPort);
+                _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
             base.OnClosing(e);
         }

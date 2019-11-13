@@ -25,7 +25,7 @@ namespace Assembler.Microprocessor
             }
         }
 
-        public IMCInstruction NextInstruction()
+        private IMCInstruction GetNextInstruction()
         {
             ushort currProgramCounter = _simulator.ProgramCounter;
 
@@ -101,10 +101,22 @@ namespace Assembler.Microprocessor
                     break;
             }
 
-            // TODO: add executer
+            return instructionToExecute;
+        }
+
+        public IMCInstruction PeekNextInstruction()
+        {
+            return GetNextInstruction();
+        }
+
+        public IMCInstruction NextInstruction()
+        {
+            IMCInstruction instructionToExecute = GetNextInstruction();
+
             InstructionSetExe.ExecuteInstruction(instructionToExecute, _simulator);
 
             return instructionToExecute;
         }
+
     }
 }

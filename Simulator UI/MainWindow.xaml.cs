@@ -34,13 +34,14 @@ namespace Simulator_UI
 
         private string[] lines;
 
+        private string currFileName;
 
         public MainWindow()
         {
             InitializeComponent();
 
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
-            
+
             Init();
 
             UpdateInstructionBox();
@@ -56,7 +57,8 @@ namespace Simulator_UI
             //Micro simulator setup
             vm = new VirtualMemory(lines);
 
-            ioManager = new IOManager(vm.VirtualMemorySize);
+            // state the last port for the micro
+            ioManager = new IOManager(vm.VirtualMemorySize - 1);
 
             micro = new MicroSimulator(vm, ioManager);
 
@@ -84,8 +86,6 @@ namespace Simulator_UI
         {
             memoryBox.Items.Clear();
 
-            memoryBox.Items.Add($"Address\t| EvenColumn\t| OddColumn");
-
             if (!int.TryParse(memorySizeBox.Text, out int lines))
             {
                 MessageBox.Show("Invalid number of memory blocks to show. Setting default to 50.", "Invalid Input");
@@ -95,7 +95,7 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{i}) {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth:3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
             }
         }
 
@@ -121,7 +121,8 @@ namespace Simulator_UI
         {
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:  {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction:     {GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -152,7 +153,7 @@ namespace Simulator_UI
                     Dispatcher.Invoke(() =>
                     {
                         UpdateInstructionBox();
-                    
+
                         LoadMemory();
 
                         UpdateRegisters();
@@ -178,6 +179,7 @@ namespace Simulator_UI
 
             Init();
 
+            instructionsBox.Items.Clear();
             UpdateInstructionBox();
         }
 
@@ -196,6 +198,8 @@ namespace Simulator_UI
             {
                 try
                 {
+                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
+
                     fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
                     statusLabel.Content = "Status: File Loaded";
                 }
@@ -226,7 +230,7 @@ namespace Simulator_UI
             UpdateInstructionBox();
 
             LoadMemory();
-            
+
             UpdateRegisters();
 
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
@@ -247,21 +251,48 @@ namespace Simulator_UI
 
         private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
-        {
             if (ioManager == null)
             {
-                cbHexkeyboard.IsChecked = false;
+                cbAsciiDisplay.IsChecked = false;
 
                 MessageBox.Show("Load an obj file before activating an IO Device.");
 
                 return;
             }
 
-            if (cbHexkeyboard.IsChecked == false)
+            if (cbAsciiDisplay.IsChecked == false)
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
+            }
+
+            Display_GUI display_GUI = new Display_GUI(ioManager);
+
+            display_GUI.Activate();
+
+            display_GUI.Show();
+
+            _ioDevicesWindows.Add(Display_GUI.DeviceID, display_GUI);
+        }
+
+        private void Unchecked_IOAsciiDisplay(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
+        private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        {
+            if(!ValidIDEState((CheckBox) sender))
             {
                 return;
             }
@@ -290,12 +321,156 @@ namespace Simulator_UI
                 MessageBox.Show("Closed");
             }
         }
+        private void Checked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
+        {
+            if (!ValidIDEState((CheckBox)sender))
+            {
+                return;
+            }
 
+            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
+            }
+
+            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow(ioManager);
+
+            sevenSegmentDisplay.Activate();
+
+            sevenSegmentDisplay.Show();
+
+            _ioDevicesWindows.Add(SevenSegmentDisplay.DeviceID, sevenSegmentDisplay);
+        }
+
+        private void Unchecked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
         private void SetIOs()
         {
             Checked_IOHexaKeyBoard(null, null);
+            cbTrafficLight_Checked(null, null);
+            Checked_IOASCIIDisplay(null, null);
+            Checked_IO7SegmentDisplay(null, null);
         }
 
-       
+        private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ioManager == null)
+            {
+                cbTrafficLight.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return;
+            }
+
+            if (cbTrafficLight.IsChecked == false)
+            {
+                return;
+            }
+
+            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
+            {
+                window.Close();
+                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
+            }
+
+            IOBinSemaforoUI semaforo = new IOBinSemaforoUI(ioManager);
+
+            semaforo.Activate();
+
+            semaforo.Show();
+
+            _ioDevicesWindows.Add(IOBinSemaforoUI.DeviceID, semaforo);
+        }
+        private void cbTrafficLight_Unhecked(object sender, RoutedEventArgs e)
+        {
+            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
+            {
+                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
+                window.Close();
+                MessageBox.Show("Closed");
+            }
+        }
+
+        /// <summary>
+        /// Helper method for verifying state of the IDE microprocessor and IOManager
+        /// </summary>
+        /// <param name="cb">Checkbox instance</param>
+        /// <returns>True if state is valid</returns>
+        private bool ValidIDEState(CheckBox cb)
+        {
+            if (cb == null)
+            {
+                return false;
+            }
+
+            if (ioManager == null)
+            {
+                cb.IsChecked = false;
+
+                MessageBox.Show("Load an obj file before activating an IO Device.");
+
+                return false;
+            }
+
+            if (cb.IsChecked == false)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            foreach (Window w in _ioDevicesWindows.Values)
+                w.Close();
+            base.OnClosed(e);
+        }
+
+        private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
+        {
+            if (vm == null)
+            {
+                MessageBox.Show("Cannot export Memory Map if no Object file is uploaded.", "Invalid IDE State");
+
+                return;
+            }
+
+            string[] virtualMemoryState = vm.ExportVirtualMemory();
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_VM_MemoryMap.txt",
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, virtualMemoryState);
+
+                MessageBox.Show($"Exported Virtual Memory Map to: {saveFileDialog.FileName}.", "Exported successfuly");
+            } else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
+            }
+        }
     }
 }

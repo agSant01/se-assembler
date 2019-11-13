@@ -102,5 +102,10 @@ namespace Assembler.Microprocessor
                 ProgramCounter += 2;
             }
         }
+
+        public IMCInstruction PeekNextInstruction()
+        {
+            return _mcLoader?.PeekNextInstruction();
+        }
     }
 }

@@ -69,7 +69,7 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {kb}");
 
-            Assert.AreEqual("00000000", kb.ReadFromPort(5));
+            Assert.AreEqual("00", kb.ReadFromPort(5));
 
             kb.KeyPress("A");
             kb.KeyPress("A");
