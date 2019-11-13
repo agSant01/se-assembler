@@ -58,7 +58,7 @@
         <Label x:Name="label_Copy2" Content="Instructions" HorizontalAlignment="Left" Margin="263,365,0,0" VerticalAlignment="Top" Width="249" Foreground="White"/>
         <Label x:Name="label1_Copy4" Content="Stack Pointer Start" Foreground="White" HorizontalAlignment="Left" Margin="267,80,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="stackPointerStart" HorizontalAlignment="Left" Height="23" Margin="384,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White"/>
-        <Label x:Name="label1_Copy5" Content="bytes" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="327,60,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <Label x:Name="label1_Copy5" Content="words" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="327,60,0,0" VerticalAlignment="Top" Grid.Column="1"/>
         <TextBox x:Name="memorySizeBox" HorizontalAlignment="Left" Height="23" Margin="274,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1" Text="50"/>
 
         <!--
