@@ -331,7 +331,7 @@ namespace Simulator_UI
                 _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
             }
 
-            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow();
+            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow(ioManager);
 
             sevenSegmentDisplay.Activate();
 

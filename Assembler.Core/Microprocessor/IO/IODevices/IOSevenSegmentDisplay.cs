@@ -18,38 +18,36 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         public short IOPortLength => 1;
 
         public bool HasData => !string.IsNullOrEmpty(_buffer);
-
+        public string Data { get { return _buffer; } }
         public byte BufferSize => (byte)1;
 
+        public Action UpdateGui;
 
+        public IOSevenSegmentDisplay(short ioPort)
+        {
+            IOPort = ioPort;
+        }
         public bool WriteInPort(int port, string contentInHex)
         {
-            _buffer = contentInHex;
+            _buffer = UnitConverter.HexToBinary(contentInHex);
+            UpdateGui?.Invoke();
             return true;
         }
 
         public string ReadFromPort(int port)
         {
-            if (HasData)
-                return UnitConverter.HexToBinary(_buffer);
-            else
-                return "00";
+            throw new InvalidOperationException("Invalid call on a write only device");
         }
 
         public bool Reset()
         {
             _buffer = string.Empty;
-
             return true;
+        }
+
+        public override string ToString()
+        {
+            return $"IOSevenSegmentDisplay[port: {IOPort}, binary content: {Data}]";
         }
     }
 }
-
-
-/*
-
-    var loQueSeLeo = [something].Read();
-    7segIoDevice.WriteInPort(0, loqueSeLeo);
-    segmentDisplay.ShowBinary(7segIoDevice.ReadFromPort(0));
-
-*/

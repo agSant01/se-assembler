@@ -8,9 +8,6 @@ using System.Windows.Media;
 
 namespace Simulator_UI
 {
-    
-    
-        
         public class BoolToVisibilityConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -101,11 +98,10 @@ namespace Simulator_UI
         }
         public partial class SevenSegmentDisplay : UserControl
         {
-        public readonly static string DeviceID = "S8ds83";
+            public readonly static string DeviceID = "S8ds83";
             public SevenSegmentDisplayModel Model;
             public SevenSegmentDisplay()
             {
-
                 InitializeComponent();
                 Model = new SevenSegmentDisplayModel();
                 DataContext = Model;
