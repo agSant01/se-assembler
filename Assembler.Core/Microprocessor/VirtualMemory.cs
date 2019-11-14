@@ -191,6 +191,35 @@ namespace Assembler.Microprocessor
         }
 
         /// <summary>
+        /// Export current state of the Virtual Memory.
+        /// </summary>
+        /// <param name="spaces">Boolean flag to indicate if it is desired to add a sapce after two Hex characters</param>
+        /// <returns>array of 16-bits hexadecimal words</returns>
+        public string[] ExportVirtualMemory(bool spaces = true)
+        {
+            // create output array of length half the number of addresses 
+            // because every line is of two addresses
+            string[] wordsInHex = new string[memoryBlocksInHexadecimal.Length/2];
+
+            string divisor;
+
+            if (spaces)
+            {
+                divisor = " ";
+            } else
+            {
+                divisor = string.Empty;
+            }
+
+            for (int i = 0; i < memoryBlocksInHexadecimal.Length/2; i++)
+            {
+                wordsInHex[i] = $"{memoryBlocksInHexadecimal[2*i]}{divisor}{memoryBlocksInHexadecimal[2*i+1]}";
+            }
+
+            return wordsInHex;
+        }
+
+        /// <summary>
         /// A string representation of the current instance of the VirtualMemory class
         /// </summary>
         /// <returns> string representation of the current instance of the Virtual Memory</returns>
@@ -201,7 +230,7 @@ namespace Assembler.Microprocessor
             for(int i = 0; i < LastAddressDecimal; i+=2)
             {
                 builder.Append("\t");
-                builder.Append($"{i})  ");
+                builder.Append($"{i}:  ");
                 builder.Append(memoryBlocksInHexadecimal[i]);
                 builder.Append(" ");
                 builder.Append(memoryBlocksInHexadecimal[i+1]);
