@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Assembler.Utils
+﻿namespace Assembler.Utils
 {
     public static class ArithmeticOperations
     {
@@ -45,7 +41,7 @@ namespace Assembler.Utils
             sbyte element1 = UnitConverter.HexToSByte(minuend);
             sbyte element2 = UnitConverter.HexToSByte(subtrahend);
 
-            return UnitConverter.ByteToHex((byte) (element1 - element2));
+            return UnitConverter.ByteToHex((byte)(element1 - element2));
         }
 
         /// <summary>

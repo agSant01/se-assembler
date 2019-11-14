@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Assembler.Core.Microprocessor.IO
+﻿namespace Assembler.Core.Microprocessor.IO
 {
     /// <summary>
     /// IODevice object. Used to implement any new I/O that will interact with the microprocessor

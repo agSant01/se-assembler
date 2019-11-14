@@ -12,7 +12,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool HasData => _buffer.Count > 0;
 
-        public byte BufferSize => (byte) _buffer.Count;
+        public byte BufferSize => (byte)_buffer.Count;
 
         public short IOPort { get; }
 
@@ -47,7 +47,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public void KeyPress(string hexChar)
         {
-            if (_buffer.Count < 4) 
+            if (_buffer.Count < 4)
             {
                 _buffer.Enqueue(hexChar + "1");
             }

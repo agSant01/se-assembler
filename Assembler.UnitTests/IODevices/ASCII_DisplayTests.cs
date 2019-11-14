@@ -14,8 +14,6 @@ namespace Assembler.UnitTests.IODevices
     [TestClass]
     public class ASCII_DisplayTests
     {
-        short port = 0;
-
         [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Invalid port \n")]
         public void ASCIIDisplayTests_ReadFromInvalidPort()

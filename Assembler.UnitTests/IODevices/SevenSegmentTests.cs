@@ -67,8 +67,6 @@ namespace Assembler.UnitTests.IODevices
                 Assert.AreEqual("11110110", segment.Data);
 
             Console.WriteLine(segment);
-
-
         }
     }
 }

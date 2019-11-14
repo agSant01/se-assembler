@@ -66,7 +66,8 @@ namespace Assembler.Microprocessor
             try
             {
                 sbyte decimalValue = UnitConverter.HexToSByte(hexValue);
-            } catch(OverflowException)
+            }
+            catch (OverflowException)
             {
                 throw new OverflowException($"The passed value '0x{hexValue}', " +
                        $"'{UnitConverter.HexToBinary(hexValue)}' is invalid for this register of " +
