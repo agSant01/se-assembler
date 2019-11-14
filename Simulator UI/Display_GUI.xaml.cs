@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Threading;
 
 namespace Simulator_UI
 {
@@ -17,6 +18,8 @@ namespace Simulator_UI
     /// </summary>
     public partial class Display_GUI: Window
     {
+        private TextBox[] boxes; 
+        private bool _active;
         private readonly IOManager _ioManager;
 
         public ASCII_Display display; //{ get; private set; }
@@ -26,11 +29,68 @@ namespace Simulator_UI
         public Display_GUI(IOManager ioManager)
         {
             InitializeComponent();
-
+             
             _ioManager = ioManager;
-
+            _active = false;
             MouseDown += delegate { DragMove(); };
+
+            boxes = new TextBox[8];
+            boxes[0] = box_a;
+            boxes[1] = box_b;
+            boxes[2] = box_c;
+            boxes[3] = box_d;
+            boxes[4] = box_e;
+            boxes[5] = box_f;
+            boxes[6] = box_g;
+            boxes[7] = box_h;
         }
+
+
+        private void UpdateAsciiDisplay()
+        {
+            //CurrentBinLbl.Content = $"Current Bin Value: {String.Join(' ', semaforo.BitContent)}";
+            //parse boolean representacion of char bit array
+            //bool[] bits = new bool[8];
+            //for (int i = 0; i < semaforo.BitContent.Length; i++)
+            //    bits[i] = semaforo.BitContent[i] == '1';
+            //MessageBox.Show(String.Join(',', bits));
+
+            //thread control
+            if (!_active)
+            {
+                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                return;
+            }
+
+            if (!_active)
+            {
+                return;
+            }
+
+
+            new Thread(() =>
+            {
+                while (_active)
+                {
+                    Thread.Sleep(100);
+
+                    //micro.NextInstruction();
+                    Dispatcher.Invoke(() =>
+                    {
+                        //Do updates here to the UI
+                       string[] curr_data =  display.ReadAllFromPort(display.IOPort);
+                       
+                        for(int i = 0; i < curr_data.Length; i++ )
+                        {
+                            boxes[i].Text = curr_data[i];
+                        }
+                        //{ box_a, box_b,box_c, box_d, box_e, box_f, box_g, box_h};
+
+                    });
+                }
+            }).Start();
+        }
+
 
         /*
 
@@ -77,7 +137,7 @@ namespace Simulator_UI
             {
                 // initialize IO Device
                 display = new ASCII_Display(port);
-
+                display.GotHexData += UpdateAsciiDisplay;
                 try
                 {
                     // try to add to IO Manager
@@ -88,6 +148,7 @@ namespace Simulator_UI
                     toggle.Content = "Active";
 
                     toggle.Background = Brushes.Green;
+                    _active = true;
 
                 }
                 catch (Exception err)
@@ -96,6 +157,7 @@ namespace Simulator_UI
                     MessageBox.Show(err.Message, "Error assigning port.");
                     toggle.IsChecked = false;
                     display = null;
+                    _active = false;
                 }
             }
             else
@@ -104,6 +166,7 @@ namespace Simulator_UI
                 MessageBox.Show("Select a port before activating the IO Device");
 
                 toggle.IsChecked = false;
+                _active = false;
             }
         }
 
@@ -133,7 +196,11 @@ namespace Simulator_UI
                 _ioManager?.RemoveIODevice((short)(display.IOPort + 6));
 
                 _ioManager?.RemoveIODevice((short)(display.IOPort + 7));
+
+               
             }
+
+            _active = false;
         }
 
         protected override void OnClosing(CancelEventArgs e)

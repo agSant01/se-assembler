@@ -42,7 +42,7 @@ namespace Assembler.UnitTests.IODevices
         [TestMethod]
         public void ASCIIDisplayTests_ExecuteOneInstruction_Success()
         {
-            ASCII_Display display = new ASCII_Display(80);
+            ASCII_Display display = new ASCII_Display(80, true);
             //Assert.AreEqual("00", display.ReadFromPort(0));
 
             display.WriteInPort(80, "B");
@@ -85,7 +85,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(manager);
             Console.WriteLine(micro);
 
-            ASCII_Display display = new ASCII_Display(5);
+            ASCII_Display display = new ASCII_Display(5, true);
 
             manager.AddIODevice(5, display);
 
@@ -143,7 +143,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(micro);
 
             short start_port = 5;
-            ASCII_Display display = new ASCII_Display(start_port);
+            ASCII_Display display = new ASCII_Display(start_port, true);
 
             manager.AddIODevice(start_port, display);
 
@@ -201,7 +201,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(manager);
             Console.WriteLine(micro);
 
-            ASCII_Display display = new ASCII_Display(5);
+            ASCII_Display display = new ASCII_Display(5, true);
 
             manager.AddIODevice(5, display);
 
@@ -277,7 +277,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(micro);
 
             short start_port = 5;
-            ASCII_Display display = new ASCII_Display(start_port);//Starting port
+            ASCII_Display display = new ASCII_Display(start_port, true);//Starting port
 
             manager.AddIODevice(start_port, display);
 

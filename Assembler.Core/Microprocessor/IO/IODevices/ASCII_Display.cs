@@ -12,6 +12,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
     public class ASCII_Display : IIODevice
     {
 
+        private bool _debug;
         private string[] characters;
 
         private Queue<string> _buffer = new Queue<string>();
@@ -24,6 +25,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public short IOPort {get;}
 
+        public Action GotHexData;
         public string DeviceName => "ASCII Display";
 
         public ASCII_Display(short port)
@@ -37,6 +39,21 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
             this.IOPort = port;
             this.characters = new string[8];
+            this._debug = false;
+        }
+
+        public ASCII_Display(short port, bool deb)
+        {
+            if (port < 0)
+                //port *= -1;// we flip it to positive
+                throw new ArgumentOutOfRangeException("Provided a negative port number!\n");
+
+            if (port == short.MaxValue || port + 7 > short.MaxValue)
+                throw new ArgumentOutOfRangeException("Provided an overflowable port number!\n");
+
+            this.IOPort = port;
+            this.characters = new string[8];
+            this._debug = deb;
         }
 
 
@@ -119,8 +136,11 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (!IsValidPort(port))
                 return false;
-
+            
             this.characters[ConvertPortToIndex((short)port)] = contentInHex;
+            
+            if(!_debug)
+                 GotHexData();
             return true;
         }
 
@@ -146,6 +166,8 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (IsValidPort(port))
             {
                 return this.characters[ConvertPortToIndex((short)port)];
+                if(!_debug)
+                    GotHexData();
             }
             else
             {
