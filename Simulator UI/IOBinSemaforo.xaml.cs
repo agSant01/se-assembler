@@ -56,6 +56,8 @@ namespace Simulator_UI
                 MouseDown += delegate { DragMove(); };
             }
             catch (Exception) { }
+
+            UpdateSemaforo();
         }
 
         private void Toggle_Activate(object sender, RoutedEventArgs e)
@@ -116,20 +118,28 @@ namespace Simulator_UI
 
         private void UpdateSemaforo()
         {
-            CurrentBinLbl.Content = $"Current Bin Value: {String.Join(' ', semaforo.BitContent)}";
-            //parse boolean representacion of char bit array
-            bool[] bits = new bool[8];
-            for (int i = 0; i < semaforo.BitContent.Length; i++)
-                bits[i] = semaforo.BitContent[i] == '1';
-            MessageBox.Show(String.Join(',', bits));
+            char[] bitContent;
 
-            //thread control
-            if (!_active) 
+            if (semaforo != null)
             {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                bitContent = semaforo.BitContent;
+            } else
+            {
+                bitContent = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+                LightsOff();
+                Dispatcher.Invoke(() => {
+                    CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                });
                 return;
             }
 
+            bool[] bits = new bool[8];
+
+            // if no traffic light IO is initialize set the UI LIGHTS to OFF
+            for (int i = 0; i < bitContent.Length; i++) {
+                    bits[i] = bitContent[i] == '1';
+            }
+            
             if (!_active)
             {
                 return;
@@ -138,13 +148,18 @@ namespace Simulator_UI
             
             new Thread(() =>
             {
+                Dispatcher.Invoke(() => {
+                    CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                });
+
                 while (_active)
                 {
                     Thread.Sleep(100);
 
-                    //micro.NextInstruction();
                     Dispatcher.Invoke(() =>
                     {
+                        CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+
                         if (bits[6] && bits[7])
                             BlinkLights(bits);
                         else LightsOnValue(bits);  

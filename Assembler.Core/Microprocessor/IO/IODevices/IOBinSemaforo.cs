@@ -16,7 +16,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         private string content = "";
 
-        public char[] BitContent { get; set; }
+        public char[] BitContent { get; set; } = { '0', '0', '0', '0', '0', '0', '0', '0' };
 
         public Action GotBinContent;
 
@@ -47,7 +47,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool Reset()
         {
-            BitContent = null;
+            BitContent = new char[]{ '0', '0', '0', '0', '0', '0', '0', '0' };
             return true;
         }
 
