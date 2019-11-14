@@ -12,6 +12,8 @@
             <ColumnDefinition Width="559*"/>
             <ColumnDefinition Width="410*"/>
         </Grid.ColumnDefinitions>
+        
+        
         <ListBox x:Name="memoryBox" HorizontalAlignment="Left" Height="110" Margin="83,247,0,0" VerticalAlignment="Top" Width="360" Grid.Column="1" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42"/>
         <!-- <TextBox x:Name="fileTextBox" HorizontalAlignment="Left" Height="312" Margin="10,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="389" IsReadOnly="True" TextChanged="fileTextBox_TextChanged"/> -->
         <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="355" Margin="490,95,0,0" VerticalAlignment="Top" Width="202" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
@@ -29,9 +31,14 @@
         </Menu>
         <Label x:Name="label" Content="Object File Content" HorizontalAlignment="Left" Margin="490,61,0,0" VerticalAlignment="Top" Width="202" Foreground="White" Grid.ColumnSpan="2"/>
         <Label x:Name="label_Copy" Content="Memory" HorizontalAlignment="Left" Margin="83,216,0,0" VerticalAlignment="Top" Width="360" Grid.Column="1" Foreground="White"/>
-        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,0,0" VerticalAlignment="Top" Width="1117" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
-        
-        </ToolBar>
+        <!--<ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,0,0" VerticalAlignment="Top" Width="1117" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
+            <Button >
+                <Image x:Name="runImg" Source="assets/icons8-play-50.png" Width="25" Height="25"/>
+            </Button>
+            <Button >
+                <Image x:Name="nextImg" Source="assets/icons8-fast-forward-50.png" Width="25" Height="25"/>
+            </Button>
+        </ToolBar>-->
         <StatusBar HorizontalAlignment="Left" Height="30" Margin="0,575,0,0" VerticalAlignment="Top" Width="1080" Background="#FF026128" Grid.ColumnSpan="2">
             <Label x:Name="statusLabel" Content="Label" Foreground="White"/>
         </StatusBar>

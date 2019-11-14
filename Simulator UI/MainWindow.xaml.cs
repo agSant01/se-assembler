@@ -485,7 +485,7 @@ namespace Simulator_UI
         {
             TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
             string[] rbText = textRange.Text.Split(Environment.NewLine);
-
+            
             try
             {
                 fileLines.ItemsSource = lines = Assemble(rbText);
