@@ -11,9 +11,8 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class ASCII_Display : IIODevice
     {
-        private readonly int[] reserved_addresses;
 
-        private string[] characters;//these need to be mapped contigously on VirtualMemory
+        private string[] characters;
 
         private Queue<string> _buffer = new Queue<string>();
 
@@ -21,13 +20,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool HasData => characters.Length > 0;
 
-        public byte BufferSize => (byte)_buffer.Count;
+        public byte BufferSize => (byte)characters.Length;
 
         public short IOPort {get;}
 
         public string DeviceName => "ASCII Display";
 
-        public ASCII_Display(short port)//PROBLEM WITH PORT NUMBER OVERFLOW
+        public ASCII_Display(short port)
         {
             if (port < 0 )
                 //port *= -1;// we flip it to positive
@@ -40,80 +39,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             this.characters = new string[8];
         }
 
-        private bool IsValidIndex(int idx)
-        {
-            if (idx > this.characters.Length | idx == this.characters.Length | idx < 0)
-                return false;
-            return true;
-        }
-        public string GetChar(int idx)
-        {
-            if (!IsValidIndex(idx))
-                return "";
-
-            //byte res = GetByte(idx);
-            //if ( res == DEFAULT)
-            //{
-            //    return "";
-            //}
-
-            else
-            {
-                return this.characters[idx];
-            }
-        }
-
-        public int[] ReservedAddresses()
-        {
-            return this.reserved_addresses;
-        }
-
-        public int[] ActiveCharactersIndexes()
-        {
-            ArrayList active = new ArrayList();
-            //int[] reserved = this.ReservedAddresses();
-            for(int i=0; i <characters.Length ; i++)
-            {
-                if(characters[i] != "")//checks if reserved memory is now in use
-                    active.Add(i);//add to active index list
-            }
-
-            int size = active.Count;
-            int[] res = new int[size];
-            int k = 0;
-            foreach(int j in active)
-            {
-                res[k++] = j;
-            }
-            return res;
-        }
-
-        public int[] InactiveCharactersIndexes()
-        {
-            ArrayList inactive = new ArrayList();
-            //int[] reserved = this.ReservedAddresses();
-            for (int i = 0; i < characters.Length; i++)
-            {
-                if (characters[i] == "")//checks if reserved memory is now in use
-                    inactive.Add(i);//add to active index list
-            }
-
-            int size = inactive.Count;
-            int[] res = new int[size];
-            int k = 0;
-            foreach (int j in inactive)
-            {
-                res[k++] = j;
-            }
-            return res;
-        }
 
         /// <summary>
         /// Verify the validity of the port being provided
         /// </summary>
         /// <param name="port">Port whose internal validity we wish to check</param>
         /// <returns>Boolean representation of the port's validity</returns>
-        private bool IsValidPort(int port)//Might have an overflow problem here
+        private bool IsValidPort(int port)//TEST THIS
         {
             if (port == IOPort || port == IOPort + 1  ||
                 port == IOPort + 2 || port == IOPort + 3 ||
@@ -169,7 +101,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         /// <returns> String representation of the ASCII Display's data</returns>
         public override string ToString()
         {
-            return $"ASCII_Display[characters: {String.Join(", ",characters)}]";
+            return $"ASCII_Display[port: {IOPort} , characters: {String.Join(", ",characters)}]";
         }
 
         /// <summary>
