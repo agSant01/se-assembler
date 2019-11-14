@@ -262,17 +262,61 @@ namespace Assembler.Microprocessor
                 }},
                 { "10010",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // ROTAR Ra, Rb, Rc {F1} R[Ra]<- R[Rb] rtr R[Rc]
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    byte ra = instructionF1.Ra;
+                    byte rb = instructionF1.Rb;
+                    byte rc = instructionF1.Rc;
+
+                    byte timesToRotate = UnitConverter.HexToByte(micro.MicroRegisters.GetRegisterValue(rc));
+
+                    char[] bitArray = UnitConverter.HexToBinary(micro.MicroRegisters.GetRegisterValue(rb)).ToCharArray();
+                    char[] newRotatedBitArr = new char[bitArray.Length];
+
+                    byte currentReadingPosition = (byte) (bitArray.Length - timesToRotate);
                     
-                    // call SHIFTR
-                    operatorFunctions["10000"](instruction, micro);
+                    for (byte writingPositon = 0; writingPositon < bitArray.Length; writingPositon++)
+                    {
+                        newRotatedBitArr[writingPositon] = bitArray[currentReadingPosition % bitArray.Length];
+                        ++currentReadingPosition;
+                    }
+
+                    string newDataInBinary = string.Join("", newRotatedBitArr);
+
+                    string newDataInHex = UnitConverter.BinaryToHex(newDataInBinary);
+
+                    micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
 
                     return true;
                 }},
                 { "10011",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // ROTAL Ra, Rb, Rc {F1} R[Ra]<- R[Rb] rtr R[Rc]
                     
-                    // call SHIFTL
-                    operatorFunctions["10001"](instruction, micro);
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
+
+                    byte ra = instructionF1.Ra;
+                    byte rb = instructionF1.Rb;
+                    byte rc = instructionF1.Rc;
+
+                    byte timesToRotate = UnitConverter.HexToByte(micro.MicroRegisters.GetRegisterValue(rc));
+
+
+                    char[] bitArray = UnitConverter.HexToBinary(micro.MicroRegisters.GetRegisterValue(rb)).ToCharArray();
+                    char[] newRotatedBitArr = new char[bitArray.Length];
+
+                    byte currentReadingPosition = timesToRotate;
+
+                    for (byte writingPositon = 0; writingPositon < bitArray.Length; writingPositon++)
+                    {
+                        newRotatedBitArr[writingPositon] = bitArray[currentReadingPosition % bitArray.Length];
+                        ++currentReadingPosition;
+                    }
+
+                    string newDataInBinary = string.Join("", newRotatedBitArr);
+
+                    string newDataInHex = UnitConverter.BinaryToHex(newDataInBinary);
+
+                    micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
 
                     return true;
                 }},
