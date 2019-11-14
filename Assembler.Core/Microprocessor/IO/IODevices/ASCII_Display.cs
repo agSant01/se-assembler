@@ -89,9 +89,14 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (!IsValidPort(port))
                 throw new ArgumentException($"Invalid port \n");
 
+            if(IsValidPort(port) & IOPort == 0)
+            {
+                return port;//something here
+            }
+
             else
             {
-                return port % IOPort;
+                return port % IOPort;//BUG HERE WITH DIVISION BY 0
             }
         }
 
