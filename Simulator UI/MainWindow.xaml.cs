@@ -1,7 +1,10 @@
-﻿using Assembler.Core.Microprocessor;
+﻿using Assembler.Assembler;
+using Assembler.Core;
+using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Parsing;
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
@@ -25,14 +28,22 @@ namespace Simulator_UI
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
-
+        private readonly string defaultOutPath = @"./AsmOut.txt";
+        
         private MicroSimulator micro;
         private IOManager ioManager;
         private VirtualMemory vm;
 
+        //assembler
+        private Parser parser;
+        private Lexer lexer;
+        public Compiler compiler;
+
         private bool stopRun;
 
         private string[] lines;
+
+        private KeyWordDetector kwd;
 
 
         public MainWindow()
@@ -50,6 +61,8 @@ namespace Simulator_UI
         {
             //UI Elements
             stopRun = true;
+
+            kwd = new KeyWordDetector(textEditorRB);
 
             if (lines == null) return;
 
@@ -289,7 +302,7 @@ namespace Simulator_UI
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if(!ValidIDEState((CheckBox) sender))
+            if (!ValidIDEState((CheckBox)sender))
             {
                 return;
             }
@@ -460,6 +473,40 @@ namespace Simulator_UI
             foreach (Window w in _ioDevicesWindows.Values)
                 w.Close();
             base.OnClosed(e);
+        }
+
+        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
+            //kwd?.AnalizeContent();
+        }
+
+        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] rbText = textRange.Text.Split(Environment.NewLine);
+
+            try
+            {
+                fileLines.ItemsSource = lines = Assemble(rbText);
+                statusLabel.Content = "Status: File Loaded";
+            }
+            catch (Exception ex)
+            {
+                //TODO: Create log with error
+                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                statusLabel.Content = "Status: File Error";
+            }
+            Init();
+        }
+
+        private string[] Assemble(string[] input)
+        {
+            this.lexer = new Lexer(input);
+            this.parser = new Parser(this.lexer);
+            this.compiler = new Compiler(parser);
+            this.compiler.Compile();
+            return compiler.GetOutput();
         }
     }
 }
