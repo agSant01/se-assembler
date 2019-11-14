@@ -43,7 +43,7 @@ namespace Assembler.UnitTests.UtilsTests
 
     class Dummy : ICustomIterable<string>
     {
-        public void AddStr(string str) 
+        public void AddStr(string str)
         {
             Add(str);
         }

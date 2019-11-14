@@ -2,7 +2,6 @@
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using System;
 
 namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
@@ -67,7 +66,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 
             InstructionSetExe.ExecuteInstruction(i1, micro);
             Console.WriteLine($"Registers after Execution #1 -> {micro.MicroRegisters}");
-            
+
             InstructionSetExe.ExecuteInstruction(i2, micro);
             Console.WriteLine($"Registers after Execution #2 -> {micro.MicroRegisters}");
 
@@ -98,13 +97,13 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             micro.StackPointer = 100;
             micro.WriteToMemory(100, "FF");
             MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
-            ushort SPNewValue= 101;
+            ushort SPNewValue = 101;
 
             //execute
-            InstructionSetExe.ExecuteInstruction(i1,micro);
+            InstructionSetExe.ExecuteInstruction(i1, micro);
 
-            Assert.AreEqual(SPNewValue,micro.StackPointer);
-            Assert.AreEqual("FF",micro.MicroRegisters.GetRegisterValue(2));
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("FF", micro.MicroRegisters.GetRegisterValue(2));
         }
 
         [TestMethod]
@@ -117,7 +116,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Console.WriteLine(micro.MicroRegisters);
             Assert.AreEqual("Registers[0,0,4,16,0,0,0,0]", micro.MicroRegisters.ToString());
 
-            string memoryAddress1 = UnitConverter.IntToBinary(50); 
+            string memoryAddress1 = UnitConverter.IntToBinary(50);
             string memoryAddress2 = UnitConverter.IntToBinary(51);
 
             Console.WriteLine($"Memory1: {UnitConverter.BinaryToInt(memoryAddress1)}");
@@ -144,7 +143,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
                 )));
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void DataMovOperationsTests_LOADRIND_Success()
         {
             // LOADRIND Ra,Rb  {F1} R[Ra] <- mem[R[Rb]] 
@@ -159,17 +158,17 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             // setting Registers and Memory values
             micro.WriteToMemory(
                 UnitConverter.HexToInt(dataHexRb), valueInMemory);
-            
+
             Assert.AreEqual(valueInMemory, micro.ReadFromMemory(UnitConverter.HexToInt(dataHexRb)));
 
             micro.MicroRegisters.SetRegisterValue(Ra, dataHexRa);
             micro.MicroRegisters.SetRegisterValue(Rb, dataHexRb);
-            
+
             Console.WriteLine(micro.MicroRegisters.ToString());
             Assert.AreEqual("Registers[0,9,64,0,0,0,0,0]", micro.MicroRegisters.ToString());
 
             // starting tests
-            MCInstructionF1 i1 = new MCInstructionF1(3, "00101", 
+            MCInstructionF1 i1 = new MCInstructionF1(3, "00101",
                 UnitConverter.IntToBinary(Ra),
                 UnitConverter.IntToBinary(Rb)
                 );

@@ -1,18 +1,10 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
@@ -32,7 +24,7 @@ namespace Simulator_UI
 
         private void UpdateDisplay()
         {
-            if(SegmentDisplay != null)
+            if (SegmentDisplay != null)
             {
                 Display.SetBinaryNumber(SegmentDisplay.Data);
             }

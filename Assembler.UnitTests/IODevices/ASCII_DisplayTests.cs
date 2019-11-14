@@ -1,13 +1,8 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
-using Assembler.Microprocessor.InstructionFormats;
-using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Assembler.UnitTests.IODevices
 {
@@ -23,7 +18,7 @@ namespace Assembler.UnitTests.IODevices
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException),"Provided a negative port number!\n")]
+        [ExpectedException(typeof(ArgumentOutOfRangeException), "Provided a negative port number!\n")]
         public void ASCIIDisplayTests_NegativePortNumber_Display_Initialization()
         {
             ASCII_Display display = new ASCII_Display(-80);
@@ -63,7 +58,7 @@ namespace Assembler.UnitTests.IODevices
         [TestMethod]
         public void ASCIIDisplayTests_ReadFromMicro_Success()
         {
-            VirtualMemory vm = new VirtualMemory(new string[] { 
+            VirtualMemory vm = new VirtualMemory(new string[] {
                 "0000",
                 "0000",
                 "0000",
@@ -297,7 +292,7 @@ namespace Assembler.UnitTests.IODevices
 
 
             //Verify that it wrote to memory correctly
-            Assert.AreEqual(display.ReadFromPort(5) , micro.ReadFromMemory(5));
+            Assert.AreEqual(display.ReadFromPort(5), micro.ReadFromMemory(5));
 
 
             //Reading from invalid before Port Range

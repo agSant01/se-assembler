@@ -3,8 +3,6 @@ using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 {
@@ -26,7 +24,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         {
             micro = null;
         }
-        
+
         [TestMethod]
         public void LogicOperationsTests_AND_Success()
         {
@@ -211,7 +209,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 
             Console.WriteLine($"Expected: {UnitConverter.BinaryToHex(resultA)}," +
                 $"Actual: {micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(ra))}");
-           
+
             Assert.AreEqual(
                 UnitConverter.BinaryToHex(resultA),
                 micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(ra))
@@ -224,14 +222,14 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             // NEG Ra,Rb {F1} R[Ra]<- - R[Rb]
             string ra1 = "001"; // 1
             string rb1 = "011"; // 3
-            
+
             string ra2 = "110"; // 6
             string rb2 = "111"; // 7
 
 
             string valInB1 = UnitConverter.ByteToBinary(-13);
             string resultA1 = UnitConverter.ByteToBinary(13);
-           
+
             string valInB2 = UnitConverter.ByteToBinary(-45);
             string resultA2 = UnitConverter.ByteToBinary(45);
 
@@ -318,7 +316,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
                 (byte)UnitConverter.BinaryToInt(rc1),
                 UnitConverter.BinaryToHex(valInC1));
             ////////////
-            
+
             ////////////
             /// Test 2
             micro.MicroRegisters.SetRegisterValue(
@@ -333,7 +331,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Console.WriteLine(micro.MicroRegisters);
 
             // Assert Registers
-            Assert.AreEqual("Registers[0,0,60,2,0,0,-100,2]", 
+            Assert.AreEqual("Registers[0,0,60,2,0,0,-100,2]",
                 micro.MicroRegisters.ToString());
 
             MCInstructionF1 i1 = new MCInstructionF1(3, "10000", ra1, rb1, rc1);

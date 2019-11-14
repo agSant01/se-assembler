@@ -1,12 +1,8 @@
 ﻿using Assembler.Parsing;
-using Assembler.Assembler;
-using Assembler.Parsing.InstructionFormats;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System;
-using Assembler.Parsing.InstructionItems;
-using System.Collections.Generic;
 using Assembler.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 
 namespace Assembler.UnitTests.CompilerTests
 {
@@ -15,7 +11,7 @@ namespace Assembler.UnitTests.CompilerTests
     {
         Lexer lexer;
 
-        private readonly string testFileSuccess =  Path.Combine(
+        private readonly string testFileSuccess = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test.txt");
         private readonly string testFileErrorToken = Path.Combine(
@@ -46,7 +42,7 @@ namespace Assembler.UnitTests.CompilerTests
         [TestCleanup]
         public void TestCleanup()
         {
-            lexer = null;  
+            lexer = null;
         }
 
         [TestMethod]

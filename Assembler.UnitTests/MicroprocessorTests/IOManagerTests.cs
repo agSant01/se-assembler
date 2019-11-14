@@ -40,7 +40,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
             io.AddIODevice(82, d2);
 
             MicroSimulator micro = new MicroSimulator(
-                new VirtualMemory(new string[]{ }),
+                new VirtualMemory(new string[] { }),
                 io
             );
 
@@ -52,7 +52,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
 
             Assert.AreEqual("Device[Id: 1, Data: 243]", d1.ToString());
             Assert.AreEqual("Device[Id: 2, Data: 8]", d2.ToString());
-            
+
             Console.WriteLine(micro.ReadFromMemory(80));
             Console.WriteLine(micro.ReadFromMemory(82));
         }

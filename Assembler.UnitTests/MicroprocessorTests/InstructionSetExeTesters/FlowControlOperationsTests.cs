@@ -3,8 +3,6 @@ using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 {
@@ -476,7 +474,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(i1, micro);
 
             Assert.AreEqual(SPNewValue, micro.StackPointer);
-            Assert.AreEqual("FF",UnitConverter.IntToHex(micro.ProgramCounter));
+            Assert.AreEqual("FF", UnitConverter.IntToHex(micro.ProgramCounter));
         }
     }
 }

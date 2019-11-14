@@ -1,24 +1,22 @@
 ﻿
-using Assembler.Core.Microprocessor.IO.IODevices;
-using Assembler.Core.Microprocessor.IO;
 using Assembler.Core.Microprocessor;
-using Assembler.Utils;
+using Assembler.Core.Microprocessor.IO.IODevices;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using System.Threading;
 
 namespace Simulator_UI
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Display_GUI: Window
+    public partial class Display_GUI : Window
     {
-        private TextBox[] boxes; 
+        private readonly TextBox[] boxes;
         private bool _active;
         private readonly IOManager _ioManager;
 
@@ -29,7 +27,7 @@ namespace Simulator_UI
         public Display_GUI(IOManager ioManager)
         {
             InitializeComponent();
-             
+
             _ioManager = ioManager;
             _active = false;
             MouseDown += delegate { DragMove(); };
@@ -78,9 +76,9 @@ namespace Simulator_UI
                     Dispatcher.Invoke(() =>
                     {
                         //Do updates here to the UI
-                       string[] curr_data =  display.ReadAllFromPort(display.IOPort);
-                       
-                        for(int i = 0; i < curr_data.Length; i++ )
+                        string[] curr_data = display.ReadAllFromPort(display.IOPort);
+
+                        for (int i = 0; i < curr_data.Length; i++)
                         {
                             boxes[i].Text = curr_data[i];
                         }
@@ -130,7 +128,7 @@ namespace Simulator_UI
         /// <param name="e"></param>
         private void Toggle_Activate(object sender, RoutedEventArgs e)
         {
-            ToggleButton toggle = (ToggleButton) sender;
+            ToggleButton toggle = (ToggleButton)sender;
 
             // verify if a port was selected
             if (short.TryParse(port_number.Text, out short port))
@@ -142,8 +140,8 @@ namespace Simulator_UI
                 {
                     // try to add to IO Manager
                     // exception wil be thrown if invalid port is selected
-                    _ioManager.AddIODevice((short)port, display);
-                    
+                    _ioManager.AddIODevice(port, display);
+
                     // change text of toggle text
                     toggle.Content = "Active";
 
@@ -183,7 +181,7 @@ namespace Simulator_UI
             if (display != null)
             {
                 _ioManager?.RemoveIODevice(display.IOPort);
-                _ioManager?.RemoveIODevice((short)(display.IOPort+1));
+                _ioManager?.RemoveIODevice((short)(display.IOPort + 1));
 
                 _ioManager?.RemoveIODevice((short)(display.IOPort + 2));
 
@@ -197,7 +195,7 @@ namespace Simulator_UI
 
                 _ioManager?.RemoveIODevice((short)(display.IOPort + 7));
 
-               
+
             }
 
             _active = false;

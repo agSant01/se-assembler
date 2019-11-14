@@ -1,24 +1,13 @@
 ﻿using Assembler.Core.Microprocessor;
-using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
@@ -95,7 +84,7 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth:3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
             }
         }
 
@@ -292,7 +281,7 @@ namespace Simulator_UI
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if(!ValidIDEState((CheckBox) sender))
+            if (!ValidIDEState((CheckBox)sender))
             {
                 return;
             }
@@ -467,7 +456,8 @@ namespace Simulator_UI
                 FileManager.Instance.ToWriteFile(fullPath, virtualMemoryState);
 
                 MessageBox.Show($"Exported Virtual Memory Map to: {saveFileDialog.FileName}.", "Exported successfuly");
-            } else
+            }
+            else
             {
                 MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
             }

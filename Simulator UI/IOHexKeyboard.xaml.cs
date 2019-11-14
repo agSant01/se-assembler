@@ -1,6 +1,5 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
-using Assembler.Utils;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -29,7 +28,8 @@ namespace Simulator_UI
             try
             {
                 MouseDown += delegate { DragMove(); };
-            } catch(Exception) { }
+            }
+            catch (Exception) { }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -40,7 +40,7 @@ namespace Simulator_UI
                 return;
             }
 
-            Button button = (Button) sender;
+            Button button = (Button)sender;
 
             string hexChar = button.Content.ToString();
 
@@ -54,13 +54,13 @@ namespace Simulator_UI
         /// <param name="e"></param>
         private void Toggle_Activate(object sender, RoutedEventArgs e)
         {
-            ToggleButton toggle = (ToggleButton) sender;
+            ToggleButton toggle = (ToggleButton)sender;
 
             // verify if a port was selected
             if (int.TryParse(tbPort.Text, out int port))
             {
                 // initialize IO Device
-                Keyboard = new IOHexKeyboard((short) port);
+                Keyboard = new IOHexKeyboard((short)port);
 
                 try
                 {

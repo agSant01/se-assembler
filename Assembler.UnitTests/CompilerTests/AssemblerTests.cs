@@ -1,12 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Assembler.Assembler;
 using Assembler.Parsing;
-using Assembler.Assembler;
-using Assembler.Parsing.InstructionFormats;
-using System.IO;
-using System;
-using Assembler.Parsing.InstructionItems;
-using System.Collections.Generic;
 using Assembler.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Assembler.UnitTests.CompilerTests
 {
@@ -90,13 +88,13 @@ namespace Assembler.UnitTests.CompilerTests
 
             compiler.Compile();
             int[] arr = compiler.GetDecimalInstructions();
-            for(int i = 0; i < compiler.Size(); i++)
+            for (int i = 0; i < compiler.Size(); i++)
             {
                 Console.WriteLine($"instruction: {arr[i]}");
             }
 
             compiler.AsmLogger.Reset();
-            while(compiler.AsmLogger.MoveNext())
+            while (compiler.AsmLogger.MoveNext())
             {
                 Console.WriteLine(compiler.AsmLogger.Current);
             }
@@ -153,7 +151,7 @@ namespace Assembler.UnitTests.CompilerTests
                 i++;
             }
 
-            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length-1]}");
+            Console.WriteLine($"\nEnd of line output: {compiler.GetOutput()[compiler.GetOutput().Length - 1]}");
 
             Assert.AreEqual("00 00", compiler.GetOutput()[compiler.GetOutput().Length - 1]);
 
@@ -201,7 +199,8 @@ namespace Assembler.UnitTests.CompilerTests
                 if (i < expectedLines.Length)
                 {
                     Assert.AreEqual(expectedLines[i], s);
-                } else
+                }
+                else
                 {
                     if (i == (expectedLines.Length + 10))
                     {
