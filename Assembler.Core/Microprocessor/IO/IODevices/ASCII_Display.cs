@@ -11,13 +11,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class ASCII_Display : IIODevice
     {
-        //private readonly string[] ascii_chars = {"A","B","C","D","E","F","G","H" };
-        private int current_byte = 0;
-        private bool[] active;
         private readonly int[] reserved_addresses;
-        private readonly byte DEFAULT = 0;
+
         private string[] characters;//these need to be mapped contigously on VirtualMemory
-        private VirtualMemory mem;
+
         private Queue<string> _buffer = new Queue<string>();
 
         public short IOPortLength => 8;//bytes
@@ -30,67 +27,18 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public string DeviceName => "ASCII Display";
 
-      //  public ASCII_Display(VirtualMemory mem)
-        public ASCII_Display(short port)
+        public ASCII_Display(short port)//PROBLEM WITH PORT NUMBER OVERFLOW
         {
-            //We need to find 8 memory locations in virutal memory to reserve the bytes...
-            // this.mem = mem;
-            //reserved_addresses = ReserveMemory();
+            if (port < 0 )
+                //port *= -1;// we flip it to positive
+                throw new ArgumentOutOfRangeException("Provided a negative port number!\n");
+
+            if (port == short.MaxValue || port + 7 > short.MaxValue)
+                throw new ArgumentOutOfRangeException("Provided an overflowable port number!\n");
+
             this.IOPort = port;
             this.characters = new string[8];
-            //this.active = new bool[8];
         }
-
-
-        private int[] ReserveMemory()
-        {
-            int[] addresses_to_use = new int[8];
-            ArrayList addresses = new ArrayList();
-            int curr = 0;
-            for(int i =1; i <= this.mem.VirtualMemorySize ; i++)//avoid using first address... may have a bug here cause we reach Last -1
-            {
-                if(!mem.IsInUse(i))
-                {
-                    addresses.Add(i);
-
-                    if (addresses.Count == 8)
-                        break;
-                }
-                else if (curr > 0 && mem.IsInUse(i))
-                {
-                    //we ignore it,empty our list and move on
-                    addresses.Clear();
-                    curr = 0;
-                }
-            }
-
-            if(addresses.Count != 8)
-                throw new Exception("ERROR: Contiguous Segments of Virtual Memory Not Found");
-
-            int j = 0;
-            foreach(int i in addresses)
-            {
-                addresses_to_use[j++] = i;
-            }
-
-            return addresses_to_use;
-        }
-
-        //public void AddCharacter(int idx, byte b)
-        //{
-        //    if (!IsValidIndex(idx))
-        //        return;
-
-        //    this.characters[idx] = b;
-        //}
-
-        //public void RemoveCharacter(int idx)
-        //{
-        //    if (!IsValidIndex(idx))
-        //        return;
-
-        //    this.characters[idx] = DEFAULT;//Sets to default value when deleting
-        //}
 
         private bool IsValidIndex(int idx)
         {
@@ -98,7 +46,6 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
                 return false;
             return true;
         }
-
         public string GetChar(int idx)
         {
             if (!IsValidIndex(idx))
@@ -115,14 +62,6 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
                 return this.characters[idx];
             }
         }
-
-        //public byte GetByte(int idx)
-        //{
-        //    if (!IsValidIndex(idx))
-        //        return DEFAULT;
-
-        //    return this.characters[idx];
-        //}
 
         public int[] ReservedAddresses()
         {
@@ -169,26 +108,38 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return res;
         }
 
-        private bool IsValidPort(int port)
+        /// <summary>
+        /// Verify the validity of the port being provided
+        /// </summary>
+        /// <param name="port">Port whose internal validity we wish to check</param>
+        /// <returns>Boolean representation of the port's validity</returns>
+        private bool IsValidPort(int port)//Might have an overflow problem here
         {
-            if (port == IOPort || port == IOPort + 1  || port == IOPort + 2 || port == IOPort + 3 || port == IOPort + 4 || port==IOPort + 5 || port == IOPort + 6 || port == IOPort + 7)
+            if (port == IOPort || port == IOPort + 1  ||
+                port == IOPort + 2 || port == IOPort + 3 ||
+                port == IOPort + 4 || port==IOPort + 5 ||
+                port == IOPort + 6 || port == IOPort + 7)
                 return true;
 
             return false;
         }
 
+        /// <summary>
+        /// Reads all data stored in ASCII Display
+        /// </summary>
+        /// <param name="port">A valid port used by the ASCII Display</param>
+        /// <returns>String array representing all the data in the ASCII Display</returns>
         public string[] ReadAllFromPort(int port)
         {
             if (!IsValidPort(port))
                 throw new ArgumentException($"Invalid port \n");
-            /*if (HasData)
-            {
-                return UnitConverter.ByteToBinary(this.characters);
-            }*/
-            //string[] def ={$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}",$"{DEFAULT}", $"{DEFAULT}"};
             return this.characters;
         }
 
+        /// <summary>
+        /// Clears all the data from the internal array of characters.
+        /// </summary>
+        /// <returns> Boolean representing that the reset was successful</returns>
         public bool Reset()
         {
             //_buffer.Clear();
@@ -196,24 +147,11 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             return true;
         }
 
-        /*
-        public bool WriteInPort(int port, string[] contentInHex)
-        {
-               // characters = contentInHex;
-            if(!IsValidPort(port))
-            {
-                throw new ArgumentException($"Invalid port:{port}\n");
-                //return false;
-            }
-
-            for(int i=0; i < this.characters.Length;i++ )
-            {
-                this.characters[i] = contentInHex[i];
-            }
-
-            return true;
-        }*/
-
+        /// <summary>
+        /// Returns index corresponding to appropriate ASCII Display port number.
+        /// </summary>
+        /// <param name="port"> The port whose data we want to retrieve.</param>
+        /// <returns>Integer representing the internal index used to store the values.</returns>
         private int ConvertPortToIndex(short port)
         {
             if (!IsValidPort(port))
@@ -221,29 +159,32 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
             else
             {
-                return port % IOPort; //Returns index corresponding to appropriate character
+                return port % IOPort;
             }
         }
 
+        /// <summary>
+        /// Method to retrieve the internal representation of the ASCII Display
+        /// </summary>
+        /// <returns> String representation of the ASCII Display's data</returns>
         public override string ToString()
         {
             return $"ASCII_Display[characters: {String.Join(", ",characters)}]";
         }
 
-        public bool WriteInPort(int port, string contentInHex)
+        /// <summary>
+        /// Method for writing data to the internal ports of the ASCII Display
+        /// </summary>
+        /// <param name="port">Integer representation of the </param>
+        /// <param name="contentInHex"></param>
+        /// <returns>Boolean representing if the writet operation was successful</returns>
+        public bool WriteInPort(int port, string contentInHex)//FUCK THIS MIGHT BE WRONG DUE TO NEGATIVE NUMBERS, NEED TO FIX
         {
-            //throw new NotImplementedException();
-
             if (!IsValidPort(port))
                 return false;
-            //    throw new ArgumentException($"Invalid port:{port}\n");
-            this.characters[ConvertPortToIndex((short)port)] = contentInHex;
-            
-            //This will wrap around to the start if end is reached...
-            //current_byte = current_byte + 1 % 7;//might need to use 7 instead of 8
-            return true;
 
-            //return true;
+            this.characters[ConvertPortToIndex((short)port)] = contentInHex;
+            return true;
         }
 
         /*string[] IIODevice.ReadFromPort(int port)
@@ -258,12 +199,16 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
                 throw new ArgumentException($"Invalid port number {port}");
             }
         }*/
-
+        /// <summary>
+        /// Reading the data contained in the ASCII Display's port.
+        /// </summary>
+        /// <param name="port">Port whose data we wish to read.</param>
+        /// <returns>String representation of the data stored in the port.</returns>
         public string ReadFromPort(int port)
         {
             if (IsValidPort(port))
             {
-                return this.characters[ConvertPortToIndex((short)port)];//this doesn't make sense because we won't know which character to display in the TextBox
+                return this.characters[ConvertPortToIndex((short)port)];
             }
             else
             {
@@ -271,6 +216,11 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             }
         }
 
+        /// <summary>
+        /// Reading the data contained in the ASCII Display's port.
+        /// </summary>
+        /// <param name="port">Port whose data we wish to read.</param>
+        /// <returns>String representation of the data stored in the port.</returns>
         string IIODevice.ReadFromPort(int port)
         {
            return ReadFromPort(port);

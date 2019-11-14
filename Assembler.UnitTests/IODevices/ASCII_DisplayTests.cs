@@ -18,10 +18,25 @@ namespace Assembler.UnitTests.IODevices
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Invalid port \n")]
-        public void ASCIIDisplayTests_InvalidPort()
+        public void ASCIIDisplayTests_ReadFromInvalidPort()
         {
             ASCII_Display display = new ASCII_Display(80);
             Assert.AreEqual("00", display.ReadFromPort(0));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException),"Provided a negative port number!\n")]
+        public void ASCIIDisplayTests_NegativePortNumber()
+        {
+            ASCII_Display display = new ASCII_Display(-80);
+            //Assert.AreEqual("00", display.ReadFromPort(0));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException), "Provided an overflowable port number!\n")]
+        public void ASCIIDisplayTests_OverflowPortNumber()
+        {
+            ASCII_Display display = new ASCII_Display(short.MaxValue);
         }
 
         [TestMethod]
@@ -103,5 +118,7 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nContent read in Hex: {h} {e} {l} {l2} {o}");
         }
+
+  
     }
 }
