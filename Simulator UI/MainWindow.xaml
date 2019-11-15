@@ -19,6 +19,7 @@
             <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="OpenObjBtn" Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="OpenAsmBtn" Header="Open Assembly File" Click="OpenAsm_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="SaveAsmBtn" Header="Save Assembly File" Click="SaveAsm_Click" Background="#FF2D2D30"/>
             </MenuItem>
             <MenuItem Header="Build/Debug" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click" Background="#FF2D2D30"/>

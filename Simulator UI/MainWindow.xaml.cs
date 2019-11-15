@@ -462,6 +462,31 @@ namespace Simulator_UI
                 statusLabel.Content = "Status: File Error";
             }
             Init();
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_ObjectFile.txt",
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath,lines);
+
+                MessageBox.Show($"Object File saved to: {saveFileDialog.FileName}.", "Exported successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
+            }
         }
 
         private string[] Assemble(string[] input)
@@ -537,6 +562,40 @@ namespace Simulator_UI
                 }
 
                 
+            }
+        }
+
+        private void SaveAsm_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] assemblyConent = textRange.Text.Split(Environment.NewLine);
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_Assembly.txt",
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, assemblyConent);
+
+                MessageBox.Show($"Assembly File saved to: {saveFileDialog.FileName}.", "Saved successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
             }
         }
     }
