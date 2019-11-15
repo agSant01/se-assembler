@@ -151,15 +151,19 @@ namespace Simulator_UI
                 while (_active)
                 {
                     Thread.Sleep(100);
-
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                        Dispatcher.Invoke(() =>
+                        {
+                            CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
 
-                        if (bits[6] && bits[7])
-                            BlinkLights(bits);
-                        else LightsOnValue(bits);
-                    });
+                            if (bits[6] && bits[7])
+                                BlinkLights(bits);
+                            else LightsOnValue(bits);
+                        });
+                    }
+                    catch (Exception ex) { MessageBox.Show("Thread Ended", ex.Message); }
+                    
                 }
             }).Start();
 

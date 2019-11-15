@@ -225,7 +225,7 @@ namespace Simulator_UI
 
             }
 
-            MessageBox.Show(ioManager.ToString());
+            //MessageBox.Show(ioManager.ToString());
 
             micro.NextInstruction();
 
