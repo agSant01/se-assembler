@@ -32,10 +32,13 @@ namespace Simulator_UI
 
         private void UpdateDisplay()
         {
-            if(SegmentDisplay != null)
+            Dispatcher.Invoke(() =>
             {
-                Display.SetBinaryNumber(SegmentDisplay.Data);
-            }
+                if (SegmentDisplay != null)
+                {
+                    Display.SetBinaryNumber(SegmentDisplay.Data);
+                }
+            });
         }
 
         private void Toggle_Activate(object sender, RoutedEventArgs e)
