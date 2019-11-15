@@ -6,39 +6,45 @@
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
         Background="#FF2D2D30"
-        Title="MicroSimulator" Height="648" Width="975.5" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
+        Title="MicroSimulator" Height="650" Width="1080" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="559*"/>
             <ColumnDefinition Width="410*"/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="memoryBox" HorizontalAlignment="Left" Height="477" Margin="120.5,88,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42"/>
+        <ListBox x:Name="memoryBox" HorizontalAlignment="Left" Height="110" Margin="83,247,0,0" VerticalAlignment="Top" Width="360" Grid.Column="1" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42"/>
         <!-- <TextBox x:Name="fileTextBox" HorizontalAlignment="Left" Height="312" Margin="10,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="389" IsReadOnly="True" TextChanged="fileTextBox_TextChanged"/> -->
-        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="477" Margin="11,88,0,0" VerticalAlignment="Top" Width="245" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42"/>
+        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="355" Margin="490,95,0,0" VerticalAlignment="Top" Width="202" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="968" Grid.ColumnSpan="2" Background="#FF2D2D30" Foreground="White">
             <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
-                <MenuItem Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
-
+                <MenuItem x:Name="OpenObjBtn" Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="OpenAsmBtn" Header="Open Assembly File" Click="OpenAsm_Click" Background="#FF2D2D30"/>
+            </MenuItem>
+            <MenuItem Header="Build/Debug" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
+                <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="assembleBtn" Header="Assemble" Icon="" Click="AssembleBtn_Click" Background="#FF2D2D30"/>
             </MenuItem>
         </Menu>
         <Label x:Name="label" Content="File Preview" HorizontalAlignment="Left" Margin="11,62,0,0" VerticalAlignment="Top" Width="390" Foreground="White"/>
-        <ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,-23,0" VerticalAlignment="Top" Width="991" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
+        <Label x:Name="label_Copy" Content="Memory" HorizontalAlignment="Left" Margin="85,217,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White"/>
+        <!--<ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,-23,0" VerticalAlignment="Top" Width="991" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
             <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click"/>
             <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click"/>
-            <MenuItem x:Name="resetBtn" Header="Reset
-" Icon="" Click="ResetBtn_Click"/>
-        </ToolBar>
-        <StatusBar HorizontalAlignment="Left" Height="30" Margin="0,574,0,0" VerticalAlignment="Top" Width="968" Background="#FF026128" Grid.ColumnSpan="2">
+            <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click"/>
+        </ToolBar>-->
+        <StatusBar HorizontalAlignment="Left" Height="30" Margin="0,574,0,0" VerticalAlignment="Top" Width="1080" Background="#FF026128" Grid.ColumnSpan="2">
             <Label x:Name="statusLabel" Content="Label" Foreground="White"/>
         </StatusBar>
-        <Label x:Name="label1" Content="Stack Pointer" Foreground="White" HorizontalAlignment="Left" Margin="267,111,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stackPointerBox" HorizontalAlignment="Left" Height="23" Margin="384,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True"/>
-        <Label x:Name="label1_Copy" Content="Program Counter" Foreground="White" HorizontalAlignment="Left" Margin="266,141,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="programCounterBox" HorizontalAlignment="Left" Height="23" Margin="385,144,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True"/>
-        <Label x:Name="label1_Copy1" Content="Conditional Bit" Foreground="White" HorizontalAlignment="Left" Margin="267,172,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="conditionalBitBox" HorizontalAlignment="Left" Height="23" Margin="384,174,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True"/>
-        <Label x:Name="label1_Copy2" Content="Program Counter" Foreground="White" HorizontalAlignment="Left" Margin="266,264,0,0" VerticalAlignment="Top"/>
-        <ListBox x:Name="registersBox" HorizontalAlignment="Left" Height="167" Margin="374,208,0,0" VerticalAlignment="Top" Width="125" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42">
+        <Label x:Name="label1" Content="Stack Pointer" Foreground="White" HorizontalAlignment="Left" Margin="91,123,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="stackPointerBox" HorizontalAlignment="Left" Height="23" Margin="208,125,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True" Grid.Column="1"/>
+        <Label x:Name="label1_Copy" Content="Program Counter" Foreground="White" HorizontalAlignment="Left" Margin="90,153,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="programCounterBox" HorizontalAlignment="Left" Height="23" Margin="209,156,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True" Grid.Column="1"/>
+        <Label x:Name="label1_Copy1" Content="Conditional Bit" Foreground="White" HorizontalAlignment="Left" Margin="91,184,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="conditionalBitBox" HorizontalAlignment="Left" Height="23" Margin="208,186,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" IsReadOnly="True" Grid.Column="1"/>
+        <Label x:Name="label1_Copy2" Content="Registers" Foreground="White" HorizontalAlignment="Left" Margin="318,20,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <ListBox x:Name="registersBox" HorizontalAlignment="Left" Height="167" Margin="318,46,0,0" VerticalAlignment="Top" Width="125" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.Column="1">
             <ListBoxItem Content="R0:"/>
             <ListBoxItem Content="R1:"/>
             <ListBoxItem Content="R2:"/>
@@ -48,28 +54,37 @@
             <ListBoxItem Content="R6:"/>
             <ListBoxItem Content="R7:"/>
         </ListBox>
-        <ListBox x:Name="instructionsHistoryBox" HorizontalAlignment="Left" Height="79" Margin="263,486,0,0" VerticalAlignment="Top" Width="362" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
-        <Label x:Name="label_Copy1" Content="Instructions History" HorizontalAlignment="Left" Margin="263,460,0,0" VerticalAlignment="Top" Width="249" Foreground="White"/>
-        <ListBox x:Name="instructionsBox" HorizontalAlignment="Left" Height="69" Margin="263,391,0,0" VerticalAlignment="Top" Width="362" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2">
+        <ListBox x:Name="instructionsHistoryBox" HorizontalAlignment="Left" Height="80" Margin="83,486,0,0" VerticalAlignment="Top" Width="362" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.Column="1"/>
+        <Label x:Name="label_Copy1" Content="Instructions History" HorizontalAlignment="Left" Margin="90,460,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Grid.Column="1"/>
+        <ListBox x:Name="instructionsBox" HorizontalAlignment="Left" Height="69" Margin="85,395,0,0" VerticalAlignment="Top" Width="362" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42" Grid.Column="1">
+            <ListBoxItem Content="Next:"/>
             <ListBoxItem Content="Next:"/>
             <ListBoxItem Content="Curr:"/>
             <ListBoxItem Content="Prev:"/>
         </ListBox>
-        <Label x:Name="label_Copy2" Content="Instructions" HorizontalAlignment="Left" Margin="263,365,0,0" VerticalAlignment="Top" Width="249" Foreground="White"/>
-        <Label x:Name="label1_Copy4" Content="Stack Pointer Start" Foreground="White" HorizontalAlignment="Left" Margin="267,80,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="stackPointerStart" HorizontalAlignment="Left" Height="23" Margin="384,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White"/>
-        <Label x:Name="label1_Copy5" Content="words" Foreground="#FF7E7979" FontSize="13" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="169,56,0,0" VerticalAlignment="Top" Grid.Column="1" Height="28"/>
-        <TextBox x:Name="memorySizeBox" HorizontalAlignment="Left" Height="27" Margin="124,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" FontSize="13" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1" Text="50"/>
+        <Label x:Name="label_Copy2" Content="Instructions" HorizontalAlignment="Left" Margin="82,364,0,0" VerticalAlignment="Top" Width="249" Foreground="White" Grid.Column="1"/>
+        <Label x:Name="label1_Copy4" Content="Stack Pointer Start" Foreground="White" HorizontalAlignment="Left" Margin="91,92,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="stackPointerStart" HorizontalAlignment="Left" Height="23" Margin="208,94,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1"/>
+        <Label x:Name="label1_Copy5" Content="words" Foreground="#FF7E7979" HorizontalAlignment="Left" Margin="337,216,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+        <TextBox x:Name="memorySizeBox" HorizontalAlignment="Left" Height="23" Margin="392,220,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="44" BorderBrush="#FF2D2D30" Background="#FF1E1E1E" Foreground="White" Grid.Column="1" Text="50"/>
 
         <!--
         IO Selection UI
         -->
-        <CheckBox x:Name="cbHexkeyboard" Content="IO Hexadecimal Keyboard"  Foreground="white" HorizontalAlignment="Left" Margin="506,89,0,0" VerticalAlignment="Top" Height="20" Width="160" Grid.ColumnSpan="2" ClipToBounds="True" SnapsToDevicePixels="True" Checked="Checked_IOHexaKeyBoard" Unchecked="Unchecked_IOHexaKeyBoard"/>
-        <CheckBox x:Name="cb7Segment" Content="IO 7-Segment Display"  Foreground="white" HorizontalAlignment="Left" Margin="506,116,0,0" VerticalAlignment="Top" Height="20" Width="160" Grid.ColumnSpan="2" ClipToBounds="True" SnapsToDevicePixels="True" Checked="Checked_IO7SegmentDisplay" Unchecked="Unchecked_IO7SegmentDisplay"/>
-        <CheckBox x:Name="cbAsciiDisplay" Content="IO ASCII Display"  Foreground="white" HorizontalAlignment="Left" Margin="506,144,0,0" VerticalAlignment="Top" Height="20" Width="160" Grid.ColumnSpan="2" ClipToBounds="True" SnapsToDevicePixels="True"  Checked="Checked_IOASCIIDisplay" Unchecked="Unchecked_IOAsciiDisplay"/>
-        <CheckBox x:Name="cbTrafficLight" Content="IO Traffic Light"  Foreground="white" HorizontalAlignment="Left" Margin="506,169,0,0" VerticalAlignment="Top" Height="20" Width="160" Grid.ColumnSpan="2" ClipToBounds="True" SnapsToDevicePixels="True" Checked="cbTrafficLight_Checked" Unchecked="cbTrafficLight_Unhecked"/>
-        <Label x:Name="label_Copy" Content="Microprocessor Virtual Memory Map" HorizontalAlignment="Left" Margin="120,29,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White" HorizontalContentAlignment="Right" FontWeight="Bold" FontSize="13"/>
-        <Button Content="Export Memory Map" Grid.Column="1" HorizontalAlignment="Left" Margin="255,58,0,0" VerticalAlignment="Top" Width="142" Height="25" Click="Btn_Click_ExportMemoryMap" FontSize="12" Background="Gray" Foreground="White" BorderBrush="AliceBlue" />
+        <CheckBox x:Name="cbHexkeyboard" Content="IO Hexadecimal Keyboard"  Foreground="white" HorizontalAlignment="Left" Margin="490,461,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Checked="Checked_IOHexaKeyBoard" Unchecked="Unchecked_IOHexaKeyBoard" Grid.ColumnSpan="2"/>
+        <CheckBox x:Name="cb7Segment" Content="IO 7-Segment Display"  Foreground="white" HorizontalAlignment="Left" Margin="490,488,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Checked="Checked_IO7SegmentDisplay" Unchecked="Unchecked_IO7SegmentDisplay" Grid.ColumnSpan="2"/>
+        <CheckBox x:Name="cbAsciiDisplay" Content="IO ASCII Display"  Foreground="white" HorizontalAlignment="Left" Margin="490,516,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True"  Checked="Checked_IOASCIIDisplay" Unchecked="Unchecked_IOAsciiDisplay" Grid.ColumnSpan="2"/>
+        <CheckBox x:Name="cbTrafficLight" Content="IO Traffic Light"  Foreground="white" HorizontalAlignment="Left" Margin="490,541,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Checked="cbTrafficLight_Checked" Unchecked="cbTrafficLight_Unhecked" Grid.ColumnSpan="2"/>
+        <RichTextBox x:Name="textEditorRB" Margin="10,64,156,73" Background="#FF1E1E1E" BorderBrush="#FF686868" Foreground="White" SelectionBrush="#FF0078D7" TextChanged="textEditorRB_TextChanged">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text=""/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+        <Label x:Name="label_Copy9" Content="Microprocessor Virtual Memory Map" HorizontalAlignment="Left" Margin="490,27,0,0" VerticalAlignment="Top" Width="237" Foreground="White" HorizontalContentAlignment="Right" FontWeight="Bold" FontSize="13" Grid.ColumnSpan="2"/>
+        <Button Content="Export Memory Map" Grid.Column="1" HorizontalAlignment="Left" Margin="121,28,0,0" VerticalAlignment="Top" Width="142" Height="25" Click="Btn_Click_ExportMemoryMap" FontSize="12" Background="Gray" Foreground="White" BorderBrush="AliceBlue" />
+        <Label x:Name="label_Copy3" Content="Object File Content" HorizontalAlignment="Left" Margin="490,64,0,0" VerticalAlignment="Top" Width="202" Foreground="White" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>

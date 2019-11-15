@@ -1,6 +1,9 @@
-﻿using Assembler.Core.Microprocessor;
+﻿using Assembler.Assembler;
+using Assembler.Core;
+using Assembler.Core.Microprocessor;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Parsing;
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,23 +11,31 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace Simulator_UI
 {
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
-
+        private readonly string defaultOutPath = @"./AsmOut.txt";
+        
         private MicroSimulator micro;
         private IOManager ioManager;
         private VirtualMemory vm;
+
+        //assembler
+        private Parser parser;
+        private Lexer lexer;
+        public Compiler compiler;
 
         private bool stopRun;
 
         private string[] lines;
 
+        private KeyWordDetector kwd;
         private string currFileName;
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +51,8 @@ namespace Simulator_UI
         {
             //UI Elements
             stopRun = true;
+
+            kwd = new KeyWordDetector(textEditorRB);
 
             if (lines == null) return;
 
@@ -425,6 +438,40 @@ namespace Simulator_UI
             base.OnClosed(e);
         }
 
+
+        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
+            //kwd?.AnalizeContent();
+        }
+
+        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] rbText = textRange.Text.Split(Environment.NewLine);
+            
+            try
+            {
+                fileLines.ItemsSource = lines = Assemble(rbText);
+                statusLabel.Content = "Status: File Loaded";
+            }
+            catch (Exception ex)
+            {
+                //TODO: Create log with error
+                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                statusLabel.Content = "Status: File Error";
+            }
+            Init();
+        }
+
+        private string[] Assemble(string[] input)
+        {
+            this.lexer = new Lexer(input);
+            this.parser = new Parser(this.lexer);
+            this.compiler = new Compiler(parser);
+            this.compiler.Compile();
+            return compiler.GetOutput();
+        }
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
         {
             if (vm == null)
@@ -460,6 +507,36 @@ namespace Simulator_UI
             else
             {
                 MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
+            }
+        }
+
+        private void OpenAsm_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            bool? result = ofd.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
+                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+                    textRange.Text  = String.Join(Environment.NewLine,File.ReadAllLines(ofd.FileName));
+                    statusLabel.Content = "Status: Assembly File Loaded";
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
+                }
+
+                
             }
         }
     }
