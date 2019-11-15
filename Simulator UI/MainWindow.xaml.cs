@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace Simulator_UI
 {
@@ -34,7 +35,7 @@ namespace Simulator_UI
 
         private KeyWordDetector kwd;
         private string currFileName;
-        private KeyWordDetector kwd;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -508,38 +509,35 @@ namespace Simulator_UI
                 MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
             }
         }
-        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
-            //kwd?.AnalizeContent();
-        }
 
-        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        private void OpenAsm_Click(object sender, RoutedEventArgs e)
         {
-            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
-            string[] rbText = textRange.Text.Split(Environment.NewLine);
-
-            try
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
             {
-                fileLines.ItemsSource = lines = Assemble(rbText);
-                statusLabel.Content = "Status: File Loaded";
-            }
-            catch (Exception ex)
-            {
-                //TODO: Create log with error
-                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
-                statusLabel.Content = "Status: File Error";
-            }
-            Init();
-        }
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
 
-        private string[] Assemble(string[] input)
-        {
-            this.lexer = new Lexer(input);
-            this.parser = new Parser(this.lexer);
-            this.compiler = new Compiler(parser);
-            this.compiler.Compile();
-            return compiler.GetOutput();
+            bool? result = ofd.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
+                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+                    textRange.Text  = String.Join(Environment.NewLine,File.ReadAllLines(ofd.FileName));
+                    statusLabel.Content = "Status: Assembly File Loaded";
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
+                }
+
+                
+            }
         }
     }
 }
