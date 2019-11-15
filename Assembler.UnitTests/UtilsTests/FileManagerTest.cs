@@ -54,7 +54,7 @@ namespace Assembler.UnitTests.UtilsTests
 
             Assert.IsNotNull(readLines);
 
-            foreach(string line in readLines)
+            foreach (string line in readLines)
             {
                 Console.WriteLine(line);
             }

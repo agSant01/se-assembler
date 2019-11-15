@@ -35,15 +35,18 @@
 
         </ToggleButton>
 
-        <TextBox x:Name="a"   HorizontalAlignment="Left" Text="a" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="53,144,0,0"/>
-        <TextBox x:Name="b"   HorizontalAlignment="Left" Text="b" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="91,144,0,0"/>
-        <TextBox x:Name="c"   HorizontalAlignment="Left" Text="c" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="129,144,0,0" />
-        <TextBox x:Name="d"   HorizontalAlignment="Left" Text="d" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="168,144,0,0"/>
-        <TextBox x:Name="e"   HorizontalAlignment="Left" Text="e" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="206,144,0,0"/>
-        <TextBox x:Name="f"   HorizontalAlignment="Left" Text="f" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="245,144,0,0"/>
-        <TextBox x:Name="g"   HorizontalAlignment="Left" Text="g" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="283,144,0,0"/>
-        <TextBox x:Name="h"   Text="h" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" HorizontalAlignment="Left" Width="38" Margin="321,144,0,0"/>
-        <!--<Button Content="Send" HorizontalAlignment="Left" Margin="262,210,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>-->
+
+            <TextBox x:Name="box_a"   HorizontalAlignment="Left" Text="a" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="53,144,0,0"/>
+            <TextBox x:Name="box_b"   HorizontalAlignment="Left" Text="b" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="91,144,0,0"/>
+            <TextBox x:Name="box_c"   HorizontalAlignment="Left" Text="c" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="129,144,0,0" />
+            <TextBox x:Name="box_d"   HorizontalAlignment="Left" Text="d" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="168,144,0,0"/>
+            <TextBox x:Name="box_e"   HorizontalAlignment="Left" Text="e" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="206,144,0,0"/>
+            <TextBox x:Name="box_f"   HorizontalAlignment="Left" Text="f" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="245,144,0,0"/>
+            <TextBox x:Name="box_g"   HorizontalAlignment="Left" Text="g" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" Margin="283,144,0,0"/>
+            <TextBox x:Name="box_h"   Text="h" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" IsReadOnly="True" IsUndoEnabled="False" HorizontalAlignment="Left" Width="38" Margin="321,144,0,0"/>
+
+       
+<!--<Button Content="Send" HorizontalAlignment="Left" Margin="262,210,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>-->
 
 
     </Grid>

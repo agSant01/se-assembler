@@ -1,6 +1,4 @@
 ﻿using Assembler.Microprocessor.InstructionFormats;
-using Assembler.Utils;
-using System;
 
 namespace Assembler.Microprocessor
 {
@@ -25,7 +23,7 @@ namespace Assembler.Microprocessor
             }
         }
 
-        public IMCInstruction NextInstruction()
+        private IMCInstruction GetNextInstruction()
         {
             ushort currProgramCounter = _simulator.ProgramCounter;
 
@@ -48,7 +46,7 @@ namespace Assembler.Microprocessor
             string[] paramList = new string[3];
 
             IMCInstruction instructionToExecute = null;
-            
+
             switch (instructionFormat)
             {
                 case 1:
@@ -101,10 +99,22 @@ namespace Assembler.Microprocessor
                     break;
             }
 
-            // TODO: add executer
+            return instructionToExecute;
+        }
+
+        public IMCInstruction PeekNextInstruction()
+        {
+            return GetNextInstruction();
+        }
+
+        public IMCInstruction NextInstruction()
+        {
+            IMCInstruction instructionToExecute = GetNextInstruction();
+
             InstructionSetExe.ExecuteInstruction(instructionToExecute, _simulator);
 
             return instructionToExecute;
         }
+
     }
 }

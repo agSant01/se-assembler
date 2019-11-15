@@ -1,7 +1,6 @@
 ﻿using Assembler.Assembler;
 using Assembler.Core;
 using Assembler.Core.Microprocessor;
-using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Parsing;
@@ -9,19 +8,9 @@ using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
@@ -44,8 +33,8 @@ namespace Simulator_UI
         private string[] lines;
 
         private KeyWordDetector kwd;
-
-
+        private string currFileName;
+        private KeyWordDetector kwd;
         public MainWindow()
         {
             InitializeComponent();
@@ -98,8 +87,6 @@ namespace Simulator_UI
         {
             memoryBox.Items.Clear();
 
-            memoryBox.Items.Add($"Address\t| EvenColumn\t| OddColumn");
-
             if (!int.TryParse(memorySizeBox.Text, out int lines))
             {
                 MessageBox.Show("Invalid number of memory blocks to show. Setting default to 50.", "Invalid Input");
@@ -109,7 +96,7 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{i}) {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
             }
         }
 
@@ -135,7 +122,8 @@ namespace Simulator_UI
         {
             instructionsBox.Items.Clear();
             instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:  {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction:     {GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -192,6 +180,7 @@ namespace Simulator_UI
 
             Init();
 
+            instructionsBox.Items.Clear();
             UpdateInstructionBox();
         }
 
@@ -210,6 +199,8 @@ namespace Simulator_UI
             {
                 try
                 {
+                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
+
                     fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
                     statusLabel.Content = "Status: File Loaded";
                 }
@@ -370,35 +361,6 @@ namespace Simulator_UI
             Checked_IO7SegmentDisplay(null, null);
         }
 
-        ///// <summary>
-        ///// Helper method for verifying state of the IDE microprocessor and IOManager
-        ///// </summary>
-        ///// <param name="cb">Checkbox instance</param>
-        ///// <returns>True if state is valid</returns>
-        //private bool ValidIDEState(CheckBox cb)
-        //{
-        //    if (cb == null)
-        //    {
-        //        return false;
-        //    }
-
-        //    if (ioManager == null)
-        //    {
-        //        cb.IsChecked = false;
-
-        //        MessageBox.Show("Load an obj file before activating an IO Device.");
-
-        //        return false;
-        //    }
-
-        //    if (cb.IsChecked == false)
-        //    {
-        //        return false;
-        //    }
-
-        //    return true;
-        //    cbTrafficLight_Checked(null,null);
-        //}
         private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
         {
             if (ioManager == null)
@@ -475,6 +437,7 @@ namespace Simulator_UI
             base.OnClosed(e);
         }
 
+
         private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
         {
             //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
@@ -486,6 +449,76 @@ namespace Simulator_UI
             TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
             string[] rbText = textRange.Text.Split(Environment.NewLine);
             
+            try
+            {
+                fileLines.ItemsSource = lines = Assemble(rbText);
+                statusLabel.Content = "Status: File Loaded";
+            }
+            catch (Exception ex)
+            {
+                //TODO: Create log with error
+                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                statusLabel.Content = "Status: File Error";
+            }
+            Init();
+        }
+
+        private string[] Assemble(string[] input)
+        {
+            this.lexer = new Lexer(input);
+            this.parser = new Parser(this.lexer);
+            this.compiler = new Compiler(parser);
+            this.compiler.Compile();
+            return compiler.GetOutput();
+        }
+        private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
+        {
+            if (vm == null)
+            {
+                MessageBox.Show("Cannot export Memory Map if no Object file is uploaded.", "Invalid IDE State");
+
+                return;
+            }
+
+            string[] virtualMemoryState = vm.ExportVirtualMemory();
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_VM_MemoryMap.txt",
+                DefaultExt = ".txt",
+                Filter = "Text Document (.txt)|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, virtualMemoryState);
+
+                MessageBox.Show($"Exported Virtual Memory Map to: {saveFileDialog.FileName}.", "Exported successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
+            }
+        }
+        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
+            //kwd?.AnalizeContent();
+        }
+
+        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] rbText = textRange.Text.Split(Environment.NewLine);
+
             try
             {
                 fileLines.ItemsSource = lines = Assemble(rbText);

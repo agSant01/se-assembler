@@ -2,7 +2,6 @@
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 
 namespace Assembler.Microprocessor
@@ -45,7 +44,7 @@ namespace Assembler.Microprocessor
                     string registerAValue = micro.MicroRegisters.GetRegisterValue(instructionF2.Ra);
 
                     micro.WriteToMemory(
-                        UnitConverter.HexToInt(instructionF2.AddressParamHex), 
+                        UnitConverter.HexToInt(instructionF2.AddressParamHex),
                         registerAValue
                     );
                     return true;
@@ -125,7 +124,7 @@ namespace Assembler.Microprocessor
                         );
 
                     micro.MicroRegisters.SetRegisterValue(ra, result);
-                    
+
                     return true;
                 }},
                 { "01010",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -159,7 +158,7 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "01100",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // OR Ra, Rb, Rc {F1} R[Ra]<- R[Rb]+R[Rc] 
@@ -176,7 +175,7 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "01101",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // XOR Ra, Rb, Rc {F1} R[Ra]<- R[Rb] XOR [Rc] 
@@ -193,7 +192,7 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "01110",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // NOT Ra,Rb {F1}   R[Ra] <- Complement(R[Rb])
@@ -205,10 +204,10 @@ namespace Assembler.Microprocessor
                     sbyte valueInB = UnitConverter.HexToSByte(micro.MicroRegisters.GetRegisterValue(rb));
 
                     sbyte resultForA = (sbyte) (~valueInB);
-                    
+
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "01111",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // NEG Ra,Rb {F1} R[Ra]<- - R[Rb]
@@ -223,7 +222,7 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "10000",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // SHIFTR Ra, Rb, Rc {F1} R[Ra]<- R[Rb] shr R[Rc]
@@ -241,7 +240,7 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "10001",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // SHIFTL Ra, Rb, Rc {F1} R[Ra]<- R[Rb] shl R[Rc] 
@@ -259,23 +258,67 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
-                    return true; 
+                    return true;
                 }},
                 { "10010",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // ROTAR Ra, Rb, Rc {F1} R[Ra]<- R[Rb] rtr R[Rc]
-                    
-                    // call SHIFTR
-                    operatorFunctions["10000"](instruction, micro);
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                    return true; 
+                    byte ra = instructionF1.Ra;
+                    byte rb = instructionF1.Rb;
+                    byte rc = instructionF1.Rc;
+
+                    byte timesToRotate = UnitConverter.HexToByte(micro.MicroRegisters.GetRegisterValue(rc));
+
+                    char[] bitArray = UnitConverter.HexToBinary(micro.MicroRegisters.GetRegisterValue(rb)).ToCharArray();
+                    char[] newRotatedBitArr = new char[bitArray.Length];
+
+                    byte currentReadingPosition = (byte) (bitArray.Length - timesToRotate);
+                    
+                    for (byte writingPositon = 0; writingPositon < bitArray.Length; writingPositon++)
+                    {
+                        newRotatedBitArr[writingPositon] = bitArray[currentReadingPosition % bitArray.Length];
+                        ++currentReadingPosition;
+                    }
+
+                    string newDataInBinary = string.Join("", newRotatedBitArr);
+
+                    string newDataInHex = UnitConverter.BinaryToHex(newDataInBinary);
+
+                    micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
+
+                    return true;
                 }},
                 { "10011",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // ROTAL Ra, Rb, Rc {F1} R[Ra]<- R[Rb] rtr R[Rc]
                     
-                    // call SHIFTL
-                    operatorFunctions["10001"](instruction, micro);
+                    MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                    return true; 
+                    byte ra = instructionF1.Ra;
+                    byte rb = instructionF1.Rb;
+                    byte rc = instructionF1.Rc;
+
+                    byte timesToRotate = UnitConverter.HexToByte(micro.MicroRegisters.GetRegisterValue(rc));
+
+
+                    char[] bitArray = UnitConverter.HexToBinary(micro.MicroRegisters.GetRegisterValue(rb)).ToCharArray();
+                    char[] newRotatedBitArr = new char[bitArray.Length];
+
+                    byte currentReadingPosition = timesToRotate;
+
+                    for (byte writingPositon = 0; writingPositon < bitArray.Length; writingPositon++)
+                    {
+                        newRotatedBitArr[writingPositon] = bitArray[currentReadingPosition % bitArray.Length];
+                        ++currentReadingPosition;
+                    }
+
+                    string newDataInBinary = string.Join("", newRotatedBitArr);
+
+                    string newDataInHex = UnitConverter.BinaryToHex(newDataInBinary);
+
+                    micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
+
+                    return true;
                 }},
                 // Flow Control
                 { "10100",     (IMCInstruction instruction, MicroSimulator micro) => { 
@@ -285,9 +328,9 @@ namespace Assembler.Microprocessor
 
                     string hexaAddress = micro.MicroRegisters.GetRegisterValue(ra);
 
-                    micro.ProgramCounter = (ushort) UnitConverter.HexToInt(hexaAddress); 
-                    
-                    return true; 
+                    micro.ProgramCounter = (ushort) UnitConverter.HexToInt(hexaAddress);
+
+                    return true;
                 }},
                 { "10101",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // JMPADDR addr {F3} [pc] <- address
@@ -317,7 +360,7 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = false;
 
-                    return true; 
+                    return true;
                 }},
                 { "10111",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // JCONDADDR addr {F3} If cond then [pc] <- address
@@ -330,7 +373,7 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = false;
 
-                    return true; 
+                    return true;
                 }},
                 { "11000",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // LOOP Ra, address {F2} 
@@ -352,7 +395,7 @@ namespace Assembler.Microprocessor
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(instructionF2.AddressParamHex);
                     }
 
-                    return true; 
+                    return true;
                 }},
                 { "11001",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // GRT Ra, Rb {F1} Cond <- R[Ra] > R[Rb]
@@ -366,7 +409,7 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = raData > rbData;
 
-                    return true; 
+                    return true;
                 }},
                 { "11010",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // GRTEQ Ra, Rb {F1} Cond <- R[Ra] >= R[Rb]
@@ -380,7 +423,7 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = raData >= rbData;
 
-                    return true; 
+                    return true;
                 }},
                 { "11011",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // EQ Ra, Rb {F1} Cond <- R[Ra] == R[Rb] 

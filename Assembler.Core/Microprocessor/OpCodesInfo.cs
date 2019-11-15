@@ -59,7 +59,7 @@ namespace Assembler.Microprocessor
             {
                 // Data movement
                 // { INSTRUCTION_FORMAT, NUM_OF_PARAMS }
-                { "00000",  "LOAD"    },    
+                { "00000",  "LOAD"    },
                 { "00001",  "LOADIM"  },
                 { "00010",  "POP"     },
                 { "00011",  "STORE"   },

@@ -1,13 +1,8 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
 using Assembler.Microprocessor;
-using Assembler.Microprocessor.InstructionFormats;
-using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace Assembler.UnitTests.IODevices
 {
@@ -40,7 +35,7 @@ namespace Assembler.UnitTests.IODevices
         [TestMethod]
         public void IOHexKeyboardTests_ReadFromMicro_Success()
         {
-            VirtualMemory vm = new VirtualMemory(new string[] { 
+            VirtualMemory vm = new VirtualMemory(new string[] {
                 "0000",
                 "0000",
                 "0000",

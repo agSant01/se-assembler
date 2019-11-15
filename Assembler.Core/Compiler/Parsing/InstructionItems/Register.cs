@@ -56,12 +56,13 @@ namespace Assembler.Parsing.InstructionItems
         /// </summary>
         /// <returns>String representation of Register</returns>
         public override string ToString()
-        {   if (IsValid() && Token != null)//BUG FIXED:If we didn't check for null, the toString in compiler would throw an exception when unused regiters were left empty
+        {
+            if (IsValid() && Token != null)//BUG FIXED:If we didn't check for null, the toString in compiler would throw an exception when unused regiters were left empty
                 return Token?.Value;
 
             else
                 //return null;//TODO: PROPER FIX FOR UNINIT REGs
-            return "";
+                return "";
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Assembler.Microprocessor
         private readonly ushort PC_SIZE = 11;
 
         private ushort _programCounter = 0;
-               
+
         public MicroSimulator(VirtualMemory virtualMemory)
         {
             MicroRegisters = new Registers();
@@ -28,7 +28,7 @@ namespace Assembler.Microprocessor
             _ioManager = new IOManager(_virtualMemory.VirtualMemorySize);
         }
 
-        public MicroSimulator(VirtualMemory virtualMemory, IOManager iOManager) 
+        public MicroSimulator(VirtualMemory virtualMemory, IOManager iOManager)
             : this(virtualMemory)
         {
             _ioManager = iOManager;
@@ -73,8 +73,10 @@ namespace Assembler.Microprocessor
             if (_ioManager.IsUsedPort((short)decimalAddress))
             {
                 _ioManager.WriteToIO((short)decimalAddress, contentInHex);
-            } else { 
-               _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
+            }
+            else
+            {
+                _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
             }
         }
 
@@ -101,6 +103,11 @@ namespace Assembler.Microprocessor
             {
                 ProgramCounter += 2;
             }
+        }
+
+        public IMCInstruction PeekNextInstruction()
+        {
+            return _mcLoader?.PeekNextInstruction();
         }
     }
 }
