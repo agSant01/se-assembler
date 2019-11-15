@@ -49,29 +49,6 @@ namespace Simulator_UI
 
             kwd = new KeyWordDetector(textEditorRB);
 
-            if (lines != null) {
-                //Micro simulator setup
-                vm = new VirtualMemory(lines);
-
-                // state the last port for the micro
-                ioManager = new IOManager(vm.VirtualMemorySize - 1);
-
-                micro = new MicroSimulator(vm, ioManager);
-
-                try
-                {
-                    string stackPointer = stackPointerStart.Text.Trim();
-
-                    micro.StackPointer = Convert.ToUInt16(stackPointer);
-                }
-                catch (Exception)
-                {
-                    stackPointerStart.Text = micro.StackPointer.ToString();
-                }
-
-                SetIOs();
-            }
-
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
@@ -80,6 +57,8 @@ namespace Simulator_UI
             UpdateRegisters();
 
             UpdateInstructionBox();
+
+            SetIOs();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
@@ -106,8 +85,6 @@ namespace Simulator_UI
         {
             bool IsMicroNull = micro == null;
 
-            stackPointerStart.IsEnabled = !IsMicroNull;
-
             stackPointerBox.IsEnabled = !IsMicroNull;
 
             programCounterBox.IsEnabled = !IsMicroNull;
@@ -116,9 +93,7 @@ namespace Simulator_UI
 
             if (IsMicroNull)
             {
-                stackPointerStart.Text = "NA";
-            } else if (stackPointerStart.Text.Length == 0){
-                stackPointerStart.Text = micro.StackPointer.ToString();
+                stackPointerStart.Text = "0";
             }
 
             stackPointerBox.Text = micro?.StackPointer.ToString() ?? "NA"; 
@@ -147,9 +122,15 @@ namespace Simulator_UI
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (compiler == null)
+            {
+                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                return;
+            }
+
             if (micro == null)
             {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
                 return;
             }
 
@@ -164,7 +145,7 @@ namespace Simulator_UI
 
             new Thread(() =>
             {
-                while (!stopRun)
+                while (!stopRun && micro != null)
                 {
                     Thread.Sleep(100);
 
@@ -178,43 +159,69 @@ namespace Simulator_UI
 
                         UpdateRegisters();
 
-                        instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                        instructionsHistoryBox.Items.Add(micro?.CurrentInstruction);
                     });
                 }
             }).Start();
         }
 
+        private void RunNextBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (compiler == null)
+            {
+                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                return;
+            }
+
+            if (micro == null)
+            {
+                MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+                return;
+            }
+
+            micro.NextInstruction();
+
+            UpdateInstructionBox();
+
+            LoadMemory();
+
+            UpdateRegisters();
+
+            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+        }
+
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (micro == null)
+            {
+                MessageBox.Show("No microprocessor to reset.", "Microprocessor not connnected.");
+                return;
+            }
+
             stopRun = true;
 
             Thread.Sleep(100);
 
-            runAllBtn.Header = "Run All";
-
-            instructionsHistoryBox.Items.Clear();
-            memoryBox.Items.Clear();
-
-
-            if (lines == null && ioManager == null) return;
-
-            //Micro simulator setup
-            vm = new VirtualMemory(lines);
-
-            ioManager.ResetIOs();
-
-            micro = new MicroSimulator(vm, ioManager);
-
-            try
+            if (lines != null || ioManager != null)
             {
-                string stackPointer = stackPointerStart.Text.Trim();
+                //Micro simulator setup
+                vm = new VirtualMemory(lines);
 
-                micro.StackPointer = Convert.ToUInt16(stackPointer);
-            }
-            catch(Exception)
-            {
-                MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
-                stackPointerStart.Text = micro.StackPointer.ToString();
+                ioManager?.ResetIOs();
+
+                micro = new MicroSimulator(vm, ioManager);
+
+                try
+                {
+                    string stackPointer = stackPointerStart.Text.Trim();
+
+                    micro.StackPointer = Convert.ToUInt16(stackPointer);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
+                    stackPointerStart.Text = micro.StackPointer.ToString();
+                }
             }
 
             LoadMemory();
@@ -231,11 +238,49 @@ namespace Simulator_UI
 
         private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
         {
+            stopRun = true;
 
+            if (lines != null)
+            {
+                //Micro simulator setup
+                vm = new VirtualMemory(lines);
+
+                // state the last port for the micro
+                ioManager = new IOManager(vm.VirtualMemorySize - 1);
+
+                micro = new MicroSimulator(vm, ioManager);
+
+                try
+                {
+                    string stackPointer = stackPointerStart.Text.Trim();
+
+                    micro.StackPointer = Convert.ToUInt16(stackPointer);
+                }
+                catch (Exception)
+                {
+                    stackPointerStart.Text = micro.StackPointer.ToString();
+                }
+
+                SetIOs();
+
+                LoadMemory();
+
+                UpdateRegisters();
+
+                UpdateInstructionBox();
+            } else
+            {
+                MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
+            }
         }
 
         private void TurnOffBtn_Click(object sender, RoutedEventArgs e)
         {
+
+            stopRun = true;
+
+            Thread.Sleep(100);
+
             if(micro == null)
             {
                 MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
@@ -253,39 +298,26 @@ namespace Simulator_UI
             ioManager = null;
             vm = null;
 
+            SetIOs();
+
             LoadMemory();
 
             UpdateRegisters();
 
             UpdateInstructionBox();
+
+            runAllBtn.Header = "Run All";
+
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
 
             MessageBox.Show("Micro Turned OFF");
-        }
-
-        private void RunNextBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (micro == null)
-            {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
-                return;
-
-            }
-            
-            micro.NextInstruction();
-
-            UpdateInstructionBox();
-
-            LoadMemory();
-
-            UpdateRegisters();
-
-            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
         {
             if (instruction == null)
-                return string.Empty;
+                return "NA";
 
             string addressHex = UnitConverter.IntToHex(instruction.InstructionAddressDecimal, defaultWidth: 3);
 
@@ -295,13 +327,19 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
+        private void VerifyMicroStateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (micro == null)
+            {
+                MessageBox.Show("Cannot turn ON I/O devices while the Microprocessor is OFF.", "Invalid State");
+            }
+        }
+
         private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
         {
             if (ioManager == null)
             {
                 cbAsciiDisplay.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
 
                 return;
             }
@@ -332,7 +370,6 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(Display_GUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
         }
 
@@ -364,7 +401,6 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
         }
         private void Checked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
@@ -395,15 +431,7 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
-        }
-        private void SetIOs()
-        {
-            Checked_IOHexaKeyBoard(null, null);
-            cbTrafficLight_Checked(null, null);
-            Checked_IOASCIIDisplay(null, null);
-            Checked_IO7SegmentDisplay(null, null);
         }
 
         private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
@@ -411,9 +439,6 @@ namespace Simulator_UI
             if (ioManager == null)
             {
                 cbTrafficLight.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
-
                 return;
             }
 
@@ -443,8 +468,21 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
+        }
+
+        private void SetIOs()
+        {
+            // set enabled or disabled depending on if micro processor is ON or OFF
+            //cb7Segment.IsEnabled = micro != null;
+            //cbHexkeyboard.IsEnabled = micro != null;
+            //cbTrafficLight.IsEnabled = micro != null;
+            //cbAsciiDisplay.IsEnabled = micro != null;
+
+            Checked_IOHexaKeyBoard(null, null);
+            cbTrafficLight_Checked(null, null);
+            Checked_IOASCIIDisplay(null, null);
+            Checked_IO7SegmentDisplay(null, null);
         }
 
         /// <summary>
@@ -462,8 +500,6 @@ namespace Simulator_UI
             if (ioManager == null)
             {
                 cb.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
 
                 return false;
             }
