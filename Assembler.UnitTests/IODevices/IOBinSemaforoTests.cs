@@ -14,7 +14,7 @@ namespace Assembler.UnitTests.IODevices
         {
             IOBinSemaforo semaforo = new IOBinSemaforo(4, "#Debug");
 
-            Assert.AreEqual(true, semaforo.HasData);
+            Assert.AreEqual(false, semaforo.HasData);
 
             foreach (char c in semaforo.BitContent)
             {

@@ -151,6 +151,27 @@ namespace Assembler.Core.Microprocessor
             return _portsAndDevices.ContainsKey(port);
         }
 
+        public bool ResetIOs()
+        {
+            bool[] results = new bool[_devicesAndIds.Count];
+            int count = 0;
+
+            foreach (IIODevice device in _devicesAndIds.Values)
+            {
+                results[count] = device.Reset();
+                ++count;
+            }
+            
+            foreach(bool result in results)
+            {
+                // could not reset at least one IO Device
+                if (!result)
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Validate port for I/O device
         /// </summary>

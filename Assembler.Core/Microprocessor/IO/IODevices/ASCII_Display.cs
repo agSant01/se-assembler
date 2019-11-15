@@ -87,6 +87,8 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             //_buffer.Clear();
             this.characters = new string[8];
+            if (!_debug)
+                GotHexData();
             return true;
         }
 

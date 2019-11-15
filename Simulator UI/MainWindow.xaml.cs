@@ -24,8 +24,6 @@ namespace Simulator_UI
         private VirtualMemory vm;
 
         //assembler
-        private Parser parser;
-        private Lexer lexer;
         public Compiler compiler;
 
         private bool stopRun;
@@ -42,8 +40,6 @@ namespace Simulator_UI
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
 
             Init();
-
-            UpdateInstructionBox();
         }
 
         private void Init()
@@ -53,36 +49,40 @@ namespace Simulator_UI
 
             kwd = new KeyWordDetector(textEditorRB);
 
-            if (lines == null) return;
+            if (lines != null) {
+                //Micro simulator setup
+                vm = new VirtualMemory(lines);
 
-            //Micro simulator setup
-            vm = new VirtualMemory(lines);
+                // state the last port for the micro
+                ioManager = new IOManager(vm.VirtualMemorySize - 1);
 
-            // state the last port for the micro
-            ioManager = new IOManager(vm.VirtualMemorySize - 1);
+                micro = new MicroSimulator(vm, ioManager);
 
-            micro = new MicroSimulator(vm, ioManager);
+                try
+                {
+                    string stackPointer = stackPointerStart.Text.Trim();
 
-            SetIOs();
+                    micro.StackPointer = Convert.ToUInt16(stackPointer);
+                }
+                catch (Exception)
+                {
+                    stackPointerStart.Text = micro.StackPointer.ToString();
+                }
+
+                SetIOs();
+            }
+
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
+
+            LoadMemory();
 
             UpdateRegisters();
 
+            UpdateInstructionBox();
+
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
-
-            try
-            {
-                string stackPointer = stackPointerStart.Text.Trim();
-
-                micro.StackPointer = Convert.ToUInt16(stackPointer);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Invalid Stack Pointer. Using 0 as default.");
-
-                stackPointerStart.Text = micro.StackPointer.ToString();
-            }
-
         }
 
         private void LoadMemory()
@@ -98,25 +98,42 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm?.GetContentsInHex(i) ?? "NA"} {vm?.GetContentsInHex(i + 1) ?? "NA"}");
             }
         }
 
         private void UpdateRegisters()
         {
-            stackPointerBox.Text = micro.StackPointer.ToString();
+            bool IsMicroNull = micro == null;
 
-            programCounterBox.Text = micro.ProgramCounter.ToString();
+            stackPointerStart.IsEnabled = !IsMicroNull;
 
-            conditionalBitBox.Text = micro.ConditionalBit ? "1" : "0";
+            stackPointerBox.IsEnabled = !IsMicroNull;
+
+            programCounterBox.IsEnabled = !IsMicroNull;
+
+            conditionalBitBox.IsEnabled = !IsMicroNull;
+
+            if (IsMicroNull)
+            {
+                stackPointerStart.Text = "NA";
+            } else if (stackPointerStart.Text.Length == 0){
+                stackPointerStart.Text = micro.StackPointer.ToString();
+            }
+
+            stackPointerBox.Text = micro?.StackPointer.ToString() ?? "NA"; 
+
+            programCounterBox.Text = micro?.ProgramCounter.ToString() ?? "NA";
+
+            conditionalBitBox.Text = (micro?.ConditionalBit ?? false) ? "1" : "0";
 
             registersBox.Items.Clear();
 
-            registersBox.Items.Add("R0: 00");
-
+            registersBox.Items.Add($"R0: {(IsMicroNull ? "NA" : "00")}");
+            
             for (int i = 1; i < 8; i++)
             {
-                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i)}");
+                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i) ?? "NA"}");
             }
         }
 
@@ -171,50 +188,78 @@ namespace Simulator_UI
         {
             stopRun = true;
 
+            Thread.Sleep(100);
+
             runAllBtn.Header = "Run All";
 
-            stackPointerBox.Clear();
-            stackPointerStart.Text = "0";
-            programCounterBox.Clear();
-            conditionalBitBox.Clear();
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
-            Init();
 
-            instructionsBox.Items.Clear();
+            if (lines == null && ioManager == null) return;
+
+            //Micro simulator setup
+            vm = new VirtualMemory(lines);
+
+            ioManager.ResetIOs();
+
+            micro = new MicroSimulator(vm, ioManager);
+
+            try
+            {
+                string stackPointer = stackPointerStart.Text.Trim();
+
+                micro.StackPointer = Convert.ToUInt16(stackPointer);
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
+                stackPointerStart.Text = micro.StackPointer.ToString();
+            }
+
+            LoadMemory();
+
+            UpdateRegisters();
+            
             UpdateInstructionBox();
+
+            runAllBtn.Header = "Run All";
+
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
         }
 
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+
+        }
+
+        private void TurnOffBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(micro == null)
             {
-                DefaultExt = ".txt",
-                Filter = "Text Document (.txt)|*.txt"
-            };
-
-            bool? result = ofd.ShowDialog();
-
-            if (result == true)
-            {
-                try
-                {
-                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
-
-                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
-                    statusLabel.Content = "Status: File Loaded";
-                }
-                catch (Exception ex)
-                {
-                    //TODO: Create log with error
-                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
-                    statusLabel.Content = "Status: File Error";
-                }
-
-                Init();
+                MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
+                return;
             }
+
+            ioManager.ResetIOs();
+            
+            foreach(Window window in _ioDevicesWindows.Values)
+            {
+                window.Close();
+            }
+
+            micro = null;
+            ioManager = null;
+            vm = null;
+
+            LoadMemory();
+
+            UpdateRegisters();
+
+            UpdateInstructionBox();
+
+            MessageBox.Show("Micro Turned OFF");
         }
 
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
@@ -462,37 +507,12 @@ namespace Simulator_UI
                 statusLabel.Content = "Status: File Error";
             }
             Init();
-            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
-            {
-                FileName = $"{currFileName}_ObjectFile.txt",
-                DefaultExt = ".txt",
-                Filter = "Text Document (.txt)|*.txt"
-            };
-
-            // Show save file dialog box
-            Nullable<bool> result = saveFileDialog.ShowDialog();
-
-            // Process save file dialog box results
-            if (result == true)
-            {
-                // get full path for the document
-                string fullPath = saveFileDialog.FileName;
-
-                // Save document
-                FileManager.Instance.ToWriteFile(fullPath,lines);
-
-                MessageBox.Show($"Object File saved to: {saveFileDialog.FileName}.", "Exported successfuly");
-            }
-            else
-            {
-                MessageBox.Show($"Folder to save file not selected.", "File not saved");
-            }
         }
 
         private string[] Assemble(string[] input)
         {
-            this.lexer = new Lexer(input);
-            this.parser = new Parser(this.lexer);
+            Lexer lexer = new Lexer(input);
+            Parser parser = new Parser(lexer);
             this.compiler = new Compiler(parser);
             this.compiler.Compile();
             return compiler.GetOutput();
@@ -535,12 +555,13 @@ namespace Simulator_UI
             }
         }
 
-        private void OpenAsm_Click(object sender, RoutedEventArgs e)
+
+        private void OpenOBJ_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
             {
-                DefaultExt = ".txt",
-                Filter = "Text Document (.txt)|*.txt"
+                DefaultExt = "*.obj;*.txt",
+                Filter = "Files|*.obj;*.txt|Object Files|*.obj|Text Document|*.txt"
             };
 
             bool? result = ofd.ShowDialog();
@@ -549,12 +570,10 @@ namespace Simulator_UI
             {
                 try
                 {
-                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
-                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd)
-                    {
-                        Text = String.Join(Environment.NewLine, File.ReadAllLines(ofd.FileName))
-                    };
-                    statusLabel.Content = "Status: Assembly File Loaded";
+                    currFileName = Path.GetFileNameWithoutExtension(ofd.FileName);
+
+                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    statusLabel.Content = "Status: File Loaded";
                 }
                 catch (Exception ex)
                 {
@@ -563,22 +582,82 @@ namespace Simulator_UI
                     statusLabel.Content = "Status: File Error";
                 }
 
-                
+                Init();
+            }
+        }
+
+        private void SaveObj_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}.obj",
+                DefaultExt = "*.obj;*.txt",
+                Filter = "Files|*.obj;*.txt|Object Files|*.obj|Text Document|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, lines);
+
+                MessageBox.Show($"Object File saved to: {saveFileDialog.FileName}.", "Exported successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
+            }
+        }
+
+        private void OpenAsm_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = "*.asm;*.txt",
+                Filter = "Files|*.asm;*.txt|Assembly Files|*.asm|Text Document|*.txt"
+            };
+
+            bool? result = ofd.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    currFileName = Path.GetFileNameWithoutExtension(ofd.FileName);
+                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd)
+                    {
+                        Text = string.Join(Environment.NewLine, File.ReadAllLines(ofd.FileName))
+                    };
+
+                    statusLabel.Content = "Status: Assembly File Loaded";
+
+                    AssembleBtn_Click(null, null);
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
+                }
             }
         }
 
         private void SaveAsm_Click(object sender, RoutedEventArgs e)
         {
-
-
             TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
             string[] assemblyConent = textRange.Text.Split(Environment.NewLine);
 
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
             {
                 FileName = $"{currFileName}_Assembly.txt",
-                DefaultExt = ".txt",
-                Filter = "Text Document (.txt)|*.txt"
+                DefaultExt = "*.asm;*.txt",
+                Filter = "Files|*.asm;*.txt|Assembly Files|*.asm|Text Document|*.txt"
             };
 
             // Show save file dialog box

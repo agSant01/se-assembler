@@ -8,7 +8,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public short IOPortLength => 1;
 
-        public bool HasData => BitContent != null;
+        public bool HasData { get; private set; } = false;
 
         public string DeviceName => "IO Bin Semaforo";
 
@@ -38,6 +38,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             string binVal = Utils.UnitConverter.HexToBinary(contentInHex);
             BitContent = binVal.ToCharArray();
             content = contentInHex;
+            HasData = true;
             if (!_debug)
                 GotBinContent();
             return true;
@@ -45,7 +46,10 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool Reset()
         {
+            HasData = false;
             BitContent = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+            if (!_debug)
+                GotBinContent();
             return true;
         }
 

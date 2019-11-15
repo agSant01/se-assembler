@@ -17,15 +17,19 @@
         <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="355" Margin="490,95,0,0" VerticalAlignment="Top" Width="202" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="968" Grid.ColumnSpan="2" Background="#FF2D2D30" Foreground="White">
             <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
-                <MenuItem x:Name="OpenObjBtn" Header="Open Object File" Click="MenuItem_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="OpenObjBtn" Header="Open Object File" Click="OpenOBJ_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="OpenAsmBtn" Header="Open Assembly File" Click="OpenAsm_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="SaveAsmBtn" Header="Save Assembly File" Click="SaveAsm_Click" Background="#FF2D2D30"/>
             </MenuItem>
             <MenuItem Header="Build/Debug" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click" Background="#FF2D2D30"/>
-                <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="assembleBtn" Header="Assemble" Icon="" Click="AssembleBtn_Click" Background="#FF2D2D30"/>
+            </MenuItem>
+            <MenuItem Header="Micro" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
+                <MenuItem x:Name="micro_off_state" Header="Turn OFF" Icon="" Click="TurnOffBtn_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="micro_on_state" Header="Turn ON" Icon="" Click="TurnOnBtn_Click" Background="#FF2D2D30"/>
+                <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click" Background="#FF2D2D30"/>
             </MenuItem>
         </Menu>
         <Label x:Name="label" Content="File Preview" HorizontalAlignment="Left" Margin="11,62,0,0" VerticalAlignment="Top" Width="390" Foreground="White"/>

@@ -143,12 +143,17 @@ namespace Simulator_UI
 
             new Thread(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (!semaforo.HasData)
                 {
-                    CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
-                });
+                    Thread.Sleep(100);
+                    Dispatcher.Invoke(() =>
+                    {
+                        CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                        LightsOff();
+                    });
+                }
 
-                while (_active)
+                while (_active && semaforo.HasData)
                 {
                     Thread.Sleep(100);
                     try
