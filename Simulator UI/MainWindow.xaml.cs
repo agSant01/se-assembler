@@ -18,7 +18,6 @@ namespace Simulator_UI
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
-        private readonly string defaultOutPath = @"./AsmOut.txt";
         
         private MicroSimulator micro;
         private IOManager ioManager;
@@ -65,6 +64,8 @@ namespace Simulator_UI
             micro = new MicroSimulator(vm, ioManager);
 
             SetIOs();
+
+            UpdateRegisters();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
@@ -224,9 +225,7 @@ namespace Simulator_UI
                 return;
 
             }
-
-            //MessageBox.Show(ioManager.ToString());
-
+            
             micro.NextInstruction();
 
             UpdateInstructionBox();
@@ -294,7 +293,7 @@ namespace Simulator_UI
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if (!ValidIDEState((CheckBox)sender))
+            if (!ValidIDEState(cbHexkeyboard))
             {
                 return;
             }
@@ -325,7 +324,7 @@ namespace Simulator_UI
         }
         private void Checked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
         {
-            if (!ValidIDEState((CheckBox)sender))
+            if (!ValidIDEState(cb7Segment))
             {
                 return;
             }
@@ -392,6 +391,7 @@ namespace Simulator_UI
 
             _ioDevicesWindows.Add(IOBinSemaforoUI.DeviceID, semaforo);
         }
+
         private void cbTrafficLight_Unhecked(object sender, RoutedEventArgs e)
         {
             if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
@@ -550,8 +550,10 @@ namespace Simulator_UI
                 try
                 {
                     currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
-                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
-                    textRange.Text  = String.Join(Environment.NewLine,File.ReadAllLines(ofd.FileName));
+                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd)
+                    {
+                        Text = String.Join(Environment.NewLine, File.ReadAllLines(ofd.FileName))
+                    };
                     statusLabel.Content = "Status: Assembly File Loaded";
                 }
                 catch (Exception ex)

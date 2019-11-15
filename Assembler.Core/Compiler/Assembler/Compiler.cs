@@ -116,6 +116,8 @@ namespace Assembler.Assembler
                 lineCount++;
             }
 
+            currentAddress = 0;
+
             AsmLogger.StatusUpdate("Finished loading labels and constants");
         }
 

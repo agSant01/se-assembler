@@ -16,7 +16,6 @@ namespace Simulator_UI
     public partial class IOBinSemaforoUI : Window
     {
         private readonly IOManager _ioManager;
-        //file:///C:/Users/oremo/Downloads/Sprint%203%20DispositivosIO.pdf
 
         public IOBinSemaforo semaforo { get; private set; }
 
@@ -105,6 +104,7 @@ namespace Simulator_UI
             if (semaforo != null)
             {
                 _ioManager?.RemoveIODevice(semaforo.IOPort);
+                LightsOff();
             }
         }
 
