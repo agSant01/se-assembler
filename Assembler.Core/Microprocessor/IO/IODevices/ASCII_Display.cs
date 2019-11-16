@@ -55,7 +55,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         private bool IsValidPort(int port)
         {
             return port >= IOPort &&
-                   port <= IOPort + IOPortLength;
+                   port < IOPort + IOPortLength;
         }
         
         /// <summary>
@@ -114,8 +114,6 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
             byte[] binary = new byte[] { UnitConverter.HexToByte(contentInHex) };
 
-
-
             DisplaySlots[port - IOPort] = Encoding.ASCII.GetString(binary);
 
             if (!_debug)
@@ -133,7 +131,9 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (IsValidPort(port))
             {
-                return DisplaySlots[ConvertPortToIndex((short)port)];
+                char c = DisplaySlots[ConvertPortToIndex((short)port)].ToCharArray()[0];
+
+                return UnitConverter.ByteToHex((byte) c);
             }
             else
             {
