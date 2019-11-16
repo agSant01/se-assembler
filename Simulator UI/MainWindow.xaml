@@ -80,16 +80,16 @@
         <CheckBox x:Name="cb7Segment" Content="IO 7-Segment Display"  Foreground="white" HorizontalAlignment="Left" Margin="490,488,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Click="VerifyMicroStateBtn_Click" Checked="Checked_IO7SegmentDisplay" Unchecked="Unchecked_IO7SegmentDisplay" Grid.ColumnSpan="2"/>
         <CheckBox x:Name="cbAsciiDisplay" Content="IO ASCII Display"  Foreground="white" HorizontalAlignment="Left" Margin="490,516,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Click="VerifyMicroStateBtn_Click" Checked="Checked_IOASCIIDisplay" Unchecked="Unchecked_IOAsciiDisplay" Grid.ColumnSpan="2"/>
         <CheckBox x:Name="cbTrafficLight" Content="IO Traffic Light"  Foreground="white" HorizontalAlignment="Left" Margin="490,541,0,0" VerticalAlignment="Top" Height="20" Width="160" ClipToBounds="True" SnapsToDevicePixels="True" Click="VerifyMicroStateBtn_Click" Checked="cbTrafficLight_Checked" Unchecked="cbTrafficLight_Unhecked" Grid.ColumnSpan="2"/>
-        <RichTextBox x:Name="textEditorRB" Margin="10,64,156,73" Background="#FF1E1E1E" BorderBrush="#FF686868" Foreground="White" SelectionBrush="#FF0078D7" TextChanged="textEditorRB_TextChanged">
-            <FlowDocument>
-                <Paragraph>
-                    <Run Text=""/>
-                </Paragraph>
-            </FlowDocument>
+        <RichTextBox x:Name="textEditorRB" Margin="10,64,156,73" Background="#FF1E1E1E" BorderBrush="#FF686868" Foreground="White" SelectionBrush="#FF0078D7" TextChanged="textEditorRB_TextChange">
+            <RichTextBox.Resources>
+                <Style TargetType="{x:Type Paragraph}">
+                    <Setter Property="Margin" Value="0" />
+                </Style>
+            </RichTextBox.Resources>
+            <FlowDocument></FlowDocument>
         </RichTextBox>
         <Label x:Name="label_Copy9" Content="Microprocessor Virtual Memory Map" HorizontalAlignment="Left" Margin="490,27,0,0" VerticalAlignment="Top" Width="237" Foreground="White" HorizontalContentAlignment="Right" FontWeight="Bold" FontSize="13" Grid.ColumnSpan="2"/>
         <Button Content="Export Memory Map" Grid.Column="1" HorizontalAlignment="Left" Margin="121,28,0,0" VerticalAlignment="Top" Width="142" Height="25" Click="Btn_Click_ExportMemoryMap" FontSize="12" Background="Gray" Foreground="White" BorderBrush="AliceBlue" />
         <Label x:Name="label_Copy3" Content="Object File Content" HorizontalAlignment="Left" Margin="490,64,0,0" VerticalAlignment="Top" Width="202" Foreground="White" Grid.ColumnSpan="2"/>
-
     </Grid>
 </Window>

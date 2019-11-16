@@ -8,14 +8,16 @@ using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 
 namespace Simulator_UI
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window 
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
         
@@ -30,7 +32,6 @@ namespace Simulator_UI
 
         private string[] lines;
 
-        private KeyWordDetector kwd;
         private string currFileName;
         
         public MainWindow()
@@ -46,8 +47,6 @@ namespace Simulator_UI
         {
             //UI Elements
             stopRun = true;
-
-            kwd = new KeyWordDetector(textEditorRB);
 
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
@@ -519,13 +518,6 @@ namespace Simulator_UI
             base.OnClosed(e);
         }
 
-
-        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
-            //kwd?.AnalizeContent();
-        }
-
         private void AssembleBtn_Click(object sender, RoutedEventArgs e)
         {
             TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
@@ -714,6 +706,70 @@ namespace Simulator_UI
             {
                 MessageBox.Show($"Folder to save file not selected.", "File not saved");
             }
+        }
+
+        private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript; 
+
+        private void textEditorRB_TextChange(object sender, TextChangedEventArgs e)
+        {
+            //new Thread(() =>
+
+            //{
+           
+            Dispatcher.Invoke(() => {
+                if (textEditorRB.Document == null)
+                    return;
+
+                //first clear all the formats
+                TextRange documentRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+                documentRange.ClearAllProperties();
+
+                textEditorRB.TextChanged -= this.textEditorRB_TextChange;
+
+                string pattern = @"([^\W_]+[^\s,.]*)";
+                TextPointer pointer = textEditorRB.Document.ContentStart;
+
+                    while (pointer.CompareTo(textEditorRB.Document.ContentEnd) < 0)
+                    {
+                        if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                        {
+
+                            string textRun = pointer.GetTextInRun(LogicalDirection.Forward);
+                            
+                            MatchCollection matches = Regex.Matches(textRun, pattern, options);
+
+                            foreach (Match match in matches)
+                            {
+                                try
+                                {
+                                    TextPointer start = pointer.GetPositionAtOffset(match.Index);
+
+                                    TextRange wordRange = new TextRange(start, start.GetPositionAtOffset(match.Length));
+                                    if (KeyWordDetector.IsKeyword(wordRange.Text, out SolidColorBrush color))
+                                    {
+                                        wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
+                                        wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+                                    }
+                                    else
+                                    {
+                                        wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+                                        wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.White);
+                                    }
+                                }
+                                catch (Exception ex) {
+                                    MessageBox.Show(ex.ToString());
+                                }
+                            }
+
+                        }
+
+                        pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                    }
+                textEditorRB.TextChanged += this.textEditorRB_TextChange;
+
+
+            });
+            //}).Start();
         }
     }
 }
