@@ -59,7 +59,7 @@ namespace Simulator_UI
             new bool[]{true, true, true, false, false, false, false}, // seven
             new bool[]{true, true, true, true, true, true, true}, // eight
             new bool[]{true, true, true, false, false, true, true}, // nine
-            new bool[]{ false, false, false, false, false, false, false}, // off
+            new bool[]{ true, true, true, true, true, true, true}, // off
         };
 
         public void ShowDigit(object number)
