@@ -1,19 +1,33 @@
 org 0
 jmpaddr start
-display db 0,0,0,0,0,0,0
+
+seven db 0
+display db 0,0,0,0,0,0,0,0
+
 start:
 // H
 loadim r1, 48
-store 02, r1
+store 03, r1
 // o
 loadim r1, 6F
-store 03, r1
+store 04, r1
 // l
 loadim r1, 6C
-store 04, r1
+store 05, r1
 // a
 loadim r1, 61
-store 05, r1
+store 06, r1
+
+
+// 7seg number 8 left
+loadim r4, FE
+store 02, r4
+
+// 7seg letter E right
+loadim r5, FF
+store 02, r5
+
+
 fin:
 jmpaddr fin
 

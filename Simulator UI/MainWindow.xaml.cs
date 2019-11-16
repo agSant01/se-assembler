@@ -178,6 +178,8 @@ namespace Simulator_UI
                 return;
             }
 
+            MessageBox.Show(ioManager.ToString());
+
             micro.NextInstruction();
 
             UpdateInstructionBox();
