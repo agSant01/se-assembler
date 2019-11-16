@@ -87,7 +87,7 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual("", display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
             display.WriteInPort(5, "48");
             display.WriteInPort(6, "6F");
@@ -101,10 +101,10 @@ namespace Assembler.UnitTests.IODevices
             string l = micro.ReadFromMemory(7);
             string a = micro.ReadFromMemory(8);
 
-            Assert.AreEqual("H", h);
-            Assert.AreEqual("o", o);
-            Assert.AreEqual("l", l);
-            Assert.AreEqual("a", a);
+            Assert.AreEqual("48", h);
+            Assert.AreEqual("6F", o);
+            Assert.AreEqual("6C", l);
+            Assert.AreEqual("61", a);
 
             Console.WriteLine($"\nContent read in Hex: {h} {o} {l} {a}");
         }
@@ -143,7 +143,7 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual(string.Empty, display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
             //Write To Valid port range
             Assert.IsTrue(display.WriteInPort(5, "48"));
@@ -212,10 +212,10 @@ namespace Assembler.UnitTests.IODevices
             string l = micro.ReadFromMemory(7);
             string a = micro.ReadFromMemory(8);
 
-            Assert.AreEqual("H", h);
-            Assert.AreEqual("o", o);
-            Assert.AreEqual("l", l);
-            Assert.AreEqual("a", a);
+            Assert.AreEqual("48", h);
+            Assert.AreEqual("6F", o);
+            Assert.AreEqual("6C", l);
+            Assert.AreEqual("61", a);
 
             Console.WriteLine($"\nContent read in Hex: {h} {o} {l} {a}");
 
@@ -272,7 +272,7 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual(string.Empty, display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
             //Write To Valid port range
             Assert.IsTrue(display.WriteInPort(5, "48"));

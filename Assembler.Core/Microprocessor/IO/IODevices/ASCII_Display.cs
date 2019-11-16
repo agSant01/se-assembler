@@ -131,9 +131,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (IsValidPort(port))
             {
-                char c = DisplaySlots[ConvertPortToIndex((short)port)].ToCharArray()[0];
-
-                return UnitConverter.ByteToHex((byte) c);
+                if (DisplaySlots[ConvertPortToIndex((short)port)].Length > 0)
+                {
+                    char c = DisplaySlots[ConvertPortToIndex((short)port)].ToCharArray()[0];
+                    return UnitConverter.ByteToHex((byte)c);
+                }
+                else
+                    return UnitConverter.ByteToHex((byte)0);
             }
             else
             {
