@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
-        Title="IOBinSemaforo" Height="351" Width="383">
+        Title="IOBinSemaforo" Height="351" Width="383" WindowStyle="None" ResizeMode="CanMinimize">
     <Grid Background="#FF252526">
         <TextBox x:Name="tbPort" HorizontalAlignment="Left" Margin="122,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116"/>
 

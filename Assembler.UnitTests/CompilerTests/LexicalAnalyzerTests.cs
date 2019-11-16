@@ -11,7 +11,7 @@ namespace Assembler.UnitTests.CompilerTests
     {
         Lexer lexer;
 
-        private readonly string testFileSuccess =  Path.Combine(
+        private readonly string testFileSuccess = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\AssemblyFiles\assembly_test.txt");
         private readonly string testFileErrorToken = Path.Combine(
@@ -134,7 +134,7 @@ namespace Assembler.UnitTests.CompilerTests
             new Token(TokenType.NEW_LINE,"\\n"),
         };
 
-        private Token[] testErrorToken =
+        private readonly Token[] testErrorToken =
         {
             new Token(TokenType.LINE_COMMENT,"//"),
             //new Token(TokenType.WHITE_SPACE," "),
@@ -274,7 +274,7 @@ namespace Assembler.UnitTests.CompilerTests
         [TestCleanup]
         public void TestCleanup()
         {
-            lexer = null;  
+            lexer = null;
         }
 
         [TestMethod]

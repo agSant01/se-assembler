@@ -37,27 +37,27 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             sbyte valInB = 20;
             sbyte valInC = -83;
 
-            byte resultA = (byte) (valInC + valInB);
+            byte resultA = (byte)(valInC + valInB);
 
             // set data in register
             micro.MicroRegisters.SetRegisterValue(
-                (byte) UnitConverter.BinaryToInt(rb),
+                (byte)UnitConverter.BinaryToInt(rb),
                 UnitConverter.ByteToHex(valInB));
 
             micro.MicroRegisters.SetRegisterValue(
-                (byte) UnitConverter.BinaryToInt(rc),
+                (byte)UnitConverter.BinaryToInt(rc),
                 UnitConverter.ByteToHex(valInC));
-            
+
             Console.WriteLine(micro.MicroRegisters);
 
             Assert.AreEqual(
                 UnitConverter.IntToHex(valInB),
-                micro.MicroRegisters.GetRegisterValue((byte) UnitConverter.BinaryToInt(rb))
+                micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(rb))
                 );
 
             Assert.AreEqual(
-                UnitConverter.ByteToHex(valInC), 
-                micro.MicroRegisters.GetRegisterValue((byte) UnitConverter.BinaryToInt(rc))
+                UnitConverter.ByteToHex(valInC),
+                micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(rc))
                 );
 
             MCInstructionF1 i1 = new MCInstructionF1(3, "00111", ra, rb, rc);
@@ -131,7 +131,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
 
             // set data in register
             micro.MicroRegisters.SetRegisterValue(
-                (byte) UnitConverter.BinaryToInt(ra),
+                (byte)UnitConverter.BinaryToInt(ra),
                 UnitConverter.ByteToHex(valInA));
 
             Console.WriteLine(micro.MicroRegisters);
@@ -141,7 +141,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
                 micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(ra))
                 );
 
-            MCInstructionF2 i2 = new MCInstructionF2(3, "01001", ra, 
+            MCInstructionF2 i2 = new MCInstructionF2(3, "01001", ra,
                 UnitConverter.ByteToBinary(constVal)
                 );
 
@@ -186,7 +186,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Console.WriteLine(i2);
 
             // execute instruction
-            
+
             InstructionSetExe.ExecuteInstruction(i2, micro);
 
             Console.WriteLine(micro.MicroRegisters);
@@ -194,7 +194,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Console.WriteLine($"Result in binary: {UnitConverter.ByteToHex((byte)resultA)}");
 
             Assert.AreEqual(
-                UnitConverter.ByteToHex((byte) resultA),
+                UnitConverter.ByteToHex((byte)resultA),
                 micro.MicroRegisters.GetRegisterValue((byte)UnitConverter.BinaryToInt(ra))
                 );
         }

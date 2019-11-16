@@ -15,7 +15,7 @@ namespace Assembler.Microprocessor
         public VirtualMemory(string[] lines, int kiloBytes = 4)
         {
             memoryBlocksInHexadecimal = new string[kiloBytes * 1024];
-            
+
             // blockBitSize / (4bits/1hex)
             int requiredHexaChars = 16 / 4;
 
@@ -29,18 +29,18 @@ namespace Assembler.Microprocessor
 
                 if (line.Length == 0)
                     continue;
-               
-                memoryBlocksInHexadecimal[i*2] = $"{line[0]}{line[1]}";
 
-                memoryBlocksInHexadecimal[i*2+1] = $"{line[2]}{line[3]}";
+                memoryBlocksInHexadecimal[i * 2] = $"{line[0]}{line[1]}";
+
+                memoryBlocksInHexadecimal[i * 2 + 1] = $"{line[2]}{line[3]}";
 
 
-                addressesUsed.Add((ushort) (i * 2));
-                addressesUsed.Add((ushort) (i * 2 + 1));
+                addressesUsed.Add((ushort)(i * 2));
+                addressesUsed.Add((ushort)(i * 2 + 1));
 
                 if (LastAddressDecimal < i * 2 + 1)
                 {
-                    LastAddressDecimal = (ushort) (i * 2 + 1);
+                    LastAddressDecimal = (ushort)(i * 2 + 1);
                 }
             }
         }
@@ -137,14 +137,14 @@ namespace Assembler.Microprocessor
 
             if (LastAddressDecimal < decimalAddress)
             {
-                LastAddressDecimal = (ushort) decimalAddress;
+                LastAddressDecimal = (ushort)decimalAddress;
             }
 
             if (UnitConverter.HexToBinary(hexContent).Length > 8)
             {
                 throw new OverflowException("Invalid data to store in memory");
             }
-            
+
             memoryBlocksInHexadecimal[decimalAddress] = hexContent;
         }
 
@@ -168,7 +168,7 @@ namespace Assembler.Microprocessor
         /// <returns>True is previously used, False otherwise</returns>
         public bool IsInUse(int decimalAddress)
         {
-            return addressesUsed.Contains((ushort) decimalAddress);
+            return addressesUsed.Contains((ushort)decimalAddress);
         }
 
         /// <summary>
@@ -199,21 +199,22 @@ namespace Assembler.Microprocessor
         {
             // create output array of length half the number of addresses 
             // because every line is of two addresses
-            string[] wordsInHex = new string[memoryBlocksInHexadecimal.Length/2];
+            string[] wordsInHex = new string[memoryBlocksInHexadecimal.Length / 2];
 
             string divisor;
 
             if (spaces)
             {
                 divisor = " ";
-            } else
+            }
+            else
             {
                 divisor = string.Empty;
             }
 
-            for (int i = 0; i < memoryBlocksInHexadecimal.Length/2; i++)
+            for (int i = 0; i < memoryBlocksInHexadecimal.Length / 2; i++)
             {
-                wordsInHex[i] = $"{memoryBlocksInHexadecimal[2*i]}{divisor}{memoryBlocksInHexadecimal[2*i+1]}";
+                wordsInHex[i] = $"{memoryBlocksInHexadecimal[2 * i]}{divisor}{memoryBlocksInHexadecimal[2 * i + 1]}";
             }
 
             return wordsInHex;
@@ -227,13 +228,13 @@ namespace Assembler.Microprocessor
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendLine("VirtualMemory[");
-            for(int i = 0; i < LastAddressDecimal; i+=2)
+            for (int i = 0; i < LastAddressDecimal; i += 2)
             {
                 builder.Append("\t");
                 builder.Append($"{i}:  ");
                 builder.Append(memoryBlocksInHexadecimal[i]);
                 builder.Append(" ");
-                builder.Append(memoryBlocksInHexadecimal[i+1]);
+                builder.Append(memoryBlocksInHexadecimal[i + 1]);
 
                 builder.Append("\n");
             }

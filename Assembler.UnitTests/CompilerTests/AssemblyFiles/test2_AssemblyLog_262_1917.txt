@@ -1,0 +1,11 @@
+[STATUS] Started Assembly Log test2_AssemblyLog_262_1917 at 11/3/2019 11:45:09 PM
+[STATUS] Assembly process started
+[STATUS] Syntax analysis
+[STATUS] Loading labels and constants
+[STATUS] Finished loading labels and constants
+[STATUS] Assembly process completed
+[STATUS] Generating of Object file
+[STATUS] Finished generating Object file
+[STATUS] Writting Obj. file
+[STATUS] Writting obj. file completed.
+[STATUS] Writting assembly log file file Completed.

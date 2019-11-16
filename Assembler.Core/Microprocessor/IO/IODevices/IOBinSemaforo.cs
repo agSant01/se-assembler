@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
-    public class IOBinSemaforo: IIODevice , IObservable<char[]>
+    public class IOBinSemaforo : IIODevice, IObservable<char[]>
     {
         public short IOPort { get; }
 
         public short IOPortLength => 1;
 
-        public bool HasData => BitContent != null;
+        public bool HasData { get; private set; } = false;
 
         public string DeviceName => "IO Bin Semaforo";
 
         private string content = "";
 
-        public char[] BitContent { get; set; }
+        public char[] BitContent { get; set; } = { '0', '0', '0', '0', '0', '0', '0', '0' };
 
         public Action GotBinContent;
 
-        private bool _debug;
+        private readonly bool _debug;
 
         public IOBinSemaforo(short ioPort)
         {
@@ -31,8 +29,8 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         public IOBinSemaforo(short ioPort, string debug)
         {
             IOPort = ioPort;
-            if(debug == "#Debug")
-                _debug = true; 
+            if (debug == "#Debug")
+                _debug = true;
         }
 
         public bool WriteInPort(int port, string contentInHex)
@@ -40,14 +38,18 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             string binVal = Utils.UnitConverter.HexToBinary(contentInHex);
             BitContent = binVal.ToCharArray();
             content = contentInHex;
-            if(!_debug)
+            HasData = true;
+            if (!_debug)
                 GotBinContent();
             return true;
         }
 
         public bool Reset()
         {
-            BitContent = null;
+            HasData = false;
+            BitContent = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+            if (!_debug)
+                GotBinContent();
             return true;
         }
 

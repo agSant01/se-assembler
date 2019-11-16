@@ -7,7 +7,7 @@ namespace Assembler.Microprocessor.InstructionFormats
     {
         public MCInstructionF1(ushort decimalAddress, string opCodeBinary, string Ra, string Rb = null, string Rc = null)
         {
-            OpCode = (byte) UnitConverter.BinaryToInt(opCodeBinary);
+            OpCode = (byte)UnitConverter.BinaryToInt(opCodeBinary);
 
             this.Ra = UnitConverter.BinaryToByte(Ra);
             this.Rb = UnitConverter.BinaryToByte(Rb);
@@ -21,7 +21,7 @@ namespace Assembler.Microprocessor.InstructionFormats
         public byte Ra { get; }
 
         public byte Rb { get; }
-        
+
         public byte Rc { get; }
 
         public ushort InstructionAddressDecimal { get; }
@@ -50,7 +50,7 @@ namespace Assembler.Microprocessor.InstructionFormats
                 if (Rb != 0) itr += $" R{Rb}";
 
                 if (Rc != 0) itr += $" R{Rc}";
-                
+
                 return itr;
             }
             return $"MCInstructionF1[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', Rb:'{Rb}', Rc:'{Rc}']";

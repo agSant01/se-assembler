@@ -1,13 +1,10 @@
 ﻿using Assembler.Assembler;
 using Assembler.Microprocessor;
-using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Parsing;
 using Assembler.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Assembler.UnitTests.MicroprocessorTests
 {
@@ -33,7 +30,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
         private readonly string test3 = Path.Combine(
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"MicroprocessorTests\TestFiles\test3.txt");
-        
+
         [TestInitialize]
         public void TestSetup()
         {

@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Assembler.Parsing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Assembler.Parsing;
 
 namespace Assembler.UnitTests.CompilerTests
 {
@@ -11,7 +9,7 @@ namespace Assembler.UnitTests.CompilerTests
     public class OperatorsInfoTests
     {
         string[] ops = { "JMPRIND", "add", "JMPAddR", "LoAd" };
-        
+
 
         EInstructionFormat[] opFormats =
         {

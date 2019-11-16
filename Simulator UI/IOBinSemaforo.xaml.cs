@@ -1,19 +1,11 @@
 ﻿using Assembler.Core.Microprocessor;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using Assembler.Core.Microprocessor.IO.IODevices;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Simulator_UI
 {
@@ -24,7 +16,6 @@ namespace Simulator_UI
     public partial class IOBinSemaforoUI : Window
     {
         private readonly IOManager _ioManager;
-        //file:///C:/Users/oremo/Downloads/Sprint%203%20DispositivosIO.pdf
 
         public IOBinSemaforo semaforo { get; private set; }
 
@@ -33,10 +24,10 @@ namespace Simulator_UI
         private bool _active;
         private bool blinkState = true;
 
-        private Brush Red;
-        private Brush Yello;
-        private Brush Green;
-        private Brush Black;
+        private readonly Brush Red;
+        private readonly Brush Yello;
+        private readonly Brush Green;
+        private readonly Brush Black;
 
         public IOBinSemaforoUI(IOManager ioManager)
         {
@@ -56,6 +47,8 @@ namespace Simulator_UI
                 MouseDown += delegate { DragMove(); };
             }
             catch (Exception) { }
+
+            UpdateSemaforo();
         }
 
         private void Toggle_Activate(object sender, RoutedEventArgs e)
@@ -111,23 +104,35 @@ namespace Simulator_UI
             if (semaforo != null)
             {
                 _ioManager?.RemoveIODevice(semaforo.IOPort);
+                LightsOff();
             }
         }
 
         private void UpdateSemaforo()
         {
-            CurrentBinLbl.Content = $"Current Bin Value: {String.Join(' ', semaforo.BitContent)}";
-            //parse boolean representacion of char bit array
-            bool[] bits = new bool[8];
-            for (int i = 0; i < semaforo.BitContent.Length; i++)
-                bits[i] = semaforo.BitContent[i] == '1';
-            MessageBox.Show(String.Join(',', bits));
+            char[] bitContent;
 
-            //thread control
-            if (!_active) 
+            if (semaforo != null)
             {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                bitContent = semaforo.BitContent;
+            }
+            else
+            {
+                bitContent = new char[] { '0', '0', '0', '0', '0', '0', '0', '0' };
+                LightsOff();
+                Dispatcher.Invoke(() =>
+                {
+                    CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                });
                 return;
+            }
+
+            bool[] bits = new bool[8];
+
+            // if no traffic light IO is initialize set the UI LIGHTS to OFF
+            for (int i = 0; i < bitContent.Length; i++)
+            {
+                bits[i] = bitContent[i] == '1';
             }
 
             if (!_active)
@@ -135,27 +140,42 @@ namespace Simulator_UI
                 return;
             }
 
-            
+
             new Thread(() =>
             {
-                while (_active)
+                if (!semaforo.HasData)
                 {
                     Thread.Sleep(100);
-
-                    //micro.NextInstruction();
                     Dispatcher.Invoke(() =>
                     {
-                        if (bits[6] && bits[7])
-                            BlinkLights(bits);
-                        else LightsOnValue(bits);  
+                        CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+                        LightsOff();
                     });
+                }
+
+                while (_active && semaforo.HasData)
+                {
+                    Thread.Sleep(100);
+                    try
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            CurrentBinLbl.Content = $"Current Bin Value: {string.Join(' ', bitContent)}";
+
+                            if (bits[6] && bits[7])
+                                BlinkLights(bits);
+                            else LightsOnValue(bits);
+                        });
+                    }
+                    catch (Exception ex) { MessageBox.Show("Thread Ended", ex.Message); }
+                    
                 }
             }).Start();
 
         }
         private void BlinkLights(bool[] binVal)
         {
-            blinkState =!blinkState;
+            blinkState = !blinkState;
             if (blinkState)
                 LightsOnValue(binVal);
             else LightsOff();
@@ -173,7 +193,7 @@ namespace Simulator_UI
         private void LightsOff()
         {
             //turn off all lights
-            IR.Fill = IA.Fill = IV.Fill = DR.Fill = DA.Fill = DV.Fill =  Black;
+            IR.Fill = IA.Fill = IV.Fill = DR.Fill = DA.Fill = DV.Fill = Black;
         }
         protected override void OnClosing(CancelEventArgs e)
         {

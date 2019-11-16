@@ -1,12 +1,9 @@
 ﻿using Assembler.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
-   public class IOSevenSegmentDisplay : IIODevice
+    public class IOSevenSegmentDisplay : IIODevice
 
     {
         public short IOPort { get; }
@@ -19,7 +16,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool HasData => !string.IsNullOrEmpty(_buffer);
         public string Data { get { return _buffer; } }
-        public byte BufferSize => (byte)1;
+        public byte BufferSize => 1;
 
         public Action UpdateGui;
 

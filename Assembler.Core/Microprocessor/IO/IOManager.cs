@@ -1,5 +1,4 @@
 ﻿using Assembler.Core.Microprocessor.IO;
-using Assembler.Microprocessor;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -34,7 +33,7 @@ namespace Assembler.Core.Microprocessor
         /// <summary>
         /// The amount of IODevices connected at a given time
         /// </summary>
-        public short ConnectedDevices => (short) _devicesAndIds.Count;
+        public short ConnectedDevices => (short)_devicesAndIds.Count;
 
         /// <summary>
         /// Creates a new IOManager instance
@@ -57,7 +56,7 @@ namespace Assembler.Core.Microprocessor
             IsValidPort(port, device);
 
             // verify if port was previously assiged to another I/O device
-            if(_portsAndDevices.ContainsKey(port))
+            if (_portsAndDevices.ContainsKey(port))
             {
                 return false;
             }
@@ -66,9 +65,9 @@ namespace Assembler.Core.Microprocessor
             _devicesAndIds.Add(_deviceId, device);
 
             // reserve all the required ports for the I/O device, even more that one
-            for(short i = 0; i < device.IOPortLength; i++)
+            for (short i = 0; i < device.IOPortLength; i++)
             {
-                _portsAndDevices.Add( (short) (port + i), _deviceId);
+                _portsAndDevices.Add((short)(port + i), _deviceId);
             }
 
             // increment DeviceId
@@ -95,7 +94,7 @@ namespace Assembler.Core.Microprocessor
                 // remove all the assigned ports
                 for (short i = 0; i < device.IOPortLength; i++)
                 {
-                    _portsAndDevices.Remove((short) (port + i));
+                    _portsAndDevices.Remove((short)(port + i));
                 }
 
                 return true;
@@ -149,7 +148,28 @@ namespace Assembler.Core.Microprocessor
         /// <returns>Returns true if port is already assigned, false if not</returns>
         public bool IsUsedPort(short port)
         {
-            return _portsAndDevices.ContainsKey((short) port);
+            return _portsAndDevices.ContainsKey(port);
+        }
+
+        public bool ResetIOs()
+        {
+            bool[] results = new bool[_devicesAndIds.Count];
+            int count = 0;
+
+            foreach (IIODevice device in _devicesAndIds.Values)
+            {
+                results[count] = device.Reset();
+                ++count;
+            }
+            
+            foreach(bool result in results)
+            {
+                // could not reset at least one IO Device
+                if (!result)
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -169,7 +189,7 @@ namespace Assembler.Core.Microprocessor
                 throw new OverflowException($"Invalid port address: {port} (0x{Convert.ToString(port, 16).PadLeft(3, '0').ToUpper()}), for '{device.DeviceName}'. " +
                     $"This device requires {device.IOPortLength} ports to work properly.");
             }
-        } 
+        }
 
         /// <summary>
         /// String representation of the object

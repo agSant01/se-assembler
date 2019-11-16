@@ -58,7 +58,7 @@ namespace Assembler.Utils
         {
             return Convert.ToInt32(Convert.ToInt32(hexNumber, 16));
         }
-    
+
         public static sbyte HexToSByte(string hexNumber)
         {
             return Convert.ToSByte(hexNumber, 16);

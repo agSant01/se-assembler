@@ -1,41 +1,38 @@
-﻿using Assembler.Core.Microprocessor;
-using Assembler.Core.Microprocessor.IO.IODevices;
+﻿using Assembler.Assembler;
+using Assembler.Core;
+using Assembler.Core.Microprocessor;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
+using Assembler.Parsing;
 using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
     public partial class MainWindow : Window
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
-
+        
         private MicroSimulator micro;
         private IOManager ioManager;
         private VirtualMemory vm;
+
+        //assembler
+        public Compiler compiler;
 
         private bool stopRun;
 
         private string[] lines;
 
+        private KeyWordDetector kwd;
         private string currFileName;
-
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -43,8 +40,6 @@ namespace Simulator_UI
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
 
             Init();
-
-            UpdateInstructionBox();
         }
 
         private void Init()
@@ -52,34 +47,21 @@ namespace Simulator_UI
             //UI Elements
             stopRun = true;
 
-            if (lines == null) return;
+            kwd = new KeyWordDetector(textEditorRB);
 
-            //Micro simulator setup
-            vm = new VirtualMemory(lines);
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
 
-            // state the last port for the micro
-            ioManager = new IOManager(vm.VirtualMemorySize - 1);
+            LoadMemory();
 
-            micro = new MicroSimulator(vm, ioManager);
+            UpdateRegisters();
+
+            UpdateInstructionBox();
 
             SetIOs();
 
             // Set instructions print mode to ASM Text
             IMCInstruction.AsmTextPrint = true;
-
-            try
-            {
-                string stackPointer = stackPointerStart.Text.Trim();
-
-                micro.StackPointer = Convert.ToUInt16(stackPointer);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Invalid Stack Pointer. Using 0 as default.");
-
-                stackPointerStart.Text = micro.StackPointer.ToString();
-            }
-
         }
 
         private void LoadMemory()
@@ -95,25 +77,38 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth:3)}\t: {vm.GetContentsInHex(i)} {vm.GetContentsInHex(i + 1)}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm?.GetContentsInHex(i) ?? "NA"} {vm?.GetContentsInHex(i + 1) ?? "NA"}");
             }
         }
 
         private void UpdateRegisters()
         {
-            stackPointerBox.Text = micro.StackPointer.ToString();
+            bool IsMicroNull = micro == null;
 
-            programCounterBox.Text = micro.ProgramCounter.ToString();
+            stackPointerBox.IsEnabled = !IsMicroNull;
 
-            conditionalBitBox.Text = micro.ConditionalBit ? "1" : "0";
+            programCounterBox.IsEnabled = !IsMicroNull;
+
+            conditionalBitBox.IsEnabled = !IsMicroNull;
+
+            if (IsMicroNull)
+            {
+                stackPointerStart.Text = "0";
+            }
+
+            stackPointerBox.Text = micro?.StackPointer.ToString() ?? "NA"; 
+
+            programCounterBox.Text = micro?.ProgramCounter.ToString() ?? "NA";
+
+            conditionalBitBox.Text = (micro?.ConditionalBit ?? false) ? "1" : "0";
 
             registersBox.Items.Clear();
 
-            registersBox.Items.Add("R0: 00");
-
+            registersBox.Items.Add($"R0: {(IsMicroNull ? "NA" : "00")}");
+            
             for (int i = 1; i < 8; i++)
             {
-                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i)}");
+                registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i) ?? "NA"}");
             }
         }
 
@@ -127,9 +122,15 @@ namespace Simulator_UI
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (compiler == null)
+            {
+                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                return;
+            }
+
             if (micro == null)
             {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
                 return;
             }
 
@@ -144,7 +145,7 @@ namespace Simulator_UI
 
             new Thread(() =>
             {
-                while (!stopRun)
+                while (!stopRun && micro != null)
                 {
                     Thread.Sleep(100);
 
@@ -158,72 +159,25 @@ namespace Simulator_UI
 
                         UpdateRegisters();
 
-                        instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                        instructionsHistoryBox.Items.Add(micro?.CurrentInstruction);
                     });
                 }
             }).Start();
         }
 
-        private void ResetBtn_Click(object sender, RoutedEventArgs e)
-        {
-            stopRun = true;
-
-            runAllBtn.Header = "Run All";
-
-            stackPointerBox.Clear();
-            stackPointerStart.Text = "0";
-            programCounterBox.Clear();
-            conditionalBitBox.Clear();
-            instructionsHistoryBox.Items.Clear();
-            memoryBox.Items.Clear();
-
-            Init();
-
-            instructionsBox.Items.Clear();
-            UpdateInstructionBox();
-        }
-
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
-            {
-                DefaultExt = ".txt",
-                Filter = "Text Document (.txt)|*.txt"
-            };
-
-            bool? result = ofd.ShowDialog();
-
-            if (result == true)
-            {
-                try
-                {
-                    currFileName = System.IO.Path.GetFileNameWithoutExtension(ofd.FileName);
-
-                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
-                    statusLabel.Content = "Status: File Loaded";
-                }
-                catch (Exception ex)
-                {
-                    //TODO: Create log with error
-                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
-                    statusLabel.Content = "Status: File Error";
-                }
-
-                Init();
-            }
-        }
-
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (micro == null)
+            if (compiler == null)
             {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
+                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
-
             }
 
-            MessageBox.Show(ioManager.ToString());
+            if (micro == null)
+            {
+                MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+                return;
+            }
 
             micro.NextInstruction();
 
@@ -236,10 +190,134 @@ namespace Simulator_UI
             instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
         }
 
+        private void ResetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (micro == null)
+            {
+                MessageBox.Show("No microprocessor to reset.", "Microprocessor not connnected.");
+                return;
+            }
+
+            stopRun = true;
+
+            Thread.Sleep(100);
+
+            if (lines != null || ioManager != null)
+            {
+                //Micro simulator setup
+                vm = new VirtualMemory(lines);
+
+                ioManager?.ResetIOs();
+
+                micro = new MicroSimulator(vm, ioManager);
+
+                try
+                {
+                    string stackPointer = stackPointerStart.Text.Trim();
+
+                    micro.StackPointer = Convert.ToUInt16(stackPointer);
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
+                    stackPointerStart.Text = micro.StackPointer.ToString();
+                }
+            }
+
+            LoadMemory();
+
+            UpdateRegisters();
+            
+            UpdateInstructionBox();
+
+            runAllBtn.Header = "Run All";
+
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
+        }
+
+        private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
+        {
+            stopRun = true;
+
+            if (lines != null)
+            {
+                //Micro simulator setup
+                vm = new VirtualMemory(lines);
+
+                // state the last port for the micro
+                ioManager = new IOManager(vm.VirtualMemorySize - 1);
+
+                micro = new MicroSimulator(vm, ioManager);
+
+                try
+                {
+                    string stackPointer = stackPointerStart.Text.Trim();
+
+                    micro.StackPointer = Convert.ToUInt16(stackPointer);
+                }
+                catch (Exception)
+                {
+                    stackPointerStart.Text = micro.StackPointer.ToString();
+                }
+
+                SetIOs();
+
+                LoadMemory();
+
+                UpdateRegisters();
+
+                UpdateInstructionBox();
+            } else
+            {
+                MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
+            }
+        }
+
+        private void TurnOffBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            stopRun = true;
+
+            Thread.Sleep(100);
+
+            if(micro == null)
+            {
+                MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
+                return;
+            }
+
+            ioManager.ResetIOs();
+            
+            foreach(Window window in _ioDevicesWindows.Values)
+            {
+                window.Close();
+            }
+
+            micro = null;
+            ioManager = null;
+            vm = null;
+
+            SetIOs();
+
+            LoadMemory();
+
+            UpdateRegisters();
+
+            UpdateInstructionBox();
+
+            runAllBtn.Header = "Run All";
+
+            instructionsHistoryBox.Items.Clear();
+            memoryBox.Items.Clear();
+
+            MessageBox.Show("Micro Turned OFF");
+        }
+
         private string GetPrettyInstruction(IMCInstruction instruction)
         {
             if (instruction == null)
-                return string.Empty;
+                return "NA";
 
             string addressHex = UnitConverter.IntToHex(instruction.InstructionAddressDecimal, defaultWidth: 3);
 
@@ -249,13 +327,19 @@ namespace Simulator_UI
             return $"{addressHex}: {contentHex}: {instruction.ToString()}";
         }
 
+        private void VerifyMicroStateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (micro == null)
+            {
+                MessageBox.Show("Cannot turn ON I/O devices while the Microprocessor is OFF.", "Invalid State");
+            }
+        }
+
         private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
         {
             if (ioManager == null)
             {
                 cbAsciiDisplay.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
 
                 return;
             }
@@ -286,13 +370,12 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(Display_GUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
         }
 
         private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
         {
-            if(!ValidIDEState((CheckBox) sender))
+            if (!ValidIDEState(cbHexkeyboard))
             {
                 return;
             }
@@ -318,12 +401,11 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
         }
         private void Checked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
         {
-            if (!ValidIDEState((CheckBox)sender))
+            if (!ValidIDEState(cb7Segment))
             {
                 return;
             }
@@ -349,15 +431,7 @@ namespace Simulator_UI
             {
                 _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
-        }
-        private void SetIOs()
-        {
-            Checked_IOHexaKeyBoard(null, null);
-            cbTrafficLight_Checked(null, null);
-            Checked_IOASCIIDisplay(null, null);
-            Checked_IO7SegmentDisplay(null, null);
         }
 
         private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
@@ -365,9 +439,6 @@ namespace Simulator_UI
             if (ioManager == null)
             {
                 cbTrafficLight.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
-
                 return;
             }
 
@@ -390,14 +461,28 @@ namespace Simulator_UI
 
             _ioDevicesWindows.Add(IOBinSemaforoUI.DeviceID, semaforo);
         }
+
         private void cbTrafficLight_Unhecked(object sender, RoutedEventArgs e)
         {
             if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
             {
                 _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
                 window.Close();
-                MessageBox.Show("Closed");
             }
+        }
+
+        private void SetIOs()
+        {
+            // set enabled or disabled depending on if micro processor is ON or OFF
+            //cb7Segment.IsEnabled = micro != null;
+            //cbHexkeyboard.IsEnabled = micro != null;
+            //cbTrafficLight.IsEnabled = micro != null;
+            //cbAsciiDisplay.IsEnabled = micro != null;
+
+            Checked_IOHexaKeyBoard(null, null);
+            cbTrafficLight_Checked(null, null);
+            Checked_IOASCIIDisplay(null, null);
+            Checked_IO7SegmentDisplay(null, null);
         }
 
         /// <summary>
@@ -415,8 +500,6 @@ namespace Simulator_UI
             if (ioManager == null)
             {
                 cb.IsChecked = false;
-
-                MessageBox.Show("Load an obj file before activating an IO Device.");
 
                 return false;
             }
@@ -436,6 +519,40 @@ namespace Simulator_UI
             base.OnClosed(e);
         }
 
+
+        private void textEditorRB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //MessageBox.Show(new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd).Text);
+            //kwd?.AnalizeContent();
+        }
+
+        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] rbText = textRange.Text.Split(Environment.NewLine);
+            
+            try
+            {
+                fileLines.ItemsSource = lines = Assemble(rbText);
+                statusLabel.Content = "Status: File Loaded";
+            }
+            catch (Exception ex)
+            {
+                //TODO: Create log with error
+                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                statusLabel.Content = "Status: File Error";
+            }
+            Init();
+        }
+
+        private string[] Assemble(string[] input)
+        {
+            Lexer lexer = new Lexer(input);
+            Parser parser = new Parser(lexer);
+            this.compiler = new Compiler(parser);
+            this.compiler.Compile();
+            return compiler.GetOutput();
+        }
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
         {
             if (vm == null)
@@ -467,9 +584,135 @@ namespace Simulator_UI
                 FileManager.Instance.ToWriteFile(fullPath, virtualMemoryState);
 
                 MessageBox.Show($"Exported Virtual Memory Map to: {saveFileDialog.FileName}.", "Exported successfuly");
-            } else
+            }
+            else
             {
                 MessageBox.Show($"Folder to save file not selected.", "Memory Map not exported");
+            }
+        }
+
+
+        private void OpenOBJ_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = "*.obj;*.txt",
+                Filter = "Files|*.obj;*.txt|Object Files|*.obj|Text Document|*.txt"
+            };
+
+            bool? result = ofd.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    currFileName = Path.GetFileNameWithoutExtension(ofd.FileName);
+
+                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    statusLabel.Content = "Status: File Loaded";
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
+                }
+
+                Init();
+            }
+        }
+
+        private void SaveObj_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}.obj",
+                DefaultExt = "*.obj;*.txt",
+                Filter = "Files|*.obj;*.txt|Object Files|*.obj|Text Document|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, lines);
+
+                MessageBox.Show($"Object File saved to: {saveFileDialog.FileName}.", "Exported successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
+            }
+        }
+
+        private void OpenAsm_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                DefaultExt = "*.asm;*.txt",
+                Filter = "Files|*.asm;*.txt|Assembly Files|*.asm|Text Document|*.txt"
+            };
+
+            bool? result = ofd.ShowDialog();
+
+            if (result == true)
+            {
+                try
+                {
+                    currFileName = Path.GetFileNameWithoutExtension(ofd.FileName);
+                    TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd)
+                    {
+                        Text = string.Join(Environment.NewLine, File.ReadAllLines(ofd.FileName))
+                    };
+
+                    statusLabel.Content = "Status: Assembly File Loaded";
+
+                    AssembleBtn_Click(null, null);
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Create log with error
+                    MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    statusLabel.Content = "Status: File Error";
+                }
+            }
+        }
+
+        private void SaveAsm_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] assemblyConent = textRange.Text.Split(Environment.NewLine);
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_Assembly.txt",
+                DefaultExt = "*.asm;*.txt",
+                Filter = "Files|*.asm;*.txt|Assembly Files|*.asm|Text Document|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, assemblyConent);
+
+                MessageBox.Show($"Assembly File saved to: {saveFileDialog.FileName}.", "Saved successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
             }
         }
     }
