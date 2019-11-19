@@ -1,21 +1,19 @@
-﻿using System;
+﻿using Assembler.Utils;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class ASCII_Display : IIODevice
     {
-
         private readonly bool _debug;
-        private string[] characters;
-
-        private readonly Queue<string> _buffer = new Queue<string>();
 
         public short IOPortLength => 8;//bytes
 
-        public bool HasData => characters.Length > 0;
+        public string[] DisplaySlots = new string[] { "", "", "", "", "", "", "", "" };
 
-        public byte BufferSize => (byte)characters.Length;
+        public bool HasData { get; private set; }
 
         public short IOPort { get; }
 
@@ -32,7 +30,6 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
                 throw new ArgumentOutOfRangeException("Provided an overflowable port number!\n");
 
             this.IOPort = port;
-            this.characters = new string[8];
             this._debug = false;
         }
 
@@ -46,7 +43,6 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
                 throw new ArgumentOutOfRangeException("Provided an overflowable port number!\n");
 
             this.IOPort = port;
-            this.characters = new string[8];
             this._debug = deb;
         }
 
@@ -56,37 +52,20 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         /// </summary>
         /// <param name="port">Port whose internal validity we wish to check</param>
         /// <returns>Boolean representation of the port's validity</returns>
-        private bool IsValidPort(int port)//TEST THIS
+        private bool IsValidPort(int port)
         {
-            if (port == IOPort || port == IOPort + 1 ||
-                port == IOPort + 2 || port == IOPort + 3 ||
-                port == IOPort + 4 || port == IOPort + 5 ||
-                port == IOPort + 6 || port == IOPort + 7)
-                return true;
-
-            return false;
+            return port >= IOPort &&
+                   port < IOPort + IOPortLength;
         }
-
-        /// <summary>
-        /// Reads all data stored in ASCII Display
-        /// </summary>
-        /// <param name="port">A valid port used by the ASCII Display</param>
-        /// <returns>String array representing all the data in the ASCII Display</returns>
-        public string[] ReadAllFromPort(int port)
-        {
-            if (!IsValidPort(port))
-                throw new ArgumentException($"Invalid port \n");
-            return this.characters;
-        }
-
+        
         /// <summary>
         /// Clears all the data from the internal array of characters.
         /// </summary>
         /// <returns> Boolean representing that the reset was successful</returns>
         public bool Reset()
         {
-            //_buffer.Clear();
-            this.characters = new string[8];
+            DisplaySlots = new string[] { "", "", "", "", "", "", "", "" };
+
             if (!_debug)
                 GotHexData();
             return true;
@@ -119,7 +98,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         /// <returns> String representation of the ASCII Display's data</returns>
         public override string ToString()
         {
-            return $"ASCII_Display[port: {IOPort} , characters: {String.Join(", ", characters)}]";
+            return $"ASCII_Display[port: {IOPort} , characters: [{String.Join(", ", DisplaySlots)}]]";
         }
 
         /// <summary>
@@ -133,25 +112,16 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             if (!IsValidPort(port))
                 return false;
 
-            this.characters[ConvertPortToIndex((short)port)] = contentInHex;
+            byte[] binary = new byte[] { UnitConverter.HexToByte(contentInHex) };
+
+            DisplaySlots[port - IOPort] = Encoding.ASCII.GetString(binary);
 
             if (!_debug)
                 GotHexData();
+
             return true;
         }
 
-        /*string[] IIODevice.ReadFromPort(int port)
-        {
-            //throw new NotImplementedException();
-            if(port == IOPort)
-            {
-                return this.characters;
-            }
-            else
-            {
-                throw new ArgumentException($"Invalid port number {port}");
-            }
-        }*/
         /// <summary>
         /// Reading the data contained in the ASCII Display's port.
         /// </summary>
@@ -161,24 +131,18 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         {
             if (IsValidPort(port))
             {
-                return this.characters[ConvertPortToIndex((short)port)];
-                if (!_debug)
-                    GotHexData();
+                if (DisplaySlots[ConvertPortToIndex((short)port)].Length > 0)
+                {
+                    char c = DisplaySlots[ConvertPortToIndex((short)port)].ToCharArray()[0];
+                    return UnitConverter.ByteToHex((byte)c);
+                }
+                else
+                    return UnitConverter.ByteToHex((byte)0);
             }
             else
             {
                 throw new ArgumentException($"Invalid port \n");
             }
-        }
-
-        /// <summary>
-        /// Reading the data contained in the ASCII Display's port.
-        /// </summary>
-        /// <param name="port">Port whose data we wish to read.</param>
-        /// <returns>String representation of the data stored in the port.</returns>
-        string IIODevice.ReadFromPort(int port)
-        {
-            return ReadFromPort(port);
         }
     }
 }

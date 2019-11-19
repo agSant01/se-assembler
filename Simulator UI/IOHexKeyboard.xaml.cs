@@ -59,6 +59,13 @@ namespace Simulator_UI
             // verify if a port was selected
             if (int.TryParse(tbPort.Text, out int port))
             {
+                if (_ioManager.IsUsedPort((short)port))
+                {
+                    MessageBox.Show("Port is already in use", "Invalid Port");
+                    toggle.IsChecked = false;
+                    return;
+                }
+
                 // initialize IO Device
                 Keyboard = new IOHexKeyboard((short)port);
 

@@ -75,51 +75,14 @@ namespace Simulator_UI
                     //micro.NextInstruction();
                     Dispatcher.Invoke(() =>
                     {
-                        //Do updates here to the UI
-                        string[] curr_data = display.ReadAllFromPort(display.IOPort);
-
-                        for (int i = 0; i < curr_data.Length; i++)
+                        for (int i = 0; i < display.DisplaySlots.Length; i++)
                         {
-                            boxes[i].Text = curr_data[i];
+                            boxes[i].Text = display.DisplaySlots[i];
                         }
-                        //{ box_a, box_b,box_c, box_d, box_e, box_f, box_g, box_h};
-
                     });
                 }
             }).Start();
         }
-
-
-        /*
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (activeButton.IsChecked == false)
-            {
-                MessageBox.Show("Activate IO Device before writing", "Inactive IO");
-                return;
-            }
-
-           // Button button = (Button) sender;
-
-            //string hexChar = button.Content.ToString();
-            //string hexcontent = user_input.Text.ToString();//user_input.Content.ToString();
-            //ADD ASCII DISPLAY HERE
-
-            //if (hexcontent.ToCharArray().Length == 8)
-            //    foreach (char c in hexcontent)
-            //        display?.WriteInPort(port, c);
-            else
-            {
-                MessageBox.Show("Sorry, the content must be of 8 chars long at maximum!", "Invalid Parameter");
-                return;
-            }
-            //display = new ASCII_Display();
-            //short port = port_number.Text
-            //display?.ReadFromPort();
-
-            //Keyboard?.KeyPress(hexChar);
-        }*/
 
         /// <summary>
         /// Activate device and register in IOManager
@@ -133,6 +96,12 @@ namespace Simulator_UI
             // verify if a port was selected
             if (short.TryParse(port_number.Text, out short port))
             {
+                if (_ioManager.IsUsedPort((short)port))
+                {
+                    MessageBox.Show("Port is already in use", "Invalid Port");
+                    toggle.IsChecked = false;
+                    return;
+                }
                 // initialize IO Device
                 display = new ASCII_Display(port);
                 display.GotHexData += UpdateAsciiDisplay;
@@ -181,20 +150,6 @@ namespace Simulator_UI
             if (display != null)
             {
                 _ioManager?.RemoveIODevice(display.IOPort);
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 1));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 2));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 3));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 4));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 5));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 6));
-
-                _ioManager?.RemoveIODevice((short)(display.IOPort + 7));
-
 
             }
 

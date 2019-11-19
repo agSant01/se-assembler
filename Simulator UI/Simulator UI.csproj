@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+  
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
@@ -10,5 +10,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Assembler.Core\Assembler.Core.csproj" />
   </ItemGroup>
-
 </Project>

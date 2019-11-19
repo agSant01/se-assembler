@@ -38,19 +38,19 @@ namespace Assembler.UnitTests.IODevices
             ASCII_Display display = new ASCII_Display(80, true);
             //Assert.AreEqual("00", display.ReadFromPort(0));
 
-            display.WriteInPort(80, "B");
-            display.WriteInPort(81, "A");
-            display.WriteInPort(82, "C");
-            display.WriteInPort(83, "K");
-            display.WriteInPort(84, "T");
-            display.WriteInPort(85, "O");
-            display.WriteInPort(86, "N");
-            display.WriteInPort(87, "m");
+            display.WriteInPort(80, "66");
+            display.WriteInPort(81, "67");
+            display.WriteInPort(82, "68");
+            display.WriteInPort(83, "69");
+            display.WriteInPort(84, "70");
+            display.WriteInPort(85, "71");
+            display.WriteInPort(86, "72");
+            display.WriteInPort(87, "73");
 
 
             Console.WriteLine(display);
 
-            Assert.AreEqual("B", display.ReadFromPort(80));
+            Assert.AreEqual("66", display.ReadFromPort(80));
 
             Console.WriteLine(display);
         }
@@ -87,28 +87,26 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual(null, display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
-            display.WriteInPort(5, "H");
-            display.WriteInPort(6, "E");
-            display.WriteInPort(7, "L");
-            display.WriteInPort(8, "L");
-            display.WriteInPort(9, "O");
+            display.WriteInPort(5, "48");
+            display.WriteInPort(6, "6F");
+            display.WriteInPort(7, "6C");
+            display.WriteInPort(8, "61");
 
             Console.WriteLine(display);
 
             string h = micro.ReadFromMemory(5);
-            string e = micro.ReadFromMemory(6);
+            string o = micro.ReadFromMemory(6);
             string l = micro.ReadFromMemory(7);
-            string l2 = micro.ReadFromMemory(8);
-            string o = micro.ReadFromMemory(9);
-            Assert.AreEqual("H", h);
-            Assert.AreEqual("E", e);
-            Assert.AreEqual("L", l);
-            Assert.AreEqual("L", l2);
-            Assert.AreEqual("O", o);
+            string a = micro.ReadFromMemory(8);
 
-            Console.WriteLine($"\nContent read in Hex: {h} {e} {l} {l2} {o}");
+            Assert.AreEqual("48", h);
+            Assert.AreEqual("6F", o);
+            Assert.AreEqual("6C", l);
+            Assert.AreEqual("61", a);
+
+            Console.WriteLine($"\nContent read in Hex: {h} {o} {l} {a}");
         }
 
         [TestMethod]
@@ -145,14 +143,13 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual(null, display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
             //Write To Valid port range
-            Assert.IsTrue(display.WriteInPort(5, "H"));
-            Assert.IsTrue(display.WriteInPort(6, "E"));
-            Assert.IsTrue(display.WriteInPort(7, "L"));
-            Assert.IsTrue(display.WriteInPort(8, "L"));
-            Assert.IsTrue(display.WriteInPort(9, "O"));
+            Assert.IsTrue(display.WriteInPort(5, "48"));
+            Assert.IsTrue(display.WriteInPort(6, "6F"));
+            Assert.IsTrue(display.WriteInPort(7, "6C"));
+            Assert.IsTrue(display.WriteInPort(8, "61"));
 
             Console.WriteLine(display);
 
@@ -203,37 +200,33 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-
-            display.WriteInPort(5, "H");
-            display.WriteInPort(6, "E");
-            display.WriteInPort(7, "L");
-            display.WriteInPort(8, "L");
-            display.WriteInPort(9, "O");
+            display.WriteInPort(5, "48");
+            display.WriteInPort(6, "6F");
+            display.WriteInPort(7, "6C");
+            display.WriteInPort(8, "61");
 
             Console.WriteLine(display);
 
             string h = micro.ReadFromMemory(5);
-            string e = micro.ReadFromMemory(6);
+            string o = micro.ReadFromMemory(6);
             string l = micro.ReadFromMemory(7);
-            string l2 = micro.ReadFromMemory(8);
-            string o = micro.ReadFromMemory(9);
-            Assert.AreEqual("H", h);
-            Assert.AreEqual("E", e);
-            Assert.AreEqual("L", l);
-            Assert.AreEqual("L", l2);
-            Assert.AreEqual("O", o);
+            string a = micro.ReadFromMemory(8);
 
-            Console.WriteLine($"\nContent read in Hex: {h} {e} {l} {l2} {o}");
+            Assert.AreEqual("48", h);
+            Assert.AreEqual("6F", o);
+            Assert.AreEqual("6C", l);
+            Assert.AreEqual("61", a);
+
+            Console.WriteLine($"\nContent read in Hex: {h} {o} {l} {a}");
 
             //Verify that it wrote to memory correctly
             Assert.AreEqual(display.ReadFromPort(5), micro.ReadFromMemory(5));
-
 
             //Reading from invalid before Port Range
             var ex = Assert.ThrowsException<ArgumentException>(() => display.ReadFromPort(4));
             Assert.AreEqual(ex.Message, "Invalid port \n");
 
-            var ex3 = Assert.ThrowsException<ArgumentException>(() => display.ReadFromPort(13));
+            var ex3 = Assert.ThrowsException<ArgumentException>(() => display.ReadFromPort(15));
             Assert.AreEqual(ex3.Message, "Invalid port \n");
 
             //Maximum Port Number
@@ -279,14 +272,13 @@ namespace Assembler.UnitTests.IODevices
 
             Console.WriteLine($"\nIO Device: {display}");
 
-            Assert.AreEqual(null, display.ReadFromPort(5));
+            Assert.AreEqual("00", display.ReadFromPort(5));
 
             //Write To Valid port range
-            Assert.IsTrue(display.WriteInPort(5, "H"));
-            Assert.IsTrue(display.WriteInPort(6, "E"));
-            Assert.IsTrue(display.WriteInPort(7, "L"));
-            Assert.IsTrue(display.WriteInPort(8, "L"));
-            Assert.IsTrue(display.WriteInPort(9, "O"));
+            Assert.IsTrue(display.WriteInPort(5, "48"));
+            Assert.IsTrue(display.WriteInPort(6, "6F"));
+            Assert.IsTrue(display.WriteInPort(7, "6C"));
+            Assert.IsTrue(display.WriteInPort(8, "61"));
 
             Console.WriteLine(display);
 
