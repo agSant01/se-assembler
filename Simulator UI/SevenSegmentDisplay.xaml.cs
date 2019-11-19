@@ -46,7 +46,7 @@ namespace Simulator_UI
             SegmentColor = Brushes.Green;
         }
 
-        //2D array for how the 7-point segement should be displayed
+        //2D array for how the 7-point segment should be displayed
         private readonly bool[][] _digits =
         {
             new bool[]{true, true, true, true, true, true, false}, // zero

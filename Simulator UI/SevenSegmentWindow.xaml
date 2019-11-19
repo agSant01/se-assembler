@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
-        Title="SevenSegmentWindow" Height="450" Width="800">
+        Title="SevenSegmentWindow" Height="400" Width="430">
     <Grid Background="Black">
         <Grid.RowDefinitions>
           <RowDefinition/>
