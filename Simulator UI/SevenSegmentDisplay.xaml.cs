@@ -46,6 +46,11 @@ namespace Simulator_UI
             SegmentColor = Brushes.Green;
         }
 
+        public void Reset()
+        {
+            ShowDigit("10");
+        }
+
         //2D array for how the 7-point segment should be displayed
         private readonly bool[][] _digits =
         {
@@ -107,6 +112,13 @@ namespace Simulator_UI
             DataContext = Model;
         }
 
+        public void Reset()
+        {
+            Model.Reset();
+            ShowFirstDigit = true;
+            ShowSecondDigit = true;
+        }
+
         public bool ShowDivider
         {
             get { return Divider.Visibility == Visibility.Visible; }
@@ -127,10 +139,17 @@ namespace Simulator_UI
 
         public void SetBinaryNumber(string binaryNumber)
         {
-            Model.ShowBinary(binaryNumber.Substring(0, 7));
-            var showFirst = binaryNumber[7] == '0';
-            ShowFirstDigit = showFirst;
-            ShowSecondDigit = !showFirst;
+            if (string.IsNullOrEmpty(binaryNumber))
+            {
+                Reset();
+            }
+            else
+            {
+                Model.ShowBinary(binaryNumber.Substring(0, 7));
+                var showFirst = binaryNumber[7] == '0';
+                ShowFirstDigit = !showFirst;
+                ShowSecondDigit = showFirst;
+            }
         }
 
         public void SetNumber(int number, bool showFirst)

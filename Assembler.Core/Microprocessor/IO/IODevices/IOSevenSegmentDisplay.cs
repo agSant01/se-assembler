@@ -39,6 +39,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
         public bool Reset()
         {
             _buffer = string.Empty;
+            UpdateGui?.Invoke();
             return true;
         }
 

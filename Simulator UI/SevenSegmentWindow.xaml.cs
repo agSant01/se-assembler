@@ -34,13 +34,16 @@ namespace Simulator_UI
         {
             Dispatcher.Invoke(() =>
             {
-
-
                 if (SegmentDisplay != null)
                 {
                     Display.SetBinaryNumber(SegmentDisplay.Data);
                 }
             });
+        }
+
+        private void ResetBtn_Clicked(object sender, RoutedEventArgs e)
+        {
+            Display.Reset();
         }
 
         private void Toggle_Activate(object sender, RoutedEventArgs e)
