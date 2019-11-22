@@ -7,7 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="120">
   <UserControl.Resources>
-    <local:BoolToVisibilityConverter x:Key="segmentConverter"/>
     <local:BoolToColorConverter x:Key="segmentColorConverter"/>
   </UserControl.Resources>
 
@@ -32,17 +31,17 @@
       </Grid.ColumnDefinitions>
 
       <DockPanel x:Name="FirstNumTop" Grid.Column="0" LastChildFill="False">
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[0], Converter={StaticResource segmentConverter}}" Height="15" DockPanel.Dock="Top"/>
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[1], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Right"/>
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[5], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding FirstNumber[0], Converter={StaticResource segmentColorConverter}}" Margin="15 0" Height="15" DockPanel.Dock="Top"/>
+        <StackPanel Background="{Binding FirstNumber[1], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Right"/>
+        <StackPanel Background="{Binding FirstNumber[5], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Left"/>
       </DockPanel>
       <DockPanel x:Name="FirstNumMid" Grid.Column="0" Grid.Row="1">
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[6], Converter={StaticResource segmentConverter}}" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding FirstNumber[6], Converter={StaticResource segmentColorConverter}}" Margin="15 0" DockPanel.Dock="Left"/>
       </DockPanel>
       <DockPanel x:Name="FirstNumBot" Grid.Column="0" Grid.Row="2" LastChildFill="False">
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[3], Converter={StaticResource segmentConverter}}" Height="15" DockPanel.Dock="Bottom"/>
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[2], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Right"/>
-        <StackPanel Background="{Binding IsFirstDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding FirstNumber[4], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding FirstNumber[3], Converter={StaticResource segmentColorConverter}}" Margin="15 0" Height="15" DockPanel.Dock="Bottom"/>
+        <StackPanel Background="{Binding FirstNumber[2], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Right"/>
+        <StackPanel Background="{Binding FirstNumber[4], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Left"/>
       </DockPanel>
 
     </Grid>
@@ -61,17 +60,17 @@
 
 
       <DockPanel x:Name="SecondNumTop" Grid.Column="0" LastChildFill="False">
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[0], Converter={StaticResource segmentConverter}}" Height="15" DockPanel.Dock="Top"/>
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[1], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Right"/>
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[5], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding SecondNumber[0], Converter={StaticResource segmentColorConverter}}" Margin="15 0" Height="15" DockPanel.Dock="Top"/>
+        <StackPanel Background="{Binding SecondNumber[1], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Right"/>
+        <StackPanel Background="{Binding SecondNumber[5], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Left"/>
       </DockPanel>
       <DockPanel x:Name="SecondNumMid" Grid.Column="0" Grid.Row="1">
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[6], Converter={StaticResource segmentConverter}}" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding SecondNumber[6], Converter={StaticResource segmentColorConverter}}" Margin="15 0" DockPanel.Dock="Left"/>
       </DockPanel>
       <DockPanel x:Name="SecondNumBot" Grid.Column="0" Grid.Row="2" LastChildFill="False">
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[3], Converter={StaticResource segmentConverter}}" Height="15" DockPanel.Dock="Bottom"/>
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[2], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Right"/>
-        <StackPanel Background="{Binding IsSecondDigitActive, Converter={StaticResource segmentColorConverter}}" Visibility="{Binding SecondNumber[4], Converter={StaticResource segmentConverter}}" Width="15" DockPanel.Dock="Left"/>
+        <StackPanel Background="{Binding SecondNumber[3], Converter={StaticResource segmentColorConverter}}" Margin="15 0" Height="15" DockPanel.Dock="Bottom"/>
+        <StackPanel Background="{Binding SecondNumber[2], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Right"/>
+        <StackPanel Background="{Binding SecondNumber[4], Converter={StaticResource segmentColorConverter}}" Width="15" DockPanel.Dock="Left"/>
       </DockPanel>
     </Grid>
   </Grid>
