@@ -176,9 +176,10 @@ namespace Simulator_UI
                 return;
             }
 
-            if (micro == null)
+            if (!IsMicroOn(micro))
             {
                 MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+                micro_menu.Background = Brushes.Gray;
                 return;
             }
 
@@ -203,7 +204,10 @@ namespace Simulator_UI
                 return;
             }*/
             if (!IsMicroValid(micro))
+            {
+                micro_menu.Background = Brushes.Gray;
                 return;
+            }
 
             stopRun = true;
 
@@ -241,6 +245,7 @@ namespace Simulator_UI
 
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
+            micro_menu.Background = Brushes.Gray;
         }
 
         private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
@@ -275,8 +280,10 @@ namespace Simulator_UI
                 UpdateRegisters();
 
                 UpdateInstructionBox();
+                micro_menu.Background = Brushes.Green;
             } else
             {
+                micro_menu.Background = Brushes.Gray;
                 MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
             }
         }
@@ -314,7 +321,11 @@ namespace Simulator_UI
                 MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
                 return;
             }*/
-            if (!IsMicroValid(micro)) return;
+            if (!IsMicroValid(micro))
+            {
+                micro_menu.Background = Brushes.Gray;
+                return;
+            }
 
             ioManager.ResetIOs();
             
