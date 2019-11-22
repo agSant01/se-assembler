@@ -179,7 +179,8 @@ namespace Simulator_UI
             if (!IsMicroOn(micro))
             {
                 MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
-                micro_menu.Background = Brushes.Gray;
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
@@ -205,7 +206,8 @@ namespace Simulator_UI
             }*/
             if (!IsMicroValid(micro))
             {
-                micro_menu.Background = Brushes.Gray;
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
@@ -245,7 +247,8 @@ namespace Simulator_UI
 
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
-            micro_menu.Background = Brushes.Gray;
+            micro_status_lbl.Background = Brushes.Gray;
+            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
@@ -280,10 +283,13 @@ namespace Simulator_UI
                 UpdateRegisters();
 
                 UpdateInstructionBox();
-                micro_menu.Background = Brushes.Green;
+                micro_status_lbl.Background = Brushes.Green;
+             
+                micro_status_lbl.Content = "Micro Status: ON";
             } else
             {
-                micro_menu.Background = Brushes.Gray;
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
             }
         }
@@ -323,7 +329,8 @@ namespace Simulator_UI
             }*/
             if (!IsMicroValid(micro))
             {
-                micro_menu.Background = Brushes.Gray;
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
@@ -352,7 +359,8 @@ namespace Simulator_UI
             memoryBox.Items.Clear();
 
             MessageBox.Show("Micro Turned OFF");
-            micro_menu.Background = Brushes.Red;
+            micro_status_lbl.Background = Brushes.Red;
+            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
@@ -378,12 +386,15 @@ namespace Simulator_UI
 
             if(!IsMicroOn(micro))
             {
-                micro_menu.Background = Brushes.Red;
+                micro_status_lbl.Background = Brushes.Red;
+                
+                micro_status_lbl.Content = "Micro Status: OFF";
                 MessageBox.Show("Cannot turn ON I/O devices while the Microprocessor is OFF.", "Invalid State");
                 return;
             }
 
-            micro_menu.Background = Brushes.Green;
+            micro_status_lbl.Background = Brushes.Green;
+            micro_status_lbl.Content = "Micro Status: ON";
         }
 
         private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
