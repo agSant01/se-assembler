@@ -14,7 +14,7 @@
         </Grid.ColumnDefinitions>
         <ListBox x:Name="memoryBox" HorizontalAlignment="Left" Height="110" Margin="83,247,0,0" VerticalAlignment="Top" Width="360" Grid.Column="1" Foreground="White" Background="#FF1E1E1E" BorderBrush="#FF3E3E42"/>
         <!-- <TextBox x:Name="fileTextBox" HorizontalAlignment="Left" Height="312" Margin="10,32,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="389" IsReadOnly="True" TextChanged="fileTextBox_TextChanged"/> -->
-        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="355" Margin="490,95,0,0" VerticalAlignment="Top" Width="202" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
+        <ListView x:Name="fileLines" HorizontalAlignment="Left" Height="330" Margin="490,120,0,0" VerticalAlignment="Top" Width="202" Background="#FF1E1E1E" Foreground="White" BorderBrush="#FF3E3E42" Grid.ColumnSpan="2"/>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="968" Grid.ColumnSpan="2" Background="#FF2D2D30" Foreground="White">
             <MenuItem Header="File" Height="29" Width="44" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="OpenObjBtn" Header="Open Object File" Click="OpenOBJ_Click" Background="#FF2D2D30"/>
@@ -27,7 +27,7 @@
                 <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="assembleBtn" Header="Assemble" Icon="" Click="AssembleBtn_Click" Background="#FF2D2D30"/>
             </MenuItem>
-            <MenuItem Header="Micro" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
+            <MenuItem x:Name="micro_menu" Header="Micro" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="micro_off_state" Header="Turn OFF" Icon="" Click="TurnOffBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="micro_on_state" Header="Turn ON" Icon="" Click="TurnOnBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click" Background="#FF2D2D30"/>
@@ -35,6 +35,8 @@
         </Menu>
         <Label x:Name="label" Content="File Preview" HorizontalAlignment="Left" Margin="11,62,0,0" VerticalAlignment="Top" Width="390" Foreground="White"/>
         <Label x:Name="label_Copy" Content="Memory" HorizontalAlignment="Left" Margin="85,217,0,0" VerticalAlignment="Top" Width="279" Grid.Column="1" Foreground="White"/>
+
+
         <!--<ToolBar x:Name="toolBar" HorizontalAlignment="Left" Height="26" Margin="0,28,-23,0" VerticalAlignment="Top" Width="991" Header="Execution Options" Background="#FF2D2D30" Foreground="White" Grid.ColumnSpan="2">
             <MenuItem x:Name="runNextBtn" Header="Run Next" Icon="" Click="RunNextBtn_Click"/>
             <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click"/>
@@ -89,8 +91,9 @@
             </RichTextBox.Resources>
             <FlowDocument></FlowDocument>
         </RichTextBox>
-        <Label x:Name="label_Copy9" Content="Microprocessor Virtual Memory Map" HorizontalAlignment="Left" Margin="490,27,0,0" VerticalAlignment="Top" Width="237" Foreground="White" HorizontalContentAlignment="Right" FontWeight="Bold" FontSize="13" Grid.ColumnSpan="2"/>
-        <Button Content="Export Memory Map" Grid.Column="1" HorizontalAlignment="Left" Margin="121,28,0,0" VerticalAlignment="Top" Width="142" Height="25" Click="Btn_Click_ExportMemoryMap" FontSize="12" Background="Gray" Foreground="White" BorderBrush="AliceBlue" />
-        <Label x:Name="label_Copy3" Content="Object File Content" HorizontalAlignment="Left" Margin="490,64,0,0" VerticalAlignment="Top" Width="202" Foreground="White" Grid.ColumnSpan="2"/>
+        <Label x:Name="label_Copy9" Content="Microprocessor Virtual Memory Map" HorizontalAlignment="Left" Margin="486,27,0,0" VerticalAlignment="Top" Width="237" Foreground="White" HorizontalContentAlignment="Right" FontWeight="Bold" FontSize="13" Grid.ColumnSpan="2"/>
+        <Button Content="Export Memory Map" HorizontalAlignment="Left" Margin="493,59,0,0" VerticalAlignment="Top" Width="142" Height="25" Click="Btn_Click_ExportMemoryMap" FontSize="12" Background="Gray" Foreground="White" BorderBrush="AliceBlue" Grid.ColumnSpan="2" />
+        <Label x:Name="label_Copy3" Content="Object File Content" HorizontalAlignment="Left" Margin="491,92,0,0" VerticalAlignment="Top" Width="202" Foreground="White" Grid.ColumnSpan="2"/>
+        <Label x:Name="micro_status_lbl" Content="Micro Status: OFF" HorizontalAlignment="Left" Margin="364,26,0,0" VerticalAlignment="Top" Background="#F6F6F6F6" RenderTransformOrigin="-0.15,0.818"/>
     </Grid>
 </Window>
