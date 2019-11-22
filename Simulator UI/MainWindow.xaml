@@ -26,7 +26,7 @@
                 <MenuItem x:Name="runAllBtn" Header="Run All" Icon="" Click="RunAllBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="assembleBtn" Header="Assemble" Icon="" Click="AssembleBtn_Click" Background="#FF2D2D30"/>
             </MenuItem>
-            <MenuItem Header="Micro" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
+            <MenuItem x:Name="micro_menu" Header="Micro" Height="29" Width="81" Foreground="White" Background="#FF2D2D30">
                 <MenuItem x:Name="micro_off_state" Header="Turn OFF" Icon="" Click="TurnOffBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="micro_on_state" Header="Turn ON" Icon="" Click="TurnOnBtn_Click" Background="#FF2D2D30"/>
                 <MenuItem x:Name="resetBtn" Header="Reset" Icon="" Click="ResetBtn_Click" Background="#FF2D2D30"/>
