@@ -88,6 +88,8 @@ namespace Simulator_UI
 
             OnPropertyChanged("FirstNumber"); //actualiza gui
             OnPropertyChanged("SecondNumber");
+            OnPropertyChanged("IsFirstDigitActive");
+            OnPropertyChanged("IsSecondDigitActive");
         }
 
         //2D array for how the 7-point segment should be displayed
@@ -100,7 +102,7 @@ namespace Simulator_UI
             {
                 final[i] = binary[i] == '1';
             }
-            var showFirst = binary[7] == '1';
+            var showFirst = binary[7] == '0';
             if(showFirst)
             {
                 _firstNumber = final;
@@ -111,8 +113,10 @@ namespace Simulator_UI
             }
             IsFirstDigitActive = showFirst;
             IsSecondDigitActive = !showFirst;
-            OnPropertyChanged("FirstNumber");
+            OnPropertyChanged("FirstNumber"); //actualiza gui
             OnPropertyChanged("SecondNumber");
+            OnPropertyChanged("IsFirstDigitActive");
+            OnPropertyChanged("IsSecondDigitActive");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

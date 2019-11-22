@@ -1,0 +1,18 @@
+org 0
+jmpaddr start
+
+seven db 0
+display db 0,0,0,0,0,0,0,0
+
+start:
+// 7seg number 1 right - port 2
+loadim r4, 61
+store 02, r4
+
+// 7seg number 7 left - port 2
+loadim r4, E0
+store 02, r4
+
+
+fin:
+jmpaddr fin
