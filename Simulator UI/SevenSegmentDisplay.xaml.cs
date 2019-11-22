@@ -27,58 +27,71 @@ namespace Simulator_UI
         }
     }
 
+    public class BoolToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool entry = (bool)value;
+            SolidColorBrush color = Brushes.Gray;
+            if (entry)
+            {
+                color = Brushes.Green;
+            }
+            return color;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException("Convert Back has not been implemented.");
+        }
+    }
+
     public class SevenSegmentDisplayModel : INotifyPropertyChanged
     {
-        private bool[] _number;
-        public bool[] Number
+        private bool[] _firstNumber;
+        private bool[] _secondNumber;
+        public bool[] FirstNumber
         {
             get
             {
-                return _number;
+                return _firstNumber;
+            }
+        }
+        public bool[] SecondNumber
+        {
+            get
+            {
+                return _secondNumber;
             }
         }
 
-        public SolidColorBrush SegmentColor { get; set; }
+        public bool IsFirstDigitActive { get; set; }
+
+        public bool IsSecondDigitActive { get; set; }
 
         public SevenSegmentDisplayModel()
         {
-            ShowDigit("10");
-            SegmentColor = Brushes.Green;
+            IsFirstDigitActive = false;
+            IsSecondDigitActive = false;
+
+            _firstNumber = offState;
+            _secondNumber = offState;
         }
 
         public void Reset()
         {
-            ShowDigit("10");
+            IsFirstDigitActive = false;
+            IsSecondDigitActive = false;
+
+            _firstNumber = offState;
+            _secondNumber = offState;
+
+            OnPropertyChanged("FirstNumber"); //actualiza gui
+            OnPropertyChanged("SecondNumber");
         }
 
         //2D array for how the 7-point segment should be displayed
-        private readonly bool[][] _digits =
-        {
-            new bool[]{true, true, true, true, true, true, false}, // zero
-            new bool[]{false, true, true, false, false, false, false}, // one
-            new bool[]{true, true, false, true, true, false, true}, // two
-            new bool[]{true, true, true, true, false, false, true}, // three
-            new bool[]{false, true, true, false, false, true, true}, // four
-            new bool[]{true, false, true, true, false, true, true}, // five
-            new bool[]{true, false, true, true, true, true, true}, // six
-            new bool[]{true, true, true, false, false, false, false}, // seven
-            new bool[]{true, true, true, true, true, true, true}, // eight
-            new bool[]{true, true, true, false, false, true, true}, // nine
-            new bool[]{ true, true, true, true, true, true, true}, // off
-        };
-
-        public void ShowDigit(object number)
-        {
-            int num = 10;
-            int.TryParse((string)number, out num);
-
-            if (num < 0 || num > 9)
-                _number = _digits[10];
-            else
-                _number = _digits[num];
-
-            OnPropertyChanged("Number");
-        }
+        private readonly bool[] offState = new bool[] { true, true, true, true, true, true, true };
 
         public void ShowBinary(string binary)
         {
@@ -87,8 +100,19 @@ namespace Simulator_UI
             {
                 final[i] = binary[i] == '1';
             }
-            _number = final;
-            OnPropertyChanged("Number");
+            var showFirst = binary[7] == '1';
+            if(showFirst)
+            {
+                _firstNumber = final;
+            }
+            else
+            {
+                _secondNumber = final;
+            }
+            IsFirstDigitActive = showFirst;
+            IsSecondDigitActive = !showFirst;
+            OnPropertyChanged("FirstNumber");
+            OnPropertyChanged("SecondNumber");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -115,26 +139,12 @@ namespace Simulator_UI
         public void Reset()
         {
             Model.Reset();
-            ShowFirstDigit = true;
-            ShowSecondDigit = true;
         }
 
         public bool ShowDivider
         {
             get { return Divider.Visibility == Visibility.Visible; }
             set { Divider.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
-        }
-
-        public bool ShowFirstDigit
-        {
-            get { return DigitOne.Visibility == Visibility.Visible; }
-            set { DigitOne.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
-        }
-
-        public bool ShowSecondDigit
-        {
-            get { return DigitTwo.Visibility == Visibility.Visible; }
-            set { DigitTwo.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
         }
 
         public void SetBinaryNumber(string binaryNumber)
@@ -145,19 +155,8 @@ namespace Simulator_UI
             }
             else
             {
-                Model.ShowBinary(binaryNumber.Substring(0, 7));
-                var showFirst = binaryNumber[7] == '0';
-                ShowFirstDigit = !showFirst;
-                ShowSecondDigit = showFirst;
+                Model.ShowBinary(binaryNumber);
             }
         }
-
-        public void SetNumber(int number, bool showFirst)
-        {
-            ShowFirstDigit = showFirst;
-            ShowSecondDigit = !showFirst;
-            Model.ShowDigit(number.ToString());
-        }
     }
-
 }
