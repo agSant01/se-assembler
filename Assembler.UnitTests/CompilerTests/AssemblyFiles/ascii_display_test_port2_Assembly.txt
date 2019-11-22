@@ -1,32 +1,40 @@
 org 0
 jmpaddr start
 
-seven db 0
+trafficLight db 0
+
+sevenSeg db 0
+
+// 8 char ascii display
 display db 0,0,0,0,0,0,0,0
 
 start:
+// ASCII
 // H
 loadim r1, 48
-store 03, r1
+store 04, r1
 // o
 loadim r1, 6F
-store 04, r1
+store 05, r1
 // l
 loadim r1, 6C
-store 05, r1
+store 06, r1
 // a
 loadim r1, 61
-store 06, r1
+store 07, r1
 
-
+// 7 segment
 // 7seg number 8 left
 loadim r4, FE
-store 02, r4
+store 03, r4
 
 // 7seg letter E right
 loadim r5, FF
-store 02, r5
+store 03, r5
 
+// traffic light
+loadim r2, BB
+store 02, r2
 
 fin:
 jmpaddr fin
