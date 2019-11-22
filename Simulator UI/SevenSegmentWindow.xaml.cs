@@ -28,6 +28,11 @@ namespace Simulator_UI
         {
             InitializeComponent();
             _ioManager = ioManager;
+            try
+            {
+                MouseDown += delegate { DragMove(); };
+            }
+            catch (Exception) { }
         }
 
         private void UpdateDisplay()

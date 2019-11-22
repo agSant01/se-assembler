@@ -40,6 +40,8 @@ namespace Simulator_UI
 
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
 
+            micro_status_lbl.Background = Brushes.Red;
+
             Init();
         }
 
