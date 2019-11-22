@@ -105,6 +105,8 @@ namespace Simulator_UI
             {
                 _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
+
+            //Display.Reset();
         }
 
         protected override void OnClosing(CancelEventArgs e)
