@@ -56,6 +56,44 @@ namespace Assembler.UnitTests.IODevices
         }
 
         [TestMethod]
+        public void ASCIIDisplayTests_Reset_After_ExecuteOneInstruction_Success()
+        {
+            ASCII_Display display = new ASCII_Display(80, true);
+            //Assert.AreEqual("00", display.ReadFromPort(0));
+
+            display.WriteInPort(80, "66");
+            display.WriteInPort(81, "67");
+            display.WriteInPort(82, "68");
+            display.WriteInPort(83, "69");
+            display.WriteInPort(84, "70");
+            display.WriteInPort(85, "71");
+            display.WriteInPort(86, "72");
+            display.WriteInPort(87, "73");
+
+
+            Console.WriteLine(display.DisplaySlots);
+
+            //Assert.AreEqual("66", display.ReadFromPort(80));
+
+            //Console.WriteLine(display);
+            string[] empty = new string[]{"","", "", "", "", "" , "", "" };
+
+            Assert.IsTrue(display.Reset());
+            Console.WriteLine(empty);
+            Console.WriteLine(display.DisplaySlots);
+
+            //Lazy comparison because a deep comparison will result in false
+            //since they are obviously not meant to be the same objects
+            for(int i = 0; i < empty.Length; i++)
+            {
+                Assert.IsTrue(empty[i] == display.DisplaySlots[i]);
+            }
+            
+
+        }
+
+
+        [TestMethod]
         public void ASCIIDisplayTests_ReadFromMicro_Success()
         {
             VirtualMemory vm = new VirtualMemory(new string[] {
