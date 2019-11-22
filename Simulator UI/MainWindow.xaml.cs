@@ -122,7 +122,7 @@ namespace Simulator_UI
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (compiler == null)
+            if (lines == null || lines.Length == 0)
             {
                 MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
@@ -170,7 +170,7 @@ namespace Simulator_UI
 
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (compiler == null)
+            if (lines == null || lines.Length == 0)
             {
                 MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
