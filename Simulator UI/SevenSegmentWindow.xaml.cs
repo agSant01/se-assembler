@@ -46,11 +46,6 @@ namespace Simulator_UI
             });
         }
 
-        private void ResetBtn_Clicked(object sender, RoutedEventArgs e)
-        {
-            Display.Reset();
-        }
-
         private void Toggle_Activate(object sender, RoutedEventArgs e)
         {
             ToggleButton toggle = (ToggleButton)sender;
@@ -110,6 +105,8 @@ namespace Simulator_UI
             {
                 _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
+
+            //Display.Reset();
         }
 
         protected override void OnClosing(CancelEventArgs e)

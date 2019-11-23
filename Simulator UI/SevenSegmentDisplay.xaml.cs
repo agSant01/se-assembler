@@ -8,31 +8,12 @@ using System.Windows.Media;
 
 namespace Simulator_UI
 {
-    public class BoolToVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            bool entry = (bool)value;
-            Visibility tmpVisibilty = Visibility.Collapsed;
-            if (entry)
-            {
-                tmpVisibilty = Visibility.Visible;
-            }
-            return tmpVisibilty;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException("Convert Back has not been implemented.");
-        }
-    }
-
     public class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool entry = (bool)value;
-            SolidColorBrush color = Brushes.Gray;
+            SolidColorBrush color = (SolidColorBrush)(new BrushConverter().ConvertFrom("#333333"));
             if (entry)
             {
                 color = Brushes.Green;
@@ -93,7 +74,7 @@ namespace Simulator_UI
         }
 
         //2D array for how the 7-point segment should be displayed
-        private readonly bool[] offState = new bool[] { true, true, true, true, true, true, true };
+        private readonly bool[] offState = new bool[] { false, false, false, false, false, false, false };
 
         public void ShowBinary(string binary)
         {

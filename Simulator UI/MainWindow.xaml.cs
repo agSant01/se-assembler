@@ -676,6 +676,7 @@ namespace Simulator_UI
                     statusLabel.Content = "Status: File Error";
                 }
 
+                ResetBtn_Click(sender,e);
                 Init();
             }
         }
