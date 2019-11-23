@@ -28,6 +28,11 @@ namespace Simulator_UI
         {
             InitializeComponent();
             _ioManager = ioManager;
+            try
+            {
+                MouseDown += delegate { DragMove(); };
+            }
+            catch (Exception) { }
         }
 
         private void UpdateDisplay()
@@ -39,11 +44,6 @@ namespace Simulator_UI
                     Display.SetBinaryNumber(SegmentDisplay.Data);
                 }
             });
-        }
-
-        private void ResetBtn_Clicked(object sender, RoutedEventArgs e)
-        {
-            Display.Reset();
         }
 
         private void Toggle_Activate(object sender, RoutedEventArgs e)
