@@ -19,10 +19,11 @@
         </Grid.ColumnDefinitions>
         <local:SevenSegmentDisplay Grid.Row="0" Grid.ColumnSpan="4" x:Name="Display" Margin="20"></local:SevenSegmentDisplay>
         <Label Grid.Row="1" Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,0,0" Background="#FF1C1C1C" FontSize="14" RenderTransformOrigin="0.314,0.542" Height="29" Width="94" Grid.ColumnSpan="2"/>
-        <TextBox Margin="12,15,0,0" Grid.Row="1" Width="100" Grid.Column="1" Name="tbPort" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow"
-               VerticalAlignment="Top" FontSize="14" AcceptsReturn="True"
-                SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1" Grid.ColumnSpan="2"/>
-        <ToggleButton Margin="10,15,0,0" Grid.Row="1" Grid.Column="2" Name="activeToggle" Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True" Height="21" Width="52">
+        <TextBox Name="tbPort" Margin="12,10,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
+                 VerticalAlignment="Top" Width="94" Height="29" FontSize="14"
+                 KeyDown="tbPort_KeyDown"
+                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1" Grid.Column="1" Grid.Row="1"/>
+        <ToggleButton x:Name="toggle" Margin="48,9,0,0" Grid.Row="1" Grid.Column="2" Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" VerticalAlignment="Top" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True" Height="32" Width="77" Grid.ColumnSpan="2">
             <ToggleButton.Style>
                 <Style TargetType="{x:Type ToggleButton}">
                     <Setter Property="Background" Value="Green"/>
@@ -35,5 +36,8 @@
                 </Style>
             </ToggleButton.Style>
         </ToggleButton>
+        <RadioButton x:Name="rbHex" GroupName="PortFormat" Content="Hexadecimal" HorizontalAlignment="Left" Foreground="White" Margin="22,55,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RadioButton_Checked" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <RadioButton x:Name="rbDec" GroupName="PortFormat" Content="Decimal" HorizontalAlignment="Left" Foreground="White" Margin="18,55,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked" Grid.Column="1" Grid.Row="1"/>
+
     </Grid>
 </Window>
