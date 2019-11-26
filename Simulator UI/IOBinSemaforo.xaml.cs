@@ -4,7 +4,9 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Simulator_UI
@@ -23,6 +25,8 @@ namespace Simulator_UI
 
         private bool _active;
         private bool blinkState = true;
+
+        private bool IsPortHex = true;
 
         private readonly Brush Red;
         private readonly Brush Yello;
@@ -56,7 +60,8 @@ namespace Simulator_UI
             ToggleButton toggle = (ToggleButton)sender;
 
             // verify if a port was selected
-            if (int.TryParse(tbPort.Text, out int port))
+            if (int.TryParse(tbPort.Text, IsPortHex ? System.Globalization.NumberStyles.HexNumber :
+                System.Globalization.NumberStyles.Integer, null, out int port))
             {
                 if (_ioManager.IsUsedPort((short)port))
                 {
@@ -79,6 +84,9 @@ namespace Simulator_UI
                     _active = true;
                     toggle.Background = Brushes.Green;
 
+                    rbDec.IsEnabled = false;
+                    rbHex.IsEnabled = false;
+                    tbPort.IsEnabled = false;
                 }
                 catch (Exception err)
                 {
@@ -88,10 +96,17 @@ namespace Simulator_UI
                     semaforo = null;
                 }
             }
+            else if (tbPort.Text.Length == 0)
+            {
+                // no port selected
+                MessageBox.Show("Select a port before activating the I/O Device.", "Invalid Port");
+
+                toggle.IsChecked = false;
+            }
             else
             {
                 // no port selected
-                MessageBox.Show("Select a port before activating the IO Device");
+                MessageBox.Show("Tried to connect I/O device to invalid port.", "Invalid Port");
 
                 toggle.IsChecked = false;
             }
@@ -99,7 +114,7 @@ namespace Simulator_UI
 
         private void Toggle_Deactivate(object sender, RoutedEventArgs e)
         {
-            ToggleButton toggle = (ToggleButton)sender;
+            ToggleButton toggle = activeToggle;
 
             // change text of toggle text
             toggle.Content = "Inactive";
@@ -112,6 +127,10 @@ namespace Simulator_UI
                 _ioManager?.RemoveIODevice(semaforo.IOPort);
                 LightsOff();
             }
+
+            rbDec.IsEnabled = true;
+            rbHex.IsEnabled = true;
+            tbPort.IsEnabled = true;
         }
 
         private void UpdateSemaforo()
@@ -174,7 +193,7 @@ namespace Simulator_UI
                         });
                     }
                     catch (Exception ex) { MessageBox.Show("Thread Ended", ex.Message); }
-                    
+
                 }
             }).Start();
 
@@ -201,6 +220,28 @@ namespace Simulator_UI
             //turn off all lights
             IR.Fill = IA.Fill = IV.Fill = DR.Fill = DA.Fill = DV.Fill = Black;
         }
+
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton b = (RadioButton)sender;
+
+            if (b.Content.ToString() == "Hexadecimal")
+            {
+                IsPortHex = true;
+            }
+            else if (b.Content.ToString() == "Decimal")
+            {
+                IsPortHex = false;
+            }
+            else
+            {
+                IsPortHex = true;
+
+                MessageBox.Show("Invalid Port Format. Choose between Hexadecimal and Decimal. Using default.", "Invalid Format.");
+            }
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             // remove IO from IO Manager
@@ -211,6 +252,12 @@ namespace Simulator_UI
             base.OnClosing(e);
         }
 
-
+        private void tbPort_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                activeToggle.IsChecked = true;
+            }
+        }
     }
 }

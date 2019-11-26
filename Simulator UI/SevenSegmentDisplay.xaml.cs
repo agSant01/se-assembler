@@ -84,7 +84,7 @@ namespace Simulator_UI
                 final[i] = binary[i] == '1';
             }
             var showFirst = binary[7] == '0';
-            if(showFirst)
+            if (showFirst)
             {
                 _firstNumber = final;
             }
