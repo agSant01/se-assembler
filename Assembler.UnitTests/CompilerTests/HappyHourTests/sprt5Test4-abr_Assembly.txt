@@ -1,0 +1,27 @@
+//pruebas con condicionales, R0 no es modificable,
+//brinco por registro indirecto
+    org 0
+    JMPADDR start
+mayor db 0
+menor db 0
+    LOADIM R0,#03       //R0 <- 00
+    LOADIM R2,#04       //R2 <- 04
+    LOADIM R3,#0A       //R3 <- 0A
+    LOADIM R4,#0F       //R4 <- 0F
+    GRT R2,R3           //Cond <- 0
+    JCONDADDR R2mayor   //no brinca
+    ADD R5,R0,R3        //R5 <- 0A
+    JMPADDR R3mayor     //brinca
+R2mayor:
+    ADD R5,R0,R2
+R3mayor	
+    GRTEQ R4,R5         //Cond <- 1
+    JCONDADDR R4mayor   //Brinca
+    JMPADDR fin
+R4mayor:
+    ADD R5,R0,R4        //R5 <- 0F
+fin:
+    STORE mayor,R5      //At 02 <- 0F
+    JMPRIND R2          //Brinca a address 02 [LOADIM R0, #03]
+	
+
