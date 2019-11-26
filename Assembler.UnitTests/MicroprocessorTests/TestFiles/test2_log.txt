@@ -1,0 +1,8 @@
+[STATUS] Started Assembly Log default_AssemblyLog_744_6756 at 11/26/2019 1:11:46 PM
+[STATUS] Assembly process started
+[STATUS] Syntax analysis
+[STATUS] Loading labels and constants
+[STATUS] Finished loading labels and constants
+[STATUS] Assembly process completed
+[STATUS] Generating of Object file
+[STATUS] Finished generating Object file

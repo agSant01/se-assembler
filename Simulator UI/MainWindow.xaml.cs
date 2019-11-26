@@ -784,9 +784,9 @@ namespace Simulator_UI
 
             Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
             {
-                FileName = $"{currFileName}_Assembly.txt",
-                DefaultExt = "*.asm;*.txt",
-                Filter = "Files|*.asm;*.txt|Assembly Files|*.asm|Text Document|*.txt"
+                FileName = $"{currFileName}_log.txt",
+                DefaultExt = "*.log;*.txt",
+                Filter = "Files|*.log;*.txt|Log Files|*.log|Text Document|*.txt"
             };
 
             // Show save file dialog box
