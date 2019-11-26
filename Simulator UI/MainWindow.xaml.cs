@@ -1,4 +1,6 @@
-﻿using Assembler.Assembler;
+﻿using Assembler;
+using Assembler.Assembler;
+using Assembler.Core;
 using Assembler.Core.Microprocessor;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
@@ -30,6 +32,8 @@ namespace Simulator_UI
         private bool stopRun;
 
         private string[] lines;
+        private string[] logOutputLines;
+       
 
         private string currFileName;
 
@@ -605,10 +609,12 @@ namespace Simulator_UI
 
         private string[] Assemble(string[] input)
         {
+            AssemblyLogger logger = new AssemblyLogger("default"); 
             Lexer lexer = new Lexer(input);
             Parser parser = new Parser(lexer);
-            this.compiler = new Compiler(parser);
+            this.compiler = new Compiler(parser,logger);
             this.compiler.Compile();
+            logLines.ItemsSource = logOutputLines = logger.GetLines();
             return compiler.GetOutput();
         }
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
@@ -774,8 +780,37 @@ namespace Simulator_UI
                 MessageBox.Show($"Folder to save file not selected.", "File not saved");
             }
         }
+        private void SaveLog_Click(object sender, RoutedEventArgs e)
+        {
 
-        private readonly RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript;
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_log.txt",
+                DefaultExt = "*.log;*.txt",
+                Filter = "Files|*.log;*.txt|Log Files|*.log|Text Document|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, logOutputLines ?? (new string[] {"log is empty"}));
+
+                MessageBox.Show($"Log File saved to: {saveFileDialog.FileName}.", "Saved successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
+            }
+        }
+
+        private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript; 
 
         private void textEditorRB_TextChange(object sender, TextChangedEventArgs e)
         {
