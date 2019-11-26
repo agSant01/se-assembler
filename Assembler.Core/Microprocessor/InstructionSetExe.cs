@@ -67,14 +67,17 @@ namespace Assembler.Microprocessor
                     return true;
                 }},
                 { "00110",     (IMCInstruction instruction, MicroSimulator micro) => {
-                    // STORERIND Ra,Rb  {F1} R[Rb] <- mem[R[Ra]]
+                    // STORERIND Ra,Rb  {F1} mem[R[Ra]] <- R[Rb]
                     MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
 
-                    string valueRegisterA = micro.MicroRegisters.GetRegisterValue(instructionF1.Ra);
+                    string registerAValue = micro.MicroRegisters.GetRegisterValue(instructionF1.Ra);
 
-                    string valueInMemory  = micro.ReadFromMemory(UnitConverter.HexToInt(valueRegisterA));
+                    string registerBValue = micro.MicroRegisters.GetRegisterValue(instructionF1.Rb);
 
-                    micro.MicroRegisters.SetRegisterValue(instructionF1.Rb, valueInMemory);
+                    micro.WriteToMemory(
+                           UnitConverter.HexToInt(registerAValue),
+                           registerBValue
+                    );
 
                     return true;
                 }},
