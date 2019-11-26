@@ -1,0 +1,9 @@
+LOADim R1,#50      //Assume Traffic light at address 50 (hex)
+
+// 1010 1000
+LOADim R5,#0A8    //Set lights as RyGrYG (uppercase letter means on, lowercase means off)
+
+STORE #50,R5  //Indirect store stores data from R5 into address specified by R1
+fin:
+jmpaddr fin
+

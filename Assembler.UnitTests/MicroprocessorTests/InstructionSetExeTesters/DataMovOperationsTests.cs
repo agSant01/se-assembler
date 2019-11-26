@@ -183,23 +183,37 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         [TestMethod]
         public void DataMovOperationsTests_STORERIND_Success()
         {
-            // STORERIND Ra,Rb  {F1} R[Rb] <- mem[R[Ra]] 
-
-            string valueInMem = UnitConverter.IntToHex(40);
-            int dataInRegisterAHex = 110;
-
+            // STORERIND Ra,Rb  {F1} mem[R[Ra]] <- R[Rb] 
             byte registerA = 3;
-            byte registerB = 7;
+            byte registerB = 6;
 
+            string expectedValueInMem = UnitConverter.IntToHex(40);
 
+            // data to write in address R[Ra]
+            string dataInBHex = UnitConverter.IntToHex(40);
+
+            // addres to write data to
+            string dataInAHex = UnitConverter.IntToHex(110);
+            
             // set data in register and VM
-            micro.WriteToMemory(dataInRegisterAHex, valueInMem);
-            micro.MicroRegisters.SetRegisterValue(registerA, UnitConverter.IntToHex(dataInRegisterAHex));
+            //Ra
+            micro.MicroRegisters
+                 .SetRegisterValue(registerA, dataInAHex);
+            // Rb
+            micro.MicroRegisters
+                .SetRegisterValue(registerB, dataInBHex);
 
             Console.WriteLine(micro.MicroRegisters);
 
-            Assert.AreEqual(valueInMem, micro.ReadFromMemory(dataInRegisterAHex));
-            Assert.AreEqual(UnitConverter.IntToHex(dataInRegisterAHex), micro.MicroRegisters.GetRegisterValue(registerA));
+
+            // assert that register contain the corret data
+            Assert.AreEqual(dataInAHex,
+                micro.MicroRegisters.GetRegisterValue(registerA));
+
+            Assert.AreEqual(dataInBHex, 
+                micro.MicroRegisters.GetRegisterValue(registerB));
+            ////
+            
 
             // set instruction
             MCInstructionF1 instructionF1 = new MCInstructionF1(4, "00110",
@@ -207,13 +221,14 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
                 UnitConverter.IntToBinary(registerB)
                 );
 
+            // execute instruction
             InstructionSetExe.ExecuteInstruction(instructionF1, micro);
 
             Console.WriteLine($"After execution: {micro.MicroRegisters}");
-            Console.WriteLine($"Value in address {dataInRegisterAHex}: {UnitConverter.HexToInt(valueInMem)}");
+            Console.WriteLine($"Value in address {dataInBHex}: {UnitConverter.HexToInt(expectedValueInMem)}");
             Assert.AreEqual(
-                valueInMem,
-                micro.MicroRegisters.GetRegisterValue(registerB)
+                expectedValueInMem,
+                micro.ReadFromMemory(UnitConverter.HexToInt(dataInAHex))
                 );
         }
     }
