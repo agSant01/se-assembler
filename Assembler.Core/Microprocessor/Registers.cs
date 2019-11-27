@@ -30,9 +30,9 @@ namespace Assembler.Microprocessor
         /// <returns>Contents of the registers in Hexadecimal format</returns>
         public string GetRegisterValue(byte registerNumber)
         {
-            if (registerNumber < 1 || registerNumber > 7)
+            if (!IsValidAction(registerNumber, isWrite: false))
             {
-                throw new IndexOutOfRangeException($"Invalid Register: {registerNumber}");
+                throw new IndexOutOfRangeException($"Read Action: Invalid Register '{registerNumber}'");
             }
 
             return UnitConverter.ByteToHex((byte)registers[registerNumber]).Replace("0x", "");
@@ -46,9 +46,9 @@ namespace Assembler.Microprocessor
         /// <exception cref="InvalidCastException">If the data is invalid for the size of the register</exception>
         public void SetRegisterValue(byte registerNumber, string hexadecimalValue)
         {
-            if (registerNumber < 1 || registerNumber > 7)
+            if (!IsValidAction(registerNumber, isWrite: true))
             {
-                throw new IndexOutOfRangeException($"Invalid Register: {registerNumber}");
+                throw new IndexOutOfRangeException($"Write Action: Invalid Register '{registerNumber}'");
             }
 
             IsValidData(hexadecimalValue);
@@ -73,6 +73,22 @@ namespace Assembler.Microprocessor
                        $"'{UnitConverter.HexToBinary(hexValue)}' is invalid for this register of " +
                        $"{registerByteSize * 8}-Bits.");
             }
+        }
+
+        /// <summary>
+        /// Validates if the action can be performed on the register
+        /// </summary>
+        /// <returns>True if action can be performed, false otherwise.</returns>
+        private bool IsValidAction(byte registerNumber, bool isWrite)
+        {
+            if (isWrite)
+            {
+                // can only write from R1-R7
+                return registerNumber > 0 || registerNumber <= 7;
+            }
+
+            // can read from R0-R7
+            return registerNumber >= 0 || registerNumber <= 7;
         }
 
         public override string ToString()

@@ -1,0 +1,7 @@
+﻿org 0
+
+loadim r4, 05
+
+push r4
+
+pop r4

@@ -25,7 +25,18 @@ namespace Assembler.Parsing.InstructionFormats
             else
             {
                 RegisterA = new Register(registerA);
-                ConstOrAddress = new VariableName(constOrAddress);
+
+
+                if (constOrAddress != null)
+                {
+                    // only occurss if instruction is Push or has only one parameter and no const or address
+                    ConstOrAddress = new VariableName(constOrAddress);
+                } else
+                {
+                    ConstOrAddress = new VariableName(
+                        new Token(TokenType.IDENTIFIER, "0")
+                        );
+                }
             }
         }
 
@@ -47,7 +58,8 @@ namespace Assembler.Parsing.InstructionFormats
         /// <summary>
         /// True if all the parameters are valid, False otherwise
         /// </summary>
-        public bool IsValid => RegisterA.IsValid() && ConstOrAddress.IsValid();
+        public bool IsValid => RegisterA.IsValid() && 
+            ConstOrAddress == null ? true : ConstOrAddress.IsValid();
 
         /// <summary>
         /// ToString Override

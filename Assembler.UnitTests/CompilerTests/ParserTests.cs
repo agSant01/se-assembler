@@ -39,6 +39,10 @@ namespace Assembler.UnitTests.CompilerTests
            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
            @"CompilerTests\PaserTestsComparisons\test3.txt");
 
+        private readonly string testParsePush = Path.Combine(
+            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+            @"CompilerTests\PaserTestsComparisons\testFailParser.txt");
+
         [TestCleanup]
         public void TestCleanup()
         {
@@ -188,6 +192,24 @@ namespace Assembler.UnitTests.CompilerTests
             {
                 Console.WriteLine(parser.CurrentInstruction);
                 Assert.AreEqual(expected[index], parser.CurrentInstruction.ToString());
+                index++;
+            }
+        }
+
+        [TestMethod]
+        public void ParserTests_ParseFailNullToken_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(testParsePush);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+            
+            lexer = new Lexer(lines);
+            Parser parser = new Parser(lexer);
+
+            int index = 0;
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
                 index++;
             }
         }

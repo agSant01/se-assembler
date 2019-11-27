@@ -91,6 +91,38 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         }
 
         [TestMethod]
+        public void DataMovOperationsTests_PUSH2_Success()
+        {
+            //init
+            micro.StackPointer = 0;
+            micro.MicroRegisters.SetRegisterValue(4, "05");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00100", "100", null);
+            ushort SPNewValue = 4095;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("05", micro.ReadFromMemory(micro.StackPointer));
+        }
+
+        [TestMethod]
+        public void DataMovOperationsTests_PUSH3_Success()
+        {
+            //init
+            micro.StackPointer = 4095;
+            micro.MicroRegisters.SetRegisterValue(4, "05");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00100", "100", null);
+            ushort SPNewValue = 4094;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("05", micro.ReadFromMemory(micro.StackPointer));
+        }
+
+        [TestMethod]
         public void DataMovOperationsTests_POP_Success()
         {
             //init
@@ -98,6 +130,38 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             micro.WriteToMemory(100, "FF");
             MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
             ushort SPNewValue = 101;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("FF", micro.MicroRegisters.GetRegisterValue(2));
+        }
+
+        [TestMethod]
+        public void DataMovOperationsTests_POP2_Success()
+        {
+            //init
+            micro.StackPointer = 0;
+            micro.WriteToMemory(0, "FF");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
+            ushort SPNewValue = 1;
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(SPNewValue, micro.StackPointer);
+            Assert.AreEqual("FF", micro.MicroRegisters.GetRegisterValue(2));
+        }
+
+        [TestMethod]
+        public void DataMovOperationsTests_POP3_Success()
+        {
+            //init
+            micro.StackPointer = 4095;
+            micro.WriteToMemory(4095, "FF");
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00010", "010", null);
+            ushort SPNewValue = 0;
 
             //execute
             InstructionSetExe.ExecuteInstruction(i1, micro);
