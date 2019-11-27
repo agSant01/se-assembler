@@ -306,7 +306,6 @@ namespace Assembler.UnitTests.CompilerTests
 
             compiler.Compile();
 
-            int counter = 0;
             foreach (string l in compiler.GetOutput())
             {
                 Console.WriteLine(l);

@@ -177,7 +177,7 @@ namespace Simulator_UI
         {
             if (lines == null || lines.Length == 0)
             {
-                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                MessageBox.Show("No target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
             }
 
@@ -188,8 +188,6 @@ namespace Simulator_UI
                 micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
-
-            MessageBox.Show(ioManager.ToString());
 
             micro.NextInstruction();
 
