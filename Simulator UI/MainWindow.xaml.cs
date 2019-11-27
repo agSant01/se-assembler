@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -33,7 +34,7 @@ namespace Simulator_UI
 
         private string[] lines;
         private string[] logOutputLines;
-       
+
 
         private string currFileName;
 
@@ -151,33 +152,47 @@ namespace Simulator_UI
                 return;
             }
 
-            new Thread(() =>
+            Task.Run(() =>
             {
                 while (!stopRun && micro != null)
                 {
                     Thread.Sleep(100);
-
-                    micro.NextInstruction();
-
-                    Dispatcher.Invoke(() =>
+                    try
                     {
-                        UpdateInstructionBox();
-
-                        LoadMemory();
-
-                        UpdateRegisters();
-
-                        instructionsHistoryBox.Items.Add(micro?.CurrentInstruction);
-                    });
+                        micro.NextInstruction();
+                        Dispatcher.Invoke(() =>
+                        {
+                            try
+                            {
+                                UpdateInstructionBox();
+                                LoadMemory();
+                                UpdateRegisters();
+                                instructionsHistoryBox.Items.Add(micro?.CurrentInstruction);
+                            }
+                            catch (Exception ex)
+                            {
+                                var message = ex.Message;
+                                MessageBox.Show(ex.Message, "Unexpected error when executing instruction. Stopping instruction execution.");
+                                stopRun = true;
+                                Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Unexpected error when executing instruction. Stopping instruction execution.");
+                        stopRun = true;
+                        Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
+                    }
                 }
-            }).Start();
+            });
         }
 
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lines == null || lines.Length == 0)
             {
-                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                MessageBox.Show("No target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
             }
 
@@ -191,15 +206,22 @@ namespace Simulator_UI
 
             MessageBox.Show(ioManager.ToString());
 
-            micro.NextInstruction();
+            try
+            {
+                micro.NextInstruction();
 
-            UpdateInstructionBox();
+                UpdateInstructionBox();
 
-            LoadMemory();
+                LoadMemory();
 
-            UpdateRegisters();
+                UpdateRegisters();
 
-            instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unexpected error when executing instruction.");
+            }
         }
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
@@ -609,10 +631,10 @@ namespace Simulator_UI
 
         private string[] Assemble(string[] input)
         {
-            AssemblyLogger logger = new AssemblyLogger("default"); 
+            AssemblyLogger logger = new AssemblyLogger("default");
             Lexer lexer = new Lexer(input);
             Parser parser = new Parser(lexer);
-            this.compiler = new Compiler(parser,logger);
+            this.compiler = new Compiler(parser, logger);
             this.compiler.Compile();
             logLines.ItemsSource = logOutputLines = logger.GetLines();
             return compiler.GetOutput();
@@ -800,7 +822,7 @@ namespace Simulator_UI
                 string fullPath = saveFileDialog.FileName;
 
                 // Save document
-                FileManager.Instance.ToWriteFile(fullPath, logOutputLines ?? (new string[] {"log is empty"}));
+                FileManager.Instance.ToWriteFile(fullPath, logOutputLines ?? (new string[] { "log is empty" }));
 
                 MessageBox.Show($"Log File saved to: {saveFileDialog.FileName}.", "Saved successfuly");
             }
@@ -810,7 +832,7 @@ namespace Simulator_UI
             }
         }
 
-        private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript; 
+        private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript;
 
         private void textEditorRB_TextChange(object sender, TextChangedEventArgs e)
         {
