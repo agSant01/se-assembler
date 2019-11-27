@@ -43,6 +43,11 @@ namespace Assembler.UnitTests.CompilerTests
           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
           @"CompilerTests\AssemblerTestsComparisons\test3Comparison.txt");
 
+        private readonly string testParsePush = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\PaserTestsComparisons\testFailParser.txt");
+
+
         [TestMethod]
         public void CompilerTest_GetLabelsAndConstants()
         {
@@ -284,6 +289,27 @@ namespace Assembler.UnitTests.CompilerTests
             {
                 Console.WriteLine(l);
                 Assert.AreEqual(expectedAsmLines[counter++], l);
+            }
+        }
+
+
+        [TestMethod]
+        public void CompilerTest_ParseFailNullToken_Success()
+        {
+            string[] asmLines = FileManager.Instance.ToReadFile(testParsePush);
+
+            Lexer lexer = new Lexer(asmLines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+
+            int counter = 0;
+            foreach (string l in compiler.GetOutput())
+            {
+                Console.WriteLine(l);
             }
         }
     }
