@@ -231,7 +231,7 @@ namespace Simulator_UI
             }*/
             if (!IsMicroValid(micro))
             {
-                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Background = Brushes.Red;
                 micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
@@ -273,7 +273,6 @@ namespace Simulator_UI
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
             micro_status_lbl.Background = Brushes.Gray;
-            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
