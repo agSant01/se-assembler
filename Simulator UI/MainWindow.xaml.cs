@@ -1,4 +1,5 @@
-﻿using Assembler.Assembler;
+﻿using Assembler;
+using Assembler.Assembler;
 using Assembler.Core;
 using Assembler.Core.Microprocessor;
 using Assembler.Microprocessor;
@@ -17,10 +18,10 @@ using System.Windows.Media;
 
 namespace Simulator_UI
 {
-    public partial class MainWindow : Window 
+    public partial class MainWindow : Window
     {
         private readonly Dictionary<string, Window> _ioDevicesWindows = new Dictionary<string, Window>();
-        
+
         private MicroSimulator micro;
         private IOManager ioManager;
         private VirtualMemory vm;
@@ -31,14 +32,18 @@ namespace Simulator_UI
         private bool stopRun;
 
         private string[] lines;
+        private string[] logOutputLines;
+       
 
         private string currFileName;
-        
+
         public MainWindow()
         {
             InitializeComponent();
 
             statusLabel.Content = "Status: First enter Stack Pointer Range Before Inserting File";
+
+            micro_status_lbl.Background = Brushes.Red;
 
             Init();
         }
@@ -82,7 +87,8 @@ namespace Simulator_UI
 
         private void UpdateRegisters()
         {
-            bool IsMicroNull = micro == null;
+            //bool IsMicroNull = micro == null;
+            bool IsMicroNull = !IsMicroOn(micro);
 
             stackPointerBox.IsEnabled = !IsMicroNull;
 
@@ -95,7 +101,7 @@ namespace Simulator_UI
                 stackPointerStart.Text = "0";
             }
 
-            stackPointerBox.Text = micro?.StackPointer.ToString() ?? "NA"; 
+            stackPointerBox.Text = micro?.StackPointer.ToString() ?? "NA";
 
             programCounterBox.Text = micro?.ProgramCounter.ToString() ?? "NA";
 
@@ -104,7 +110,7 @@ namespace Simulator_UI
             registersBox.Items.Clear();
 
             registersBox.Items.Add($"R0: {(IsMicroNull ? "NA" : "00")}");
-            
+
             for (int i = 1; i < 8; i++)
             {
                 registersBox.Items.Add($"R{i}: {micro?.MicroRegisters.GetRegisterValue((byte)i) ?? "NA"}");
@@ -121,17 +127,20 @@ namespace Simulator_UI
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (compiler == null)
+            if (lines == null || lines.Length == 0)
             {
                 MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
             }
 
-            if (micro == null)
-            {
-                MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+            if (!IsMicroValid(micro))
                 return;
-            }
+
+            /* if (micro == null)
+             {
+                 MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+                 return;
+             }*/
 
             stopRun = !stopRun;
 
@@ -166,15 +175,17 @@ namespace Simulator_UI
 
         private void RunNextBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (compiler == null)
+            if (lines == null || lines.Length == 0)
             {
                 MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
             }
 
-            if (micro == null)
+            if (!IsMicroOn(micro))
             {
                 MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
@@ -193,9 +204,15 @@ namespace Simulator_UI
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (micro == null)
+            /*if (micro == null)
             {
                 MessageBox.Show("No microprocessor to reset.", "Microprocessor not connnected.");
+                return;
+            }*/
+            if (!IsMicroValid(micro))
+            {
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
@@ -218,7 +235,7 @@ namespace Simulator_UI
 
                     micro.StackPointer = Convert.ToUInt16(stackPointer);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
                     stackPointerStart.Text = micro.StackPointer.ToString();
@@ -228,13 +245,15 @@ namespace Simulator_UI
             LoadMemory();
 
             UpdateRegisters();
-            
+
             UpdateInstructionBox();
 
             runAllBtn.Header = "Run All";
 
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
+            micro_status_lbl.Background = Brushes.Gray;
+            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
@@ -269,10 +288,37 @@ namespace Simulator_UI
                 UpdateRegisters();
 
                 UpdateInstructionBox();
-            } else
+                micro_status_lbl.Background = Brushes.Green;
+
+                micro_status_lbl.Content = "Micro Status: ON";
+            }
+            else
             {
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
             }
+        }
+
+        private bool IsMicroOn(MicroSimulator micro)
+        {
+            bool state = true;
+            if (micro == null)
+            {
+                state = false;
+            }
+
+            return state;
+        }
+
+        private bool IsMicroValid(MicroSimulator micro)
+        {
+            if (!IsMicroOn(micro))
+            {
+                MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
+                return false;
+            }
+            return true;
         }
 
         private void TurnOffBtn_Click(object sender, RoutedEventArgs e)
@@ -282,15 +328,21 @@ namespace Simulator_UI
 
             Thread.Sleep(100);
 
-            if(micro == null)
+            /*if(!IsMicroOn(micro))
             {
                 MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
+                return;
+            }*/
+            if (!IsMicroValid(micro))
+            {
+                micro_status_lbl.Background = Brushes.Gray;
+                micro_status_lbl.Content = "Micro Status: OFF";
                 return;
             }
 
             ioManager.ResetIOs();
-            
-            foreach(Window window in _ioDevicesWindows.Values)
+
+            foreach (Window window in _ioDevicesWindows.Values)
             {
                 window.Close();
             }
@@ -313,6 +365,8 @@ namespace Simulator_UI
             memoryBox.Items.Clear();
 
             MessageBox.Show("Micro Turned OFF");
+            micro_status_lbl.Background = Brushes.Red;
+            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
@@ -330,10 +384,23 @@ namespace Simulator_UI
 
         private void VerifyMicroStateBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (micro == null)
+            /*if (micro == null)
             {
+                micro_menu.Background = Brushes.Red;
                 MessageBox.Show("Cannot turn ON I/O devices while the Microprocessor is OFF.", "Invalid State");
+            }*/
+
+            if (!IsMicroOn(micro))
+            {
+                micro_status_lbl.Background = Brushes.Red;
+
+                micro_status_lbl.Content = "Micro Status: OFF";
+                MessageBox.Show("Cannot turn ON I/O devices while the Microprocessor is OFF.", "Invalid State");
+                return;
             }
+
+            micro_status_lbl.Background = Brushes.Green;
+            micro_status_lbl.Content = "Micro Status: ON";
         }
 
         private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
@@ -486,6 +553,7 @@ namespace Simulator_UI
             Checked_IO7SegmentDisplay(null, null);
         }
 
+
         /// <summary>
         /// Helper method for verifying state of the IDE microprocessor and IOManager
         /// </summary>
@@ -524,7 +592,7 @@ namespace Simulator_UI
         {
             TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
             string[] rbText = textRange.Text.Split(Environment.NewLine);
-            
+
             try
             {
                 fileLines.ItemsSource = lines = Assemble(rbText);
@@ -541,10 +609,12 @@ namespace Simulator_UI
 
         private string[] Assemble(string[] input)
         {
+            AssemblyLogger logger = new AssemblyLogger("default"); 
             Lexer lexer = new Lexer(input);
             Parser parser = new Parser(lexer);
-            this.compiler = new Compiler(parser);
+            this.compiler = new Compiler(parser,logger);
             this.compiler.Compile();
+            logLines.ItemsSource = logOutputLines = logger.GetLines();
             return compiler.GetOutput();
         }
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
@@ -612,6 +682,7 @@ namespace Simulator_UI
                     statusLabel.Content = "Status: File Error";
                 }
 
+                ResetBtn_Click(sender, e);
                 Init();
             }
         }
@@ -709,6 +780,35 @@ namespace Simulator_UI
                 MessageBox.Show($"Folder to save file not selected.", "File not saved");
             }
         }
+        private void SaveLog_Click(object sender, RoutedEventArgs e)
+        {
+
+            Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            {
+                FileName = $"{currFileName}_log.txt",
+                DefaultExt = "*.log;*.txt",
+                Filter = "Files|*.log;*.txt|Log Files|*.log|Text Document|*.txt"
+            };
+
+            // Show save file dialog box
+            Nullable<bool> result = saveFileDialog.ShowDialog();
+
+            // Process save file dialog box results
+            if (result == true)
+            {
+                // get full path for the document
+                string fullPath = saveFileDialog.FileName;
+
+                // Save document
+                FileManager.Instance.ToWriteFile(fullPath, logOutputLines ?? (new string[] {"log is empty"}));
+
+                MessageBox.Show($"Log File saved to: {saveFileDialog.FileName}.", "Saved successfuly");
+            }
+            else
+            {
+                MessageBox.Show($"Folder to save file not selected.", "File not saved");
+            }
+        }
 
         private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript; 
 
@@ -717,8 +817,9 @@ namespace Simulator_UI
             //new Thread(() =>
 
             //{
-           
-            Dispatcher.Invoke(() => {
+
+            Dispatcher.Invoke(() =>
+            {
                 if (textEditorRB.Document == null)
                     return;
 
@@ -731,42 +832,43 @@ namespace Simulator_UI
                 string pattern = @"([^\W_]+[^\s,.]*)";
                 TextPointer pointer = textEditorRB.Document.ContentStart;
 
-                    while (pointer.CompareTo(textEditorRB.Document.ContentEnd) < 0)
+                while (pointer.CompareTo(textEditorRB.Document.ContentEnd) < 0)
+                {
+                    if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
                     {
-                        if (pointer.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+
+                        string textRun = pointer.GetTextInRun(LogicalDirection.Forward);
+
+                        MatchCollection matches = Regex.Matches(textRun, pattern, options);
+
+                        foreach (Match match in matches)
                         {
-
-                            string textRun = pointer.GetTextInRun(LogicalDirection.Forward);
-                            
-                            MatchCollection matches = Regex.Matches(textRun, pattern, options);
-
-                            foreach (Match match in matches)
+                            try
                             {
-                                try
-                                {
-                                    TextPointer start = pointer.GetPositionAtOffset(match.Index);
+                                TextPointer start = pointer.GetPositionAtOffset(match.Index);
 
-                                    TextRange wordRange = new TextRange(start, start.GetPositionAtOffset(match.Length));
-                                    if (KeyWordDetector.IsKeyword(wordRange.Text, out SolidColorBrush color))
-                                    {
-                                        wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
-                                        wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-                                    }
-                                    else
-                                    {
-                                        wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-                                        wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.White);
-                                    }
+                                TextRange wordRange = new TextRange(start, start.GetPositionAtOffset(match.Length));
+                                if (KeyWordDetector.IsKeyword(wordRange.Text, out SolidColorBrush color))
+                                {
+                                    wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, color);
+                                    wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
                                 }
-                                catch (Exception ex) {
-                                    MessageBox.Show(ex.ToString());
+                                else
+                                {
+                                    wordRange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+                                    wordRange.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.White);
                                 }
                             }
-
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.ToString());
+                            }
                         }
 
-                        pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
                     }
+
+                    pointer = pointer.GetNextContextPosition(LogicalDirection.Forward);
+                }
                 textEditorRB.TextChanged += this.textEditorRB_TextChange;
 
 

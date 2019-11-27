@@ -1,18 +1,12 @@
 ﻿using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Simulator_UI
 {
@@ -24,10 +18,17 @@ namespace Simulator_UI
         private readonly IOManager _ioManager;
         public IOSevenSegmentDisplay SegmentDisplay { get; private set; }
 
+        private bool IsPortHex = true;
+
         public SevenSegmentWindow(IOManager ioManager)
         {
             InitializeComponent();
             _ioManager = ioManager;
+            try
+            {
+                MouseDown += delegate { DragMove(); };
+            }
+            catch (Exception) { }
         }
 
         private void UpdateDisplay()
@@ -41,17 +42,19 @@ namespace Simulator_UI
             });
         }
 
-        private void ResetBtn_Clicked(object sender, RoutedEventArgs e)
-        {
-            Display.Reset();
-        }
-
         private void Toggle_Activate(object sender, RoutedEventArgs e)
         {
             ToggleButton toggle = (ToggleButton)sender;
 
             // verify if a port was selected
-            if (int.TryParse(tbPort.Text, out int port))
+            if (
+                int.TryParse(
+                    tbPort.Text,
+                    IsPortHex ?
+                    System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.Integer,
+                    null, out int port
+                    )
+                )
             {
                 if (_ioManager.IsUsedPort((short)port))
                 {
@@ -73,6 +76,9 @@ namespace Simulator_UI
 
                     toggle.Background = Brushes.Green;
 
+                    rbDec.IsEnabled = false;
+                    rbHex.IsEnabled = false;
+                    tbPort.IsEnabled = false;
                 }
                 catch (Exception err)
                 {
@@ -82,10 +88,17 @@ namespace Simulator_UI
                     SegmentDisplay = null;
                 }
             }
+            else if (tbPort.Text.Length == 0)
+            {
+                // no port selected
+                MessageBox.Show("Select a port before activating the I/O Device.", "Invalid Port");
+
+                toggle.IsChecked = false;
+            }
             else
             {
                 // no port selected
-                MessageBox.Show("Select a port before activating the IO Device");
+                MessageBox.Show("Tried to connect I/O device to invalid port.", "Invalid Port");
 
                 toggle.IsChecked = false;
             }
@@ -106,7 +119,9 @@ namespace Simulator_UI
                 _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
 
-            //Display.Reset();
+            rbDec.IsEnabled = true;
+            rbHex.IsEnabled = true;
+            tbPort.IsEnabled = true;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -117,6 +132,34 @@ namespace Simulator_UI
                 _ioManager?.RemoveIODevice(SegmentDisplay.IOPort);
             }
             base.OnClosing(e);
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton b = (RadioButton)sender;
+
+            if (b.Content.ToString() == "Hexadecimal")
+            {
+                IsPortHex = true;
+            }
+            else if (b.Content.ToString() == "Decimal")
+            {
+                IsPortHex = false;
+            }
+            else
+            {
+                IsPortHex = true;
+
+                MessageBox.Show("Invalid Port Format. Choose between Hexadecimal and Decimal. Using default.", "Invalid Format.");
+            }
+        }
+
+        private void tbPort_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                toggle.IsChecked = true;
+            }
         }
     }
 }

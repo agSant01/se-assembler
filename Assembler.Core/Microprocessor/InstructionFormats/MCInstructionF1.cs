@@ -47,9 +47,9 @@ namespace Assembler.Microprocessor.InstructionFormats
             {
                 string itr = $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} R{Ra}";
 
-                if (Rb != 0) itr += $" R{Rb}";
+                if (Rb >= 0) itr += $" R{Rb}";
 
-                if (Rc != 0) itr += $" R{Rc}";
+                if (Rc >= 0) itr += $" R{Rc}";
 
                 return itr;
             }

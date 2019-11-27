@@ -7,10 +7,13 @@
         mc:Ignorable="d"
         Title="IOBinSemaforo" Height="351" Width="383" WindowStyle="None" ResizeMode="CanMinimize">
     <Grid Background="#FF252526">
-        <TextBox x:Name="tbPort" HorizontalAlignment="Left" Margin="122,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="116"/>
+        <TextBox Name="tbPort" Margin="120,14,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
+                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14"
+                 KeyDown="tbPort_KeyDown"
+                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
 
 
-        <ToggleButton Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="272,10,0,0" VerticalAlignment="Top" Height="37" Width="101" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
+        <ToggleButton x:Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="272,12,0,0" VerticalAlignment="Top" Height="32" Width="86" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
             <ToggleButton.Style>
                 <Style TargetType="{x:Type ToggleButton}">
                     <Setter Property="Background" Value="Green"/>
@@ -23,9 +26,9 @@
                 </Style>
             </ToggleButton.Style>
         </ToggleButton>
-        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Width="107" Background="#FF252526" FontSize="14"/>
-        <Rectangle HorizontalAlignment="Left" Height="195" Margin="90,62,0,0" Stroke="Black" VerticalAlignment="Top" Width="82" Fill="#FF151212"/>
-        <Ellipse x:Name="IR" HorizontalAlignment="Left" Height="51" Margin="106,78,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="10,12,0,0" VerticalAlignment="Top" Width="107" Background="#FF252526" FontSize="14"/>
+        <Rectangle HorizontalAlignment="Left" Height="195" Margin="90,86,0,0" Stroke="Black" VerticalAlignment="Top" Width="82" Fill="#FF151212"/>
+        <Ellipse x:Name="IR" HorizontalAlignment="Left" Height="51" Margin="106,102,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="Red"/>
@@ -33,7 +36,7 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Ellipse x:Name="IA" HorizontalAlignment="Left" Height="51" Margin="106,134,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Ellipse x:Name="IA" HorizontalAlignment="Left" Height="51" Margin="106,158,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="Yellow"/>
@@ -41,7 +44,7 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Ellipse x:Name="IV" HorizontalAlignment="Left" Height="51" Margin="106,190,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Ellipse x:Name="IV" HorizontalAlignment="Left" Height="51" Margin="106,214,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="#FF00C709"/>
@@ -49,8 +52,8 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Rectangle HorizontalAlignment="Left" Height="195" Margin="201,62,0,0" Stroke="Black" VerticalAlignment="Top" Width="82" Fill="#FF151212"/>
-        <Ellipse x:Name="DR" HorizontalAlignment="Left" Height="51" Margin="217,78,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Rectangle HorizontalAlignment="Left" Height="195" Margin="201,86,0,0" Stroke="Black" VerticalAlignment="Top" Width="82" Fill="#FF151212"/>
+        <Ellipse x:Name="DR" HorizontalAlignment="Left" Height="51" Margin="217,102,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="Red"/>
@@ -58,7 +61,7 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Ellipse x:Name="DA" HorizontalAlignment="Left" Height="51" Margin="217,134,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Ellipse x:Name="DA" HorizontalAlignment="Left" Height="51" Margin="217,158,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="Yellow"/>
@@ -66,7 +69,7 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Ellipse x:Name="DV" HorizontalAlignment="Left" Height="51" Margin="217,190,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
+        <Ellipse x:Name="DV" HorizontalAlignment="Left" Height="51" Margin="217,214,0,0" Stroke="Black" VerticalAlignment="Top" Width="50">
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="#FF00C709"/>
@@ -74,8 +77,10 @@
                 </RadialGradientBrush>
             </Ellipse.Fill>
         </Ellipse>
-        <Label x:Name="CurrentBinLbl" Content="Current Bin Value: " Foreground="#FFBBBBBB" HorizontalAlignment="Center" Margin="0,272,0,0" VerticalAlignment="Top" Width="225" Background="#FF252526" FontSize="14"/>
+        <Label x:Name="CurrentBinLbl" Content="Current Bin Value: 0 0 0 0 0 0 0" Foreground="#FFBBBBBB" HorizontalAlignment="Center" Margin="0,296,0,0" VerticalAlignment="Top" Width="225" Background="#FF252526" FontSize="14"/>
 
+        <RadioButton x:Name="rbHex" GroupName="PortFormat" Content="Hexadecimal" HorizontalAlignment="Left" Foreground="White" Margin="22,51,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RadioButton_Checked"/>
+        <RadioButton x:Name="rbDec" GroupName="PortFormat" Content="Decimal" HorizontalAlignment="Left" Foreground="White" Margin="123,51,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked"/>
 
     </Grid>
 </Window>

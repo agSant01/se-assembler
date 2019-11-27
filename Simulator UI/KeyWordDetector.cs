@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
-using System.Windows.Documents;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace Simulator_UI
@@ -51,7 +45,7 @@ namespace Simulator_UI
                 { "CALL",       Brushes.Salmon },
                 { "RETURN",     Brushes.Salmon },
                 // Registers
-                 { "R1"         , Brushes.Red   },   
+                 { "R1"         , Brushes.Red   },
                  { "R2"         , Brushes.Red   },
                  { "R3"         , Brushes.Red   },
                  { "R4"         , Brushes.Red   },
@@ -65,7 +59,7 @@ namespace Simulator_UI
                 { "CONST"       , Brushes.Yellow },
                 { "//"          , Brushes.LightSeaGreen },
             };
-     
+
         /// <summary>
         /// Gets the highlight color associated with keyword
         /// </summary>
