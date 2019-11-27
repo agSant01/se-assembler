@@ -130,7 +130,7 @@ namespace Simulator_UI
         {
             if (lines == null || lines.Length == 0)
             {
-                MessageBox.Show("NOt target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
+                MessageBox.Show("No target OBJ file found.\nLoad an OBJ file or an ASM and compile.", "No OBJ file found.");
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace Simulator_UI
                             catch (Exception ex)
                             {
                                 var message = ex.Message;
-                                MessageBox.Show(ex.Message, "Unexpected error when executing instruction. Stopping instruction execution.");
+                                MessageBox.Show($"{ex.Message}\nStopping instruction execution.", "Unexpected error");
                                 stopRun = true;
                                 Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
                             }
@@ -180,7 +180,7 @@ namespace Simulator_UI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message, "Unexpected error when executing instruction. Stopping instruction execution.");
+                        MessageBox.Show($"{ex.Message}\nStopping instruction execution.", "Unexpected error.");
                         stopRun = true;
                         Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
                     }
@@ -204,8 +204,6 @@ namespace Simulator_UI
                 return;
             }
 
-            MessageBox.Show(ioManager.ToString());
-
             try
             {
                 micro.NextInstruction();
@@ -220,7 +218,7 @@ namespace Simulator_UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Unexpected error when executing instruction.");
+                MessageBox.Show($"{ex.Message}\nStopping instruction execution.", "Unexpected error");
             }
         }
 
