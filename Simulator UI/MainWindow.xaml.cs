@@ -74,14 +74,14 @@ namespace Simulator_UI
 
             if (!int.TryParse(memorySizeBox.Text, out int lines))
             {
-                MessageBox.Show("Invalid number of memory blocks to show. Setting default to 50.", "Invalid Input");
+                MessageBox.Show("Invalid number of memory blocks to show. Setting default to 250.", "Invalid Input");
                 memorySizeBox.Text = "50";
                 lines = 50;
             }
 
             for (int i = 0; i < lines; i += 2)
             {
-                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)}\t: {vm?.GetContentsInHex(i) ?? "NA"} {vm?.GetContentsInHex(i + 1) ?? "NA"}");
+                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)} : {vm?.GetContentsInHex(i) ?? "NA"} {vm?.GetContentsInHex(i + 1) ?? "NA"}");
             }
         }
 
@@ -120,9 +120,9 @@ namespace Simulator_UI
         private void UpdateInstructionBox()
         {
             instructionsBox.Items.Clear();
-            instructionsBox.Items.Add($"Previous Instruction: {GetPrettyInstruction(micro?.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:  {GetPrettyInstruction(micro?.CurrentInstruction)}");
-            instructionsBox.Items.Add($"Next Instruction:     {GetPrettyInstruction(micro?.PeekNextInstruction())}");
+            instructionsBox.Items.Add($"Previous Instruction:\t{GetPrettyInstruction(micro?.PreviousInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:\t{GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction:\t{GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -160,7 +160,7 @@ namespace Simulator_UI
                                 UpdateInstructionBox();
                                 LoadMemory();
                                 UpdateRegisters();
-                                instructionsHistoryBox.Items.Add(micro?.CurrentInstruction);
+                                instructionsHistoryBox.Items.Add(GetPrettyInstruction(micro?.CurrentInstruction));
                             }
                             catch (Exception ex)
                             {
@@ -207,7 +207,7 @@ namespace Simulator_UI
 
                 UpdateRegisters();
 
-                instructionsHistoryBox.Items.Add(micro.CurrentInstruction);
+                instructionsHistoryBox.Items.Add(GetPrettyInstruction(micro.CurrentInstruction));
             }
             catch (Exception ex)
             {
@@ -340,11 +340,7 @@ namespace Simulator_UI
 
             Thread.Sleep(100);
 
-            /*if(!IsMicroOn(micro))
-            {
-                MessageBox.Show("Microprocessor was not detected to be in ON state.", "Invalid State");
-                return;
-            }*/
+   
             if (!IsMicroValid(micro))
             {
                 micro_status_lbl.Background = Brushes.Gray;
@@ -373,7 +369,6 @@ namespace Simulator_UI
 
             runAllBtn.Header = "Run All";
 
-            instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
 
             MessageBox.Show("Micro Turned OFF");
@@ -607,7 +602,7 @@ namespace Simulator_UI
 
             try
             {
-                fileLines.ItemsSource = lines = Assemble(rbText);
+                objFile.ItemsSource = lines = Assemble(rbText);
 
                 statusLabel.Content = "Status: File Loaded";
 
@@ -698,7 +693,7 @@ namespace Simulator_UI
                 {
                     currFileName = Path.GetFileNameWithoutExtension(ofd.FileName);
 
-                    fileLines.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
+                    objFile.ItemsSource = lines = File.ReadAllLines(ofd.FileName);
                     statusLabel.Content = "Status: File Loaded";
                 }
                 catch (Exception ex)
