@@ -69,7 +69,7 @@ namespace Assembler.UnitTests.CompilerTests
 
             Assert.AreEqual(2, data.Length);
 
-            Assert.AreEqual($"[WARNING] {msg}. Address {adrs} overwrite [content: '{old}'] at line {line}", data[1]);
+            Assert.AreEqual($"[WARNING] {msg}. Address {adrs} overwrite [content: '{old}'] in instruction {line}", data[1]);
 
             foreach (string d in data)
             {

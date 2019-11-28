@@ -47,6 +47,13 @@ namespace Assembler.UnitTests.CompilerTests
            Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
            @"CompilerTests\PaserTestsComparisons\testFailParser.txt");
 
+        private readonly string testCall = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\HappyHourTests\test4_Asmbly.txt");
+
+        private readonly string testCall2 = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\HappyHourTests\test3_Asmbly.txt");
 
         [TestMethod]
         public void CompilerTest_GetLabelsAndConstants()
@@ -292,11 +299,13 @@ namespace Assembler.UnitTests.CompilerTests
             }
         }
 
-
         [TestMethod]
-        public void CompilerTest_ParseFailNullToken_Success()
+        public void CompilerTest_CALLPush_Success()
         {
-            string[] asmLines = FileManager.Instance.ToReadFile(testParsePush);
+            string[] asmLines = FileManager.Instance.ToReadFile(testCall);
+            string[] expectedAsmLines = FileManager.Instance.ToReadFile(test3Comparison);
+
+            Assert.IsNotNull(asmLines, "File not found");
 
             Lexer lexer = new Lexer(asmLines);
 
@@ -305,6 +314,36 @@ namespace Assembler.UnitTests.CompilerTests
             Compiler compiler = new Compiler(parser);
 
             compiler.Compile();
+
+            foreach (string l in compiler.GetOutput())
+            {
+                Console.WriteLine(l);
+            }
+        }
+
+
+        [TestMethod]
+        public void CompilerTest_CALLPush2_Success()
+        {
+            string[] asmLines = FileManager.Instance.ToReadFile(testCall2);
+
+            Assert.IsNotNull(asmLines, "File not found");
+
+            Lexer lexer = new Lexer(asmLines);
+
+            Parser parser = new Parser(lexer);
+
+            Compiler compiler = new Compiler(parser);
+
+            compiler.Compile();
+
+            if (compiler.AsmLogger.HasAssemblyError)
+            {
+                while(compiler.AsmLogger.MoveNext())
+                {
+                    Console.WriteLine(compiler.AsmLogger.Current);
+                }
+            }
 
             foreach (string l in compiler.GetOutput())
             {

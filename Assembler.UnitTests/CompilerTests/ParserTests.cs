@@ -43,6 +43,10 @@ namespace Assembler.UnitTests.CompilerTests
             Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
             @"CompilerTests\PaserTestsComparisons\testFailParser.txt");
 
+        private readonly string test3Call = Path.Combine(
+           Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName,
+           @"CompilerTests\HappyHourTests\test3_Asmbly.txt");
+
         [TestCleanup]
         public void TestCleanup()
         {
@@ -203,6 +207,24 @@ namespace Assembler.UnitTests.CompilerTests
 
             Assert.IsNotNull(lines, "File Not Found.");
             
+            lexer = new Lexer(lines);
+            Parser parser = new Parser(lexer);
+
+            int index = 0;
+            while (parser.MoveNext())
+            {
+                Console.WriteLine(parser.CurrentInstruction);
+                index++;
+            }
+        }
+
+        [TestMethod]
+        public void ParserTests_CALL_Success()
+        {
+            string[] lines = FileManager.Instance.ToReadFile(test3Call);
+
+            Assert.IsNotNull(lines, "File Not Found.");
+
             lexer = new Lexer(lines);
             Parser parser = new Parser(lexer);
 
