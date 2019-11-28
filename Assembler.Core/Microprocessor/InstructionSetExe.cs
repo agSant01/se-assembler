@@ -391,6 +391,9 @@ namespace Assembler.Microprocessor
                         string hexaAddress = micro.MicroRegisters.GetRegisterValue(ra);
 
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(hexaAddress);
+                    } else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     micro.ConditionalBit = false;
@@ -404,6 +407,9 @@ namespace Assembler.Microprocessor
                         string addressHex = ((MCInstructionF3)instruction).AddressParamHex;
 
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(addressHex);
+                    } else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     micro.ConditionalBit = false;
