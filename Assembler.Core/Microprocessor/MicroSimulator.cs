@@ -104,11 +104,6 @@ namespace Assembler.Microprocessor
         {
             PreviousInstruction = CurrentInstruction;
             CurrentInstruction = _mcLoader.NextInstruction();
-
-            if (!OpCodesInfo.IsJump(UnitConverter.IntToBinary(CurrentInstruction.OpCode, 5)))
-            {
-                ProgramCounter += 2;
-            }
         }
 
         public IMCInstruction PeekNextInstruction()

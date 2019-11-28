@@ -25,9 +25,13 @@ namespace Assembler.Microprocessor
 
                     if (instructionF2.Ra == 7)
                     {
-                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "0000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
+                    } 
+                    else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     return true;
@@ -40,9 +44,13 @@ namespace Assembler.Microprocessor
 
                     if (instructionF2.Ra == 7)
                     {
-                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "0000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
+                    } 
+                    else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     return true;
@@ -52,6 +60,9 @@ namespace Assembler.Microprocessor
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
                     micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, micro.ReadFromMemory(micro.StackPointer));
                     micro.StackPointer++;
+
+                    micro.ProgramCounter += 2;
+
                     return true; 
                 }},
                 { "00011",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -64,6 +75,9 @@ namespace Assembler.Microprocessor
                         UnitConverter.HexToInt(instructionF2.AddressParamHex),
                         registerAValue
                     );
+
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "00100",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -76,7 +90,9 @@ namespace Assembler.Microprocessor
                         micro.StackPointer,
                         micro.MicroRegisters.GetRegisterValue(instructionF2.Ra)
                         );
-                    
+
+                    micro.ProgramCounter += 2;
+
                     return true; 
                 }},
                 { "00101",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -94,6 +110,10 @@ namespace Assembler.Microprocessor
                         MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
+                    } 
+                    else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     return true;
@@ -110,6 +130,8 @@ namespace Assembler.Microprocessor
                            UnitConverter.HexToInt(registerAValue),
                            registerBValue
                     );
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -128,6 +150,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(instructionF1.Ra, result);
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "01000",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -143,6 +167,8 @@ namespace Assembler.Microprocessor
                         );
 
                     micro.MicroRegisters.SetRegisterValue(instructionF1.Ra, result);
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -160,6 +186,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, result);
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "01010",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -174,6 +202,8 @@ namespace Assembler.Microprocessor
                         );
 
                     micro.MicroRegisters.SetRegisterValue(ra, resultHex);
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -193,6 +223,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "01100",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -209,6 +241,8 @@ namespace Assembler.Microprocessor
                     sbyte resultForA = (sbyte) (valueInB | valueInC);
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -227,6 +261,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "01110",     (IMCInstruction instruction, MicroSimulator micro) => { 
@@ -242,6 +278,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "01111",     (IMCInstruction instruction, MicroSimulator micro) => { 
@@ -256,6 +294,8 @@ namespace Assembler.Microprocessor
                     sbyte resultForA = (sbyte) (-valueInB);
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -274,6 +314,8 @@ namespace Assembler.Microprocessor
                     byte resultForA = (byte) (valueInB >> valueInC);
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
+                    
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -292,6 +334,8 @@ namespace Assembler.Microprocessor
                     byte resultForA = (byte) (valueInB << valueInC);
 
                     micro.MicroRegisters.SetRegisterValue(ra, UnitConverter.ByteToHex(resultForA));
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -322,6 +366,8 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
 
+                    micro.ProgramCounter += 2;
+                    
                     return true;
                 }},
                 { "10011",     (IMCInstruction instruction, MicroSimulator micro) => { 
@@ -352,6 +398,8 @@ namespace Assembler.Microprocessor
                     string newDataInHex = UnitConverter.BinaryToHex(newDataInBinary);
 
                     micro.MicroRegisters.SetRegisterValue(ra, newDataInHex);
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -391,11 +439,12 @@ namespace Assembler.Microprocessor
                         string hexaAddress = micro.MicroRegisters.GetRegisterValue(ra);
 
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(hexaAddress);
-                    } else
+                    }
+                    else
                     {
                         micro.ProgramCounter += 2;
                     }
-
+                    
                     micro.ConditionalBit = false;
 
                     return true;
@@ -407,7 +456,8 @@ namespace Assembler.Microprocessor
                         string addressHex = ((MCInstructionF3)instruction).AddressParamHex;
 
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(addressHex);
-                    } else
+                    } 
+                    else
                     {
                         micro.ProgramCounter += 2;
                     }
@@ -434,6 +484,9 @@ namespace Assembler.Microprocessor
                     if (UnitConverter.HexToSByte(valueMinus1Hex) != 0) {
                         // [pc] <- address
                         micro.ProgramCounter = (ushort) UnitConverter.HexToInt(instructionF2.AddressParamHex);
+                    } else
+                    {
+                        micro.ProgramCounter += 2;
                     }
 
                     return true;
@@ -450,6 +503,8 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = raData > rbData;
 
+                    micro.ProgramCounter += 2;
+
                     return true;
                 }},
                 { "11010",     (IMCInstruction instruction, MicroSimulator micro) => { 
@@ -463,6 +518,8 @@ namespace Assembler.Microprocessor
                         micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
 
                     micro.ConditionalBit = raData >= rbData;
+
+                    micro.ProgramCounter += 2;
 
                     return true;
                 }},
@@ -478,6 +535,8 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = raData == rbData;
 
+                    micro.ProgramCounter += 2;
+
                     return true; }},
                 { "11100",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // NEQ Ra, Rb {F1} Cond <- R[Ra] != R[Rb] 
@@ -490,6 +549,8 @@ namespace Assembler.Microprocessor
                         micro.MicroRegisters.GetRegisterValue(instructionF1.Rb));
 
                     micro.ConditionalBit = raData != rbData;
+
+                    micro.ProgramCounter += 2;
 
                     return true; 
                 }},
@@ -509,9 +570,6 @@ namespace Assembler.Microprocessor
 
                     micro.ProgramCounter = (ushort)UnitConverter.HexToInt(instructionF3.AddressParamHex);
                     
-                    // to account for the already increasing Program counter in Micro
-                    micro.ProgramCounter -= 2;
-
                     return true; 
                 }},
                 { "11111",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -521,6 +579,8 @@ namespace Assembler.Microprocessor
                     micro.ProgramCounter = (ushort) UnitConverter.HexToInt(micro.ReadFromMemory(micro.StackPointer));
 
                     micro.StackPointer+=2;
+
+                    micro.ProgramCounter += 2;
 
                     return true; 
                 }}
@@ -532,6 +592,7 @@ namespace Assembler.Microprocessor
 
             if (!operatorFunctions.ContainsKey(opCode))
                 return false;
+
             return operatorFunctions[opCode](instruction, microSimulator);
         }
     }

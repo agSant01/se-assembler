@@ -63,17 +63,7 @@ namespace Assembler.UnitTests.MicroprocessorTests
             while (i < 10)
             {
                 IMCInstruction instruction = l.NextInstruction();
-
-                if (OpCodesInfo.IsJump(UnitConverter.IntToBinary(instruction.OpCode, 5)))
-                {
-                    micro.ProgramCounter = (ushort)UnitConverter.HexToInt(
-                        ((MCInstructionF3)instruction).AddressParamHex);
-                }
-                else
-                {
-                    micro.ProgramCounter += 2;
-                }
-
+                
                 Console.WriteLine(instruction);
 
                 Assert.AreEqual(expected[i], instruction.ToString());

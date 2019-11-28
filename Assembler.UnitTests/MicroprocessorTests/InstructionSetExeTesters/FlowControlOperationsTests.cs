@@ -128,7 +128,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             // cond bit is false, pc will not change
             InstructionSetExe.ExecuteInstruction(i2, micro);
             Console.WriteLine($"CondBit False: {micro}");
-            Assert.AreEqual(v1, micro.ProgramCounter);
+            Assert.AreEqual(v1 + 2, micro.ProgramCounter);
 
             // now set to true
             micro.ConditionalBit = true;
@@ -173,7 +173,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             // cond bit is false, pc will not change
             InstructionSetExe.ExecuteInstruction(i2, micro);
             Console.WriteLine($"CondBit False: {micro}");
-            Assert.AreEqual(a1, micro.ProgramCounter);
+            Assert.AreEqual(a1+2, micro.ProgramCounter);
 
             // now set to true
             micro.ConditionalBit = true;
@@ -216,7 +216,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             Console.WriteLine(micro.MicroRegisters);
 
             Assert.AreEqual(value - 1, UnitConverter.HexToInt(micro.MicroRegisters.GetRegisterValue(ra)));
-            Assert.AreEqual(addressToGoHex, UnitConverter.IntToHex(micro.ProgramCounter));
+            Assert.AreEqual(UnitConverter.HexToInt(addressToGoHex), micro.ProgramCounter);
         }
 
         [TestMethod]
@@ -446,18 +446,33 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         public void FlowControlOperationsTests_CALL_Success()
         {
             //init
-            micro.StackPointer = 100;
-            micro.ProgramCounter = 12;
-            micro.WriteToMemory(100, "FF");
-            MCInstructionF3 i1 = new MCInstructionF3(30, "11110", "010");
-            ushort SPNewValue = 98;
+            // CALL address {F3} 
+            // SP <- SP - 2 
+            // mem[SP] <- PC 
+            // PC <- address
 
-            //execute
+            ushort expectedSPVal = 98;
+
+            string addressOfCall = UnitConverter.ByteToBinary(33);
+
+            byte initialValueOfPC = 12;
+
+            micro.StackPointer = 100;
+            micro.ProgramCounter = initialValueOfPC;
+
+            // address: 2
+            MCInstructionF3 i1 = new MCInstructionF3(30, "11110", addressOfCall);
+
+            // execute
             InstructionSetExe.ExecuteInstruction(i1, micro);
 
-            Assert.AreEqual(SPNewValue, micro.StackPointer);
-            Assert.AreEqual("0C", micro.ReadFromMemory(micro.StackPointer));
-            Assert.AreEqual(micro.ProgramCounter, (ushort)UnitConverter.HexToInt(i1.AddressParamHex));
+            Assert.AreEqual(expectedSPVal, micro.StackPointer);
+
+            // expected data in Address: 33
+            Assert.AreEqual(UnitConverter.ByteToHex(initialValueOfPC), micro.ReadFromMemory(micro.StackPointer));
+
+            // program counter should be equal to 98
+            Assert.AreEqual(UnitConverter.BinaryToByte(addressOfCall), micro.ProgramCounter);
         }
 
         [TestMethod]
@@ -466,7 +481,10 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             //init
             micro.StackPointer = 100;
             micro.ProgramCounter = 12;
-            micro.WriteToMemory(100, "FF");
+
+            string savedAddresInMemory = "FF";
+
+            micro.WriteToMemory(100, savedAddresInMemory);
             MCInstructionF3 i1 = new MCInstructionF3(31, "11111", null);
             ushort SPNewValue = 102;
 
@@ -474,7 +492,7 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
             InstructionSetExe.ExecuteInstruction(i1, micro);
 
             Assert.AreEqual(SPNewValue, micro.StackPointer);
-            Assert.AreEqual("FF", UnitConverter.IntToHex(micro.ProgramCounter));
+            Assert.AreEqual(UnitConverter.HexToInt(savedAddresInMemory) + 2, micro.ProgramCounter);
         }
     }
 }

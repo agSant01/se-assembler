@@ -75,11 +75,11 @@ namespace Simulator_UI
             if (!int.TryParse(memorySizeBox.Text, out int lines))
             {
                 MessageBox.Show("Invalid number of memory blocks to show. Setting default to 250.", "Invalid Input");
-                memorySizeBox.Text = "50";
+                memorySizeBox.Text = "250";
                 lines = 50;
             }
 
-            for (int i = 0; i < lines; i += 2)
+            for (int i = 0; i < lines * 2; i += 2)
             {
                 memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)} : {vm?.GetContentsInHex(i) ?? "NA"} {vm?.GetContentsInHex(i + 1) ?? "NA"}");
             }
@@ -87,7 +87,6 @@ namespace Simulator_UI
 
         private void UpdateRegisters()
         {
-            //bool IsMicroNull = micro == null;
             bool IsMicroNull = !IsMicroOn(micro);
 
             stackPointerBox.IsEnabled = !IsMicroNull;
@@ -120,9 +119,9 @@ namespace Simulator_UI
         private void UpdateInstructionBox()
         {
             instructionsBox.Items.Clear();
-            instructionsBox.Items.Add($"Previous Instruction:\t{GetPrettyInstruction(micro?.PreviousInstruction)}");
-            instructionsBox.Items.Add($"Current Instruction:\t{GetPrettyInstruction(micro?.CurrentInstruction)}");
-            instructionsBox.Items.Add($"Next Instruction:\t{GetPrettyInstruction(micro?.PeekNextInstruction())}");
+            instructionsBox.Items.Add($"Previous Instruction:  {GetPrettyInstruction(micro?.PreviousInstruction)}");
+            instructionsBox.Items.Add($"Current Instruction:   {GetPrettyInstruction(micro?.CurrentInstruction)}");
+            instructionsBox.Items.Add($"Next Instruction:      {GetPrettyInstruction(micro?.PeekNextInstruction())}");
         }
 
         private void RunAllBtn_Click(object sender, RoutedEventArgs e)
@@ -138,7 +137,7 @@ namespace Simulator_UI
 
             stopRun = !stopRun;
 
-            runAllBtn.Header = stopRun ? "Run All" : "Stop";
+            runAll.Content = stopRun ? "Run All" : "Stop";
 
             if (stopRun)
             {
@@ -167,7 +166,7 @@ namespace Simulator_UI
                                 var message = ex.Message;
                                 MessageBox.Show($"{ex.Message}\nStopping instruction execution.", "Unexpected error");
                                 stopRun = true;
-                                Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
+                                Dispatcher.Invoke(() => { runAll.Content = "Run All"; });
                             }
                         });
                     }
@@ -175,7 +174,7 @@ namespace Simulator_UI
                     {
                         MessageBox.Show($"{ex.Message}\nStopping instruction execution.", "Unexpected error.");
                         stopRun = true;
-                        Dispatcher.Invoke(() => { runAllBtn.Header = "Run All"; });
+                        Dispatcher.Invoke(() => { runAll.Content = "Run All"; });
                     }
                 }
             });
@@ -217,11 +216,6 @@ namespace Simulator_UI
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
-            /*if (micro == null)
-            {
-                MessageBox.Show("No microprocessor to reset.", "Microprocessor not connnected.");
-                return;
-            }*/
             if (!IsMicroValid(micro))
             {
                 micro_status_lbl.Background = Brushes.Red;
@@ -261,14 +255,62 @@ namespace Simulator_UI
 
             UpdateInstructionBox();
 
-            runAllBtn.Header = "Run All";
+            runAll.Content = "Run All";
 
             instructionsHistoryBox.Items.Clear();
             memoryBox.Items.Clear();
             micro_status_lbl.Background = Brushes.Gray;
         }
 
-        private void TurnOnBtn_Click(object sender, RoutedEventArgs e)
+        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
+            string[] rbText = textRange.Text.Split(Environment.NewLine);
+
+            stopRun = true;
+
+            try
+            {
+                objFile.ItemsSource = lines = Assemble(rbText);
+
+                statusLabel.Content = "Status: File Loaded";
+
+
+                if (compiler.AsmLogger.HasAssemblyError)
+                {
+                    MessageBox.Show("Output code -1.\n\n" +
+                        "The assembler exited with assembling errors.\n" +
+                        "More info in the Assembly Log.", "Assembled with errors");
+                }
+                else if (compiler.AsmLogger.HasAssemblyWarning)
+                {
+                    MessageBox.Show("The assembler exited with assembly warnings.\n" +
+                        "More info in the Assembly Log.", "Assembled with warnings");
+                }
+
+                TurnOnMicro();
+                ResetBtn_Click(null, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unexpected error.");
+                statusLabel.Content = "Status: File Error";
+            }
+            Init();
+        }
+
+        private string[] Assemble(string[] input)
+        {
+            AssemblyLogger logger = new AssemblyLogger("default");
+            Lexer lexer = new Lexer(input);
+            Parser parser = new Parser(lexer);
+            this.compiler = new Compiler(parser, logger);
+            this.compiler.Compile();
+            logLines.ItemsSource = logOutputLines = logger.GetLines();
+            return compiler.GetOutput();
+        }
+
+        private void TurnOnMicro()
         {
             stopRun = true;
 
@@ -302,12 +344,12 @@ namespace Simulator_UI
                 UpdateInstructionBox();
                 micro_status_lbl.Background = Brushes.Green;
 
-                micro_status_lbl.Content = "Micro Status: ON";
+                micro_status_lbl.Content = "Micro Status: Ready";
             }
             else
             {
                 micro_status_lbl.Background = Brushes.Gray;
-                micro_status_lbl.Content = "Micro Status: OFF";
+                micro_status_lbl.Content = "Micro Status: Stand By";
                 MessageBox.Show("There is no OBJ or ASM file to initialize the Microprocessor with.", "Invalid State");
             }
         }
@@ -331,49 +373,6 @@ namespace Simulator_UI
                 return false;
             }
             return true;
-        }
-
-        private void TurnOffBtn_Click(object sender, RoutedEventArgs e)
-        {
-
-            stopRun = true;
-
-            Thread.Sleep(100);
-
-   
-            if (!IsMicroValid(micro))
-            {
-                micro_status_lbl.Background = Brushes.Gray;
-                micro_status_lbl.Content = "Micro Status: OFF";
-                return;
-            }
-
-            ioManager.ResetIOs();
-
-            foreach (Window window in _ioDevicesWindows.Values)
-            {
-                window.Close();
-            }
-
-            micro = null;
-            ioManager = null;
-            vm = null;
-
-            SetIOs();
-
-            LoadMemory();
-
-            UpdateRegisters();
-
-            UpdateInstructionBox();
-
-            runAllBtn.Header = "Run All";
-
-            memoryBox.Items.Clear();
-
-            MessageBox.Show("Micro Turned OFF");
-            micro_status_lbl.Background = Brushes.Red;
-            micro_status_lbl.Content = "Micro Status: OFF";
         }
 
         private string GetPrettyInstruction(IMCInstruction instruction)
@@ -595,49 +594,6 @@ namespace Simulator_UI
             base.OnClosed(e);
         }
 
-        private void AssembleBtn_Click(object sender, RoutedEventArgs e)
-        {
-            TextRange textRange = new TextRange(textEditorRB.Document.ContentStart, textEditorRB.Document.ContentEnd);
-            string[] rbText = textRange.Text.Split(Environment.NewLine);
-
-            try
-            {
-                objFile.ItemsSource = lines = Assemble(rbText);
-
-                statusLabel.Content = "Status: File Loaded";
-
-                if (compiler.AsmLogger.HasAssemblyError)
-                {
-                    MessageBox.Show("Output code -1.\n\n" +
-                        "The assembler exited with assembling errors.\n" +
-                        "More info in the Assembly Log.", "Assembled with errors");
-                }
-                else if (compiler.AsmLogger.HasAssemblyWarning)
-                {
-                    MessageBox.Show("The assembler exited with assembly warnings.\n" +
-                        "More info in the Assembly Log.", "Assembled with warnings");
-                }
-            }
-            catch (Exception ex)
-            {
-                //TODO: Create log with error
-                MessageBox.Show(ex.Message, "Unexpected error.");
-                statusLabel.Content = "Status: File Error";
-            }
-            Init();
-        }
-
-        private string[] Assemble(string[] input)
-        {
-            AssemblyLogger logger = new AssemblyLogger("default");
-            Lexer lexer = new Lexer(input);
-            Parser parser = new Parser(lexer);
-            this.compiler = new Compiler(parser, logger);
-            this.compiler.Compile();
-            logLines.ItemsSource = logOutputLines = logger.GetLines();
-            return compiler.GetOutput();
-        }
-
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
         {
             if (vm == null)
@@ -718,7 +674,7 @@ namespace Simulator_UI
             };
 
             // Show save file dialog box
-            Nullable<bool> result = saveFileDialog.ShowDialog();
+            bool? result = saveFileDialog.ShowDialog();
 
             // Process save file dialog box results
             if (result == true)
