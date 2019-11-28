@@ -81,12 +81,12 @@
 
             if (this.Type == "WARNING")
             {
-                return $"[{this.Type}] {this.Message}. Address {this.address} overwrite [content: '{this.previousContent}'] at line {this.line}";
+                return $"[{this.Type}] {this.Message}. Address {this.address} overwrite [content: '{this.previousContent}'] in instruction {line}";
             }
 
             if (this.Type == "ERROR")
             {
-                return $"[{this.Type}] {this.Message} at line {this.line}. Cause: {this.errorCause}";
+                return $"[{this.Type}] {this.Message} on instruction {this.line}. Cause: {this.errorCause}";
             }
 
             return "Invalid Log Type";

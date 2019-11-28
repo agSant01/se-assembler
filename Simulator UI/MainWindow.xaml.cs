@@ -1,6 +1,5 @@
 ﻿using Assembler;
 using Assembler.Assembler;
-using Assembler.Core;
 using Assembler.Core.Microprocessor;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
@@ -136,12 +135,6 @@ namespace Simulator_UI
 
             if (!IsMicroValid(micro))
                 return;
-
-            /* if (micro == null)
-             {
-                 MessageBox.Show("Cannot execute OBJ instructions file if Micro is turned OFF", "Microprocessor not connnected.");
-                 return;
-             }*/
 
             stopRun = !stopRun;
 
@@ -615,12 +608,25 @@ namespace Simulator_UI
             try
             {
                 fileLines.ItemsSource = lines = Assemble(rbText);
+
                 statusLabel.Content = "Status: File Loaded";
+
+                if (compiler.AsmLogger.HasAssemblyError)
+                {
+                    MessageBox.Show("Output code -1.\n\n" +
+                        "The assembler exited with assembling errors.\n" +
+                        "More info in the Assembly Log.", "Assembled with errors");
+                }
+                else if (compiler.AsmLogger.HasAssemblyWarning)
+                {
+                    MessageBox.Show("The assembler exited with assembly warnings.\n" +
+                        "More info in the Assembly Log.", "Assembled with warnings");
+                }
             }
             catch (Exception ex)
             {
                 //TODO: Create log with error
-                MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                MessageBox.Show(ex.Message, "Unexpected error.");
                 statusLabel.Content = "Status: File Error";
             }
             Init();
@@ -636,6 +642,7 @@ namespace Simulator_UI
             logLines.ItemsSource = logOutputLines = logger.GetLines();
             return compiler.GetOutput();
         }
+
         private void Btn_Click_ExportMemoryMap(object sender, RoutedEventArgs e)
         {
             if (vm == null)
@@ -829,7 +836,7 @@ namespace Simulator_UI
             }
         }
 
-        private RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript;
+        private readonly RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.ECMAScript;
 
         private void textEditorRB_TextChange(object sender, TextChangedEventArgs e)
         {

@@ -20,6 +20,16 @@ namespace Assembler
         private IEnumerator<LogItem> logIterator;
 
         /// <summary>
+        /// Used to notify if error was logged.
+        /// </summary>
+        public bool HasAssemblyError { get; private set; } = false;
+
+        /// <summary>
+        /// Used to notify if warning was issued
+        /// </summary>
+        public bool HasAssemblyWarning { get; private set; } = false;
+
+        /// <summary>
         /// Create a new instance of AssemblyLogger
         /// </summary>
         public AssemblyLogger(string asmFileName)
@@ -56,7 +66,9 @@ namespace Assembler
         /// <param name="previousContent">Content being overwritten.</param>
         public void Warning(string message, string line, string address, string previousContent)
         {
-            this.logs.Enqueue(new LogItem(message, address, line, previousContent));
+            HasAssemblyWarning = true;
+
+            logs.Enqueue(new LogItem(message, address, line, previousContent));
             // Everytime a new event is recorded reset the internal Enumerator
             Reset();
         }
@@ -69,7 +81,10 @@ namespace Assembler
         /// <param name="cause">Cause of the error.</param>
         public void Error(string message, string line, string cause)
         {
-            this.logs.Enqueue(new LogItem(message, line, cause));
+            HasAssemblyError = true;
+
+            logs.Enqueue(new LogItem(message, line, cause));
+            
             // Everytime a new event is recorded reset the internal Enumerator
             Reset();
         }

@@ -2,6 +2,7 @@
 using Assembler.Parsing;
 using Assembler.Parsing.InstructionFormats;
 using Assembler.Parsing.InstructionItems;
+using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -29,6 +30,8 @@ namespace Assembler.Assembler
         //instructions list
         private int[] decimalInstuctions;
         private readonly Parser parser;
+
+        private int currentLine = 0;
 
         //initialize components
 
@@ -93,7 +96,7 @@ namespace Assembler.Assembler
                 {
 
                     if (variables.ContainsValue(currentAddress))
-                        AsmLogger.Warning("Memory Overide", lineCount.ToString(), currentAddress.ToString(), vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
+                        AsmLogger.Warning("Memory Overide", currentAddress.ToString(), currentAddress.ToString(), vMemory[((VariableAssign)parser.CurrentInstruction).Name.ToString()].ToString());
 
                     variables.Add(((VariableAssign)parser.CurrentInstruction).Name.ToString(), currentAddress);
                     currentAddress += ((VariableAssign)parser.CurrentInstruction).Values.Length;
@@ -114,6 +117,8 @@ namespace Assembler.Assembler
                 }
 
                 lineCount++;
+
+                ++currentLine;
             }
 
             currentAddress = 0;
@@ -126,13 +131,15 @@ namespace Assembler.Assembler
             AsmLogger.StatusUpdate("Syntax analysis");
             int lineCount = 0;
             parser.Reset();
+            currentLine = 0;
             while (parser.MoveNext())
             {
                 if (!parser.CurrentInstruction.IsValid)
                 {
-                    AsmLogger.Error("Invalid syntax", lineCount.ToString(), $"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
+                    AsmLogger.Error("Invalid syntax", currentLine.ToString(), $"{parser.CurrentInstruction.Operator.Value} is a syntax violation");
                 };
                 lineCount++;
+                ++currentLine;
             }
             return false;
         }
@@ -192,6 +199,9 @@ namespace Assembler.Assembler
             LoadConstantsAndLabels();
 
             parser.Reset();
+
+            currentLine = 0;
+
             while (parser.MoveNext())
             {
                 if (parser.CurrentInstruction.Operator != null)
@@ -224,7 +234,7 @@ namespace Assembler.Assembler
                         }
                     }
                 }
-
+                ++currentLine;
             }
 
             AsmLogger.StatusUpdate("Assembly process completed");
@@ -275,8 +285,15 @@ namespace Assembler.Assembler
 
             if (binInstruction.Length != 16)
             {
-                AsmLogger.Error("invalid bites", size.ToString(), "program crashed please report");
-                throw new Exception("invalid bytes");
+                AsmLogger.Error($"Invalid bit size: {binInstruction.Length}", 
+                    currentLine.ToString(), 
+                    $"Malformatted Instruction {_operator}, Binary: {binInstruction}");
+            } else if (!_operator.IsValid)
+            {
+                AsmLogger.Error($"Invalid instruction {_operator}",
+                    currentLine.ToString(),
+                    $"Invalid syntax or malformatted instruction"
+                );
             }
 
             string firstByte = binInstruction.Substring(0, 8);
@@ -321,7 +338,8 @@ namespace Assembler.Assembler
                         InstructionFormat2 format = (InstructionFormat2)_operator;
                         int Ra = (format.RegisterA.ToString() == "") ? 0 : Convert.ToInt32(Regex.Replace(format.RegisterA.ToString(), @"[.\D+]", ""));
 
-                        int constOrAddr = 0;
+                        int constOrAddr;
+
                         if (constants.ContainsKey(format.ConstOrAddress.ToString()))
                             constOrAddr = constants[format.ConstOrAddress.ToString()];
                         else if (variables.ContainsKey(format.ConstOrAddress.ToString()))
@@ -333,19 +351,32 @@ namespace Assembler.Assembler
                             //check if the constant or address is a direct input
                             try
                             {
-                                constOrAddr = Convert.ToInt32(format.ConstOrAddress.ToString().Replace("#", ""), 16);
+                              constOrAddr = UnitConverter.BinaryToByte(
+                                    UnitConverter.HexToBinary(
+                                        format.ConstOrAddress.ToString().Replace("#", "")
+                                        )
+                                    );
+                            } catch (OverflowException)
+                            {
+                                //send error message (undefined variable)
+                                AsmLogger.Error($"Overflow in instruction: {_operator}",
+                                    currentLine.ToString(),
+                                    $"Value '{format.ConstOrAddress}'");
+
+                                return null;
                             }
                             catch
                             {
                                 //send error message (undefined variable)
-                                AsmLogger.Error("Variable not defined", currentAddress.ToString(), "Variable called but never defined");
+                                AsmLogger.Error($"Variable not defined: {_operator}", 
+                                    currentLine.ToString(), 
+                                    "Variable called but never defined");
                                 return null;
                             }
                         }
-
-                        return $"{Convert.ToString(opcode, 2).PadLeft(5, '0')}" +
-                            $"{Convert.ToString(Ra, 2).PadLeft(3, '0')}" +
-                            $"{Convert.ToString(constOrAddr, 2).PadLeft(8, '0')}";
+                        return $"{UnitConverter.IntToBinary(opcode, defaultWidth: 5)}" +
+                            $"{UnitConverter.IntToBinary(Ra, defaultWidth: 3)}" +
+                            $"{UnitConverter.IntToBinary(constOrAddr, defaultWidth: 8)}";
 
                     }
                 case EInstructionFormat.FORMAT_3:

@@ -58,8 +58,7 @@ namespace Assembler.Parsing.InstructionFormats
         /// <summary>
         /// True if all the parameters are valid, False otherwise
         /// </summary>
-        public bool IsValid => RegisterA.IsValid() && 
-            ConstOrAddress == null ? true : ConstOrAddress.IsValid();
+        public bool IsValid => RegisterA.IsValid() && (ConstOrAddress == null ? true : ConstOrAddress.IsValid());
 
         /// <summary>
         /// ToString Override

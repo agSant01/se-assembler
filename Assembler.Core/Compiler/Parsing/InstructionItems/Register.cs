@@ -1,4 +1,5 @@
 ﻿using Assembler.Interfaces;
+using System;
 
 namespace Assembler.Parsing.InstructionItems
 {
@@ -10,7 +11,7 @@ namespace Assembler.Parsing.InstructionItems
         /// <summary>
         /// True if value is a valid register
         /// </summary>
-        private readonly bool _isValid;
+        private bool _isValid;
 
         /// <summary>
         /// Creates a Register instance
@@ -24,19 +25,21 @@ namespace Assembler.Parsing.InstructionItems
             {
                 _isValid = true;
             }
-            else if (char.IsDigit(Token.Value[1]))
-            {
-                int registerNumber = (int)char.GetNumericValue(Token.Value[1]);
-
-                // registerNumber grater than 7 or less than 1
-                if (registerNumber > 7 || registerNumber < 1)
-                    _isValid = false;
-                else
-                    _isValid = true;
-            }
             else
             {
-                _isValid = false;
+                string numericPart = Token.Value.Trim().ToLower().Replace("r", "");
+
+                if (int.TryParse(numericPart, out int registerNumber))
+                {
+                    // registerNumber grater than 7 or less than 1
+                    if (registerNumber > 7 || registerNumber < 0)
+                        _isValid = false;
+                    else
+                        _isValid = true;
+                } else
+                {
+                    _isValid = false;
+                }
             }
         }
 
@@ -57,12 +60,7 @@ namespace Assembler.Parsing.InstructionItems
         /// <returns>String representation of Register</returns>
         public override string ToString()
         {
-            if (IsValid() && Token != null)//BUG FIXED:If we didn't check for null, the toString in compiler would throw an exception when unused regiters were left empty
-                return Token?.Value;
-
-            else
-                //return null;//TODO: PROPER FIX FOR UNINIT REGs
-                return "";
+            return Token?.Value ?? "";
         }
     }
 }
