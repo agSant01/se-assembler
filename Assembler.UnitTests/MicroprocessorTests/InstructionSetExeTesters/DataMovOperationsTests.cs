@@ -245,6 +245,32 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         }
 
         [TestMethod]
+        [ExpectedException(typeof(IndexOutOfRangeException), "Cannot write in register 0")]
+        public void DataMovOperationsTests_LOADIntoR0_Success()
+        {
+            string value2 = "00010000";
+
+            // LOAD R0 02
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00001", "000", value2);
+
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+        }
+
+        [TestMethod]
+        public void DataMovOperationsTests_STOREFrom0_Success()
+        {
+            string addrs = "00000010";
+            // STORE R0 02
+            MCInstructionF2 i1 = new MCInstructionF2(3, "00011", "000", addrs);
+
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual("00", micro.ReadFromMemory(
+                UnitConverter.BinaryToInt(addrs)
+                ));
+        }
+
+        [TestMethod]
         public void DataMovOperationsTests_STORERIND_Success()
         {
             // STORERIND Ra,Rb  {F1} mem[R[Ra]] <- R[Rb] 

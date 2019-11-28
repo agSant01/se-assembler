@@ -18,8 +18,17 @@ namespace Assembler.Microprocessor
                   
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
                     string microAddress = instructionF2.AddressParamHex;
+                    
                     string valueInMicro = micro.ReadFromMemory(UnitConverter.HexToInt(microAddress));
+                    
                     micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, valueInMicro);
+
+                    if (instructionF2.Ra == 7)
+                    {
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+
+                        operatorFunctions["00100"](mCInstructionF2, micro);
+                    }
 
                     return true;
                 }},
@@ -29,6 +38,13 @@ namespace Assembler.Microprocessor
 
                     micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, instructionF2.AddressParamHex);
 
+                    if (instructionF2.Ra == 7)
+                    {
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+
+                        operatorFunctions["00100"](mCInstructionF2, micro);
+                    }
+
                     return true;
                 }},
                 { "00010",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -36,7 +52,8 @@ namespace Assembler.Microprocessor
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
                     micro.MicroRegisters.SetRegisterValue(instructionF2.Ra, micro.ReadFromMemory(micro.StackPointer));
                     micro.StackPointer++;
-                    return true; }},
+                    return true; 
+                }},
                 { "00011",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // STORE mem, Ra  {F2} [mem] <- R[Ra]
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
@@ -52,9 +69,16 @@ namespace Assembler.Microprocessor
                 { "00100",     (IMCInstruction instruction, MicroSimulator micro) => {
                     //F2; PUSH Ra
                     MCInstructionF2 instructionF2 = (MCInstructionF2) instruction;
+
                     micro.StackPointer--;
-                    micro.WriteToMemory(micro.StackPointer,micro.MicroRegisters.GetRegisterValue(instructionF2.Ra));
-                    return true; }},
+                    
+                    micro.WriteToMemory(
+                        micro.StackPointer,
+                        micro.MicroRegisters.GetRegisterValue(instructionF2.Ra)
+                        );
+                    
+                    return true; 
+                }},
                 { "00101",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // LOADRIND Ra,Rb  {F1} R[Ra] <- mem[R[Rb]]
                     MCInstructionF1 instructionF1 = (MCInstructionF1) instruction;
@@ -64,6 +88,14 @@ namespace Assembler.Microprocessor
                     string memoryData = micro.ReadFromMemory(UnitConverter.HexToInt(valueRegisterBHex));
 
                     micro.MicroRegisters.SetRegisterValue( instructionF1.Ra, memoryData);
+
+                    if (instructionF1.Ra == 7)
+                    {
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+
+                        operatorFunctions["00100"](mCInstructionF2, micro);
+                    }
+
                     return true;
                 }},
                 { "00110",     (IMCInstruction instruction, MicroSimulator micro) => {
@@ -453,7 +485,8 @@ namespace Assembler.Microprocessor
 
                     micro.ConditionalBit = raData != rbData;
 
-                    return true; }},
+                    return true; 
+                }},
                 { "11101",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // NOP  {F1} Do nothing
                     return true; }},
@@ -463,17 +496,28 @@ namespace Assembler.Microprocessor
                     // mem[SP] <- PC 
                     // PC <- address
                     MCInstructionF3 instructionF3 = (MCInstructionF3) instruction;
+
                     micro.StackPointer -= 2;
+                    
                     micro.WriteToMemory(micro.StackPointer, UnitConverter.IntToHex(micro.ProgramCounter));
+
                     micro.ProgramCounter = (ushort)UnitConverter.HexToInt(instructionF3.AddressParamHex);
-                    return true; }},
+                    
+                    // to account for the already increasing Program counter in Micro
+                    micro.ProgramCounter -= 2;
+
+                    return true; 
+                }},
                 { "11111",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // RETURN 
                     // PC <- mem[SP] 
                     // SP <- SP + 2  
                     micro.ProgramCounter = (ushort) UnitConverter.HexToInt(micro.ReadFromMemory(micro.StackPointer));
+
                     micro.StackPointer+=2;
-                    return true; }}
+
+                    return true; 
+                }}
            };
 
         public static bool ExecuteInstruction(IMCInstruction instruction, MicroSimulator microSimulator)

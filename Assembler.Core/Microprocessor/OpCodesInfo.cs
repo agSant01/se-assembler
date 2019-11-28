@@ -49,7 +49,7 @@ namespace Assembler.Microprocessor
                 { "11100",  new byte[] { 1, 2 }},
                 { "11101",  new byte[] { 1, 1 }},
                 { "11110",  new byte[] { 3, 1 }},
-                { "11111",  new byte[] { 0, 0 }}
+                { "11111",  new byte[] { 2, 0 }}
             };
 
         /// Dictionary of Operator Codes Names

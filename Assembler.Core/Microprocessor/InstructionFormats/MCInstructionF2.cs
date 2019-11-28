@@ -42,6 +42,10 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             if (IMCInstruction.AsmTextPrint)
             {
+                if (OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5)).ToLower().Equals("return"))
+                {
+                    return "RETURN";
+                }
                 return $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} R{Ra} {AddressParamHex}";
             }
             return $"MCInstructionF2[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', AddressParamHex:'{AddressParamHex}']";

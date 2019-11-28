@@ -49,7 +49,7 @@ namespace Assembler.Parsing
                 { "NEQ",        new int[] { 28, 1, 2 } },
                 { "NOP",        new int[] { 29, 1, 1 } },
                 { "CALL",       new int[] { 30, 3, 1 } },
-                { "RETURN",     new int[] { 31, -1, 0 } }
+                { "RETURN",     new int[] { 31, 2, 0 } }
             };
 
         /// <summary>

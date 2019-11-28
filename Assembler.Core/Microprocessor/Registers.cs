@@ -84,11 +84,11 @@ namespace Assembler.Microprocessor
             if (isWrite)
             {
                 // can only write from R1-R7
-                return registerNumber > 0 || registerNumber <= 7;
+                return registerNumber > 0 && registerNumber <= 7;
             }
 
             // can read from R0-R7
-            return registerNumber >= 0 || registerNumber <= 7;
+            return registerNumber >= 0 && registerNumber <= 7;
         }
 
         public override string ToString()
