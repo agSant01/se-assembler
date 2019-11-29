@@ -6,43 +6,16 @@
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
         Title="ASCII Display" Height="220" Width="370" WindowStyle="None" ResizeMode="CanMinimize">
-
-
     <Grid Background="Black">
-
-        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="19,17,0,0" VerticalAlignment="Top" Width="107" Background="Black" FontSize="14"/>
-        <TextBox Name="port_number" Margin="120,14,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
-                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14"
-                 KeyDown="tbPort_KeyDown"
-                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
-
-        <ToggleButton x:Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="256,12,0,0" VerticalAlignment="Top" Height="31" Width="78" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
-
-            <ToggleButton.Style>
-                <Style TargetType="{x:Type ToggleButton}">
-                    <Setter Property="Background" Value="Green"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter Property="Background" Value="Green"/>
-                        </Trigger>
-                    </Style.Triggers>
-
-                </Style>
-            </ToggleButton.Style>
-
-        </ToggleButton>
-
-
-        <TextBox x:Name="box_a" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30"  FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="36,114,0,0"/>
-        <TextBox x:Name="box_b" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="74,114,0,0"/>
-        <TextBox x:Name="box_c" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="112,114,0,0" />
-        <TextBox x:Name="box_d" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="150,114,0,0"/>
-        <TextBox x:Name="box_e" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="188,114,0,0"/>
-        <TextBox x:Name="box_f" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="226,114,0,0"/>
-        <TextBox x:Name="box_g" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="264,114,0,0"/>
-        <TextBox x:Name="box_h" HorizontalContentAlignment="Center" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold"              Width="38" FontSize="30" IsReadOnly="True" Height="45" IsUndoEnabled="False" HorizontalAlignment="Left" Margin="302,114,0,0"/>
-
-        <RadioButton x:Name="rbHex" GroupName="PortFormat" Content="Hexadecimal" HorizontalAlignment="Left" Foreground="White" Margin="25,59,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RadioButton_Checked"/>
-        <RadioButton x:Name="rbDec" GroupName="PortFormat" Content="Decimal" HorizontalAlignment="Left" Foreground="White" Margin="126,59,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked"/>
+        <TextBox x:Name="box_a" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30"  FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="36,55,0,0"/>
+        <TextBox x:Name="box_b" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="74,55,0,0"/>
+        <TextBox x:Name="box_c" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="112,55,0,0" />
+        <TextBox x:Name="box_d" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="150,55,0,0"/>
+        <TextBox x:Name="box_e" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="188,55,0,0"/>
+        <TextBox x:Name="box_f" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="226,55,0,0"/>
+        <TextBox x:Name="box_g" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="264,55,0,0"/>
+        <TextBox x:Name="box_h" HorizontalContentAlignment="Center" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Width="38" FontSize="30" IsReadOnly="True" Height="45" IsUndoEnabled="False" HorizontalAlignment="Left" Margin="302,55,0,0"/>
+        <Label Content="Port Assigned" HorizontalAlignment="Left" Margin="21,125,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="18" Width="129"/>
+        <Label x:Name="portNumber" Content="" HorizontalAlignment="Left" Margin="154,125,0,0" VerticalAlignment="Top" Foreground="White"  FontSize="18"/>
     </Grid>
 </Window>

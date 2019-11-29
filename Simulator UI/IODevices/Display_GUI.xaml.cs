@@ -1,6 +1,7 @@
 ﻿
 using Assembler.Core.Microprocessor;
 using Assembler.Core.Microprocessor.IO.IODevices;
+using Assembler.Utils;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -18,22 +19,40 @@ namespace Simulator_UI
     public partial class Display_GUI : Window
     {
         private readonly TextBox[] boxes;
-        private bool _active;
-        private readonly IOManager _ioManager;
 
-        private bool IsPortHex = true;
+        private bool _active;
+        
+        private readonly IOManager _ioManager;
 
         public ASCII_Display display; //{ get; private set; }
 
         public readonly static string DeviceID = "leprechaunt";
 
-        public Display_GUI(IOManager ioManager)
+        public Display_GUI(IOManager ioManager, ushort port)
         {
             InitializeComponent();
 
             _ioManager = ioManager;
-            _active = false;
-            MouseDown += delegate { DragMove(); };
+
+            _active = true;
+
+            // initialize IO Device
+            display = new ASCII_Display(port);
+
+            portNumber.Content = "0x" + UnitConverter.IntToHex(port, defaultWidth:3);
+
+            display.GotHexData += UpdateAsciiDisplay;
+
+            // try to add to IO Manager
+            // exception wil be thrown if invalid port is selected
+          
+            _ioManager.AddIODevice(port, display);
+
+            try
+            {
+                MouseDown += delegate { DragMove(); };
+            }
+            catch (Exception) { }
 
             boxes = new TextBox[8];
             boxes[0] = box_a;
@@ -56,19 +75,6 @@ namespace Simulator_UI
             //    bits[i] = semaforo.BitContent[i] == '1';
             //MessageBox.Show(String.Join(',', bits));
 
-            //thread control
-            if (!_active)
-            {
-                MessageBox.Show("Load an Object file before trying to execute instructions.");
-                return;
-            }
-
-            if (!_active)
-            {
-                return;
-            }
-
-
             new Thread(() =>
             {
                 while (_active)
@@ -87,98 +93,6 @@ namespace Simulator_UI
             }).Start();
         }
 
-        /// <summary>
-        /// Activate device and register in IOManager
-        /// </summary>
-        /// <param name="sender">UI Object</param>
-        /// <param name="e"></param>
-        private void Toggle_Activate(object sender, RoutedEventArgs e)
-        {
-            ToggleButton toggle = activeToggle;
-
-            // verify if a port was selected
-            if (
-                short.TryParse(
-                    port_number.Text,
-                    IsPortHex ?
-                    System.Globalization.NumberStyles.HexNumber : System.Globalization.NumberStyles.Integer,
-                    null, out short port
-                    )
-                )
-            {
-                if (_ioManager.IsUsedPort(port))
-                {
-                    MessageBox.Show("Port is already in use", "Invalid Port");
-                    toggle.IsChecked = false;
-                    return;
-                }
-                // initialize IO Device
-                display = new ASCII_Display(port);
-                display.GotHexData += UpdateAsciiDisplay;
-                try
-                {
-                    // try to add to IO Manager
-                    // exception wil be thrown if invalid port is selected
-                    _ioManager.AddIODevice(port, display);
-
-                    // change text of toggle text
-                    toggle.Content = "Active";
-
-                    toggle.Background = Brushes.Green;
-                    _active = true;
-
-                    rbDec.IsEnabled = false;
-                    rbHex.IsEnabled = false;
-                    port_number.IsEnabled = false;
-                }
-                catch (Exception err)
-                {
-                    // error message
-                    MessageBox.Show(err.Message, "Error assigning port.");
-                    toggle.IsChecked = false;
-                    display = null;
-                    _active = false;
-                }
-            }
-            else if (port_number.Text.Length == 0)
-            {
-                // no port selected
-                MessageBox.Show("Select a port before activating the I/O Device.", "Invalid Port");
-
-                toggle.IsChecked = false;
-            }
-            else
-            {
-                // no port selected
-                MessageBox.Show("Tried to connect I/O device to invalid port.", "Invalid Port");
-
-                toggle.IsChecked = false;
-            }
-        }
-
-        private void Toggle_Deactivate(object sender, RoutedEventArgs e)
-        {
-            ToggleButton toggle = (ToggleButton)sender;
-
-            // change text of toggle text
-            toggle.Content = "Inactive";
-
-            toggle.Background = Brushes.Red;
-
-            // remove IO from IO Manager
-            if (display != null)
-            {
-                _ioManager?.RemoveIODevice(display.IOPort);
-
-            }
-
-            _active = false;
-
-            rbDec.IsEnabled = true;
-            rbHex.IsEnabled = true;
-            port_number.IsEnabled = true;
-        }
-
         protected override void OnClosing(CancelEventArgs e)
         {
             // remove IO from IO Manager
@@ -186,35 +100,10 @@ namespace Simulator_UI
             {
                 _ioManager?.RemoveIODevice(display.IOPort);
             }
+            
+            _active = false;
+
             base.OnClosing(e);
-        }
-
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            RadioButton b = (RadioButton)sender;
-
-            if (b.Content.ToString() == "Hexadecimal")
-            {
-                IsPortHex = true;
-            }
-            else if (b.Content.ToString() == "Decimal")
-            {
-                IsPortHex = false;
-            }
-            else
-            {
-                IsPortHex = true;
-
-                MessageBox.Show("Invalid Port Format. Choose between Hexadecimal and Decimal. Using default.", "Invalid Format.");
-            }
-        }
-
-        private void tbPort_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                activeToggle.IsChecked = true;
-            }
         }
     }
 }

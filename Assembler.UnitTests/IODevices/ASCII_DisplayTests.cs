@@ -18,18 +18,10 @@ namespace Assembler.UnitTests.IODevices
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Provided a negative port number!\n")]
-        public void ASCIIDisplayTests_NegativePortNumber_Display_Initialization()
-        {
-            ASCII_Display display = new ASCII_Display(-80);
-            //Assert.AreEqual("00", display.ReadFromPort(0));
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException), "Provided an overflowable port number!\n")]
         public void ASCIIDisplayTests_OverflowPortNumber()
         {
-            ASCII_Display display = new ASCII_Display(short.MaxValue);
+            ASCII_Display display = new ASCII_Display(ushort.MaxValue);
         }
 
         [TestMethod]
@@ -171,7 +163,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(manager);
             Console.WriteLine(micro);
 
-            short start_port = 5;
+            ushort start_port = 5;
             ASCII_Display display = new ASCII_Display(start_port, true);
 
             manager.AddIODevice(start_port, display);
@@ -300,7 +292,7 @@ namespace Assembler.UnitTests.IODevices
             Console.WriteLine(manager);
             Console.WriteLine(micro);
 
-            short start_port = 5;
+            ushort start_port = 5;
             ASCII_Display display = new ASCII_Display(start_port, true);//Starting port
 
             manager.AddIODevice(start_port, display);

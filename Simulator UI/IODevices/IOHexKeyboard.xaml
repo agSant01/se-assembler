@@ -5,43 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simulator_UI"
         mc:Ignorable="d"
-        Title="IOHexKeyboard" Height="375" Width="375" WindowStyle="None" ResizeMode="CanMinimize">
+        Title="IOHexKeyboard" Height="350" Width="325" WindowStyle="None" ResizeMode="CanMinimize">
     <Grid Background="Black">
-        <Button Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click" Margin="62,92,0,0"/>
-        <Button Content="1" HorizontalAlignment="Left" Margin="122,92,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="2" HorizontalAlignment="Left" Margin="182,92,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="3" HorizontalAlignment="Left" Margin="242,92,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click" />
-        <Button Content="4" HorizontalAlignment="Left" Margin="62,0,0,0" VerticalAlignment="Center" Height="60" Width="60"     Click="Button_Click"/>
-        <Button Content="5" HorizontalAlignment="Left" Margin="122,0,0,0" VerticalAlignment="Center" Height="60" Width="60"   Click="Button_Click"/>
-        <Button Content="6" HorizontalAlignment="Left" Margin="182,0,0,0" VerticalAlignment="Center" Height="60" Width="60"   Click="Button_Click"/>
-        <Button Content="7" HorizontalAlignment="Left" Margin="242,0,0,0" VerticalAlignment="Center" Height="60" Width="60"   Click="Button_Click" />
-        <Button Content="8" HorizontalAlignment="Left" Margin="62,209,0,0" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click"/>
-        <Button Content="9" HorizontalAlignment="Left" Margin="122,209,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="A" HorizontalAlignment="Left" Margin="182,209,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="B" HorizontalAlignment="Left" Margin="242,209,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="C" HorizontalAlignment="Left" Margin="62,269,0,0" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click" />
-        <Button Content="D" HorizontalAlignment="Left" Margin="122,269,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click" />
-        <Button Content="E" HorizontalAlignment="Left" Margin="182,269,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
-        <Button Content="F" Margin="242,269,0,0"  Click="Button_Click" Height="60" VerticalAlignment="Top" HorizontalAlignment="Left" Width="60"/>
-        <Label Content="Port Assigned: " Foreground="White" HorizontalAlignment="Left" Margin="17,13,0,0" VerticalAlignment="Top" Width="107" Background="Black" FontSize="14"/>
-        <TextBox Name="tbPort" Margin="120,14,0,0" HorizontalAlignment="Left" VerticalContentAlignment="Center" TextAlignment="Left" TextWrapping="WrapWithOverflow" 
-                 VerticalAlignment="Top" Width="95" Height="29" FontSize="14"
-                 KeyDown="tbPort_KeyDown"
-                  SelectionOpacity="3" ToolTip="Port to connect IO Device" FontWeight="Medium" FontStyle="Normal" MaxLines="1"/>
-        <ToggleButton x:Name="activeToggle"  Content="Inactive" Checked="Toggle_Activate" Background="Red" Unchecked="Toggle_Deactivate" HorizontalAlignment="Left" Margin="279,14,0,0" VerticalAlignment="Top" Height="30" Width="77" FontWeight="Bold" ClipToBounds="True" VerticalContentAlignment="Center" UseLayoutRounding="True">
-            <ToggleButton.Style>
-                <Style TargetType="{x:Type ToggleButton}">
-                    <Setter Property="Background" Value="Green"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsChecked" Value="true">
-                            <Setter Property="Background" Value="Green"/>
-                        </Trigger>
-                    </Style.Triggers>
-
-                </Style>
-            </ToggleButton.Style>
-        </ToggleButton>
-        <RadioButton x:Name="rbHex" GroupName="PortFormat" Content="Hexadecimal" HorizontalAlignment="Left" Foreground="White" Margin="22,51,0,0" VerticalAlignment="Top" IsChecked="True" Checked="RadioButton_Checked"/>
-        <RadioButton x:Name="rbDec" GroupName="PortFormat" Content="Decimal" HorizontalAlignment="Left" Foreground="White" Margin="123,51,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked"/>
+        <Button Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click" Margin="41,36,0,0"/>
+        <Button Content="1" HorizontalAlignment="Left" Margin="101,36,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="2" HorizontalAlignment="Left" Margin="161,36,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="3" HorizontalAlignment="Left" Margin="221,36,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click" />
+        <Button Content="4" HorizontalAlignment="Left" Margin="41,94,0,0" VerticalAlignment="Top" Height="60" Width="60"     Click="Button_Click"/>
+        <Button Content="5" HorizontalAlignment="Left" Margin="101,94,0,0" VerticalAlignment="Top" Height="60" Width="60"   Click="Button_Click"/>
+        <Button Content="6" HorizontalAlignment="Left" Margin="161,94,0,0" VerticalAlignment="Top" Height="60" Width="60"   Click="Button_Click"/>
+        <Button Content="7" HorizontalAlignment="Left" Margin="221,94,0,0" VerticalAlignment="Top" Height="60" Width="60"   Click="Button_Click" />
+        <Button Content="8" HorizontalAlignment="Left" Margin="41,153,0,0" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click"/>
+        <Button Content="9" HorizontalAlignment="Left" Margin="101,153,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="A" HorizontalAlignment="Left" Margin="161,153,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="B" HorizontalAlignment="Left" Margin="221,153,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="C" HorizontalAlignment="Left" Margin="41,213,0,0" VerticalAlignment="Top" Height="60" Width="60"    Click="Button_Click" />
+        <Button Content="D" HorizontalAlignment="Left" Margin="101,213,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click" />
+        <Button Content="E" HorizontalAlignment="Left" Margin="161,213,0,0" VerticalAlignment="Top" Height="60" Width="60"  Click="Button_Click"/>
+        <Button Content="F" Margin="221,213,0,0"  Click="Button_Click" Height="60" VerticalAlignment="Top" HorizontalAlignment="Left" Width="60"/>
+        <Label Content="Port Assigned" HorizontalAlignment="Left" Margin="21,282,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="18" Width="129"/>
+        <Label x:Name="portNumber" Content="" HorizontalAlignment="Left" Margin="153,282,0,0" VerticalAlignment="Top" Foreground="White"  FontSize="18"/>
     </Grid>
 </Window>

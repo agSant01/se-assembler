@@ -64,11 +64,11 @@ namespace Assembler.UnitTests.MicroprocessorTests
 
         public int Id { get; set; }
 
-        short IIODevice.IOPortLength => 1;
+        ushort IIODevice.IOPortLength => 1;
 
         bool IIODevice.HasData => true;
 
-        public short IOPort => throw new NotImplementedException();
+        public ushort IOPort => throw new NotImplementedException();
 
         public string DeviceName => throw new NotImplementedException();
 

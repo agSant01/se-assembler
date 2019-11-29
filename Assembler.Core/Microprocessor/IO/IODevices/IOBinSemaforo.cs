@@ -4,9 +4,9 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 {
     public class IOBinSemaforo : IIODevice, IObservable<char[]>
     {
-        public short IOPort { get; }
+        public ushort IOPort { get; }
 
-        public short IOPortLength => 1;
+        public ushort IOPortLength => 1;
 
         public bool HasData { get; private set; } = false;
 
@@ -20,13 +20,13 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         private readonly bool _debug;
 
-        public IOBinSemaforo(short ioPort)
+        public IOBinSemaforo(ushort ioPort)
         {
             IOPort = ioPort;
             _debug = false;
         }
 
-        public IOBinSemaforo(short ioPort, string debug)
+        public IOBinSemaforo(ushort ioPort, string debug)
         {
             IOPort = ioPort;
             if (debug == "#Debug")

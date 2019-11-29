@@ -1,6 +1,7 @@
 ﻿using Assembler;
 using Assembler.Assembler;
 using Assembler.Core.Microprocessor;
+using Assembler.Core.Microprocessor.IO;
 using Assembler.Microprocessor;
 using Assembler.Microprocessor.InstructionFormats;
 using Assembler.Parsing;
@@ -8,6 +9,7 @@ using Assembler.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,6 +53,8 @@ namespace Simulator_UI
 
             runAll.Content = "Run All";
 
+            SetIOs();
+
             RefreshGUI();
         }
 
@@ -63,7 +67,6 @@ namespace Simulator_UI
 
             UpdateInstructionBox();
 
-            SetIOs();
 
             if (microProcessor.IsOn())
             {
@@ -75,6 +78,8 @@ namespace Simulator_UI
                 micro_status_lbl.Background = Brushes.LightGray;
                 micro_status_lbl.Content = "Micro Status: Disconnected";
             }
+
+            runAll.Content = microProcessor.StopRun ? "Run All" : "Stop";
         }
 
         private void LoadMemory()
@@ -233,7 +238,7 @@ namespace Simulator_UI
                 stackPointerStart.Text = microProcessor.Micro.StackPointer.ToString();
             }
 
-            ResetGUI();
+            RefreshGUI();
 
             micro_status_lbl.Background = Brushes.Gray;
 
@@ -445,7 +450,7 @@ namespace Simulator_UI
                 catch (Exception ex)
                 {
                     //TODO: Create log with error
-                    _ = MessageBox.Show(ex.Message, "Unexpected error when loading object file.");
+                    _ = MessageBox.Show(ex.Message, "Unexpected error when loading ASM file.");
                     statusLabel.Content = "Status: File Error";
                 }
             } 
@@ -528,135 +533,164 @@ namespace Simulator_UI
             RefreshGUI();
         }
 
-        private void Checked_IOASCIIDisplay(object sender, RoutedEventArgs e)
+        private void ConnectIO(object sender, RoutedEventArgs e)
         {
-            if (!ValidIDEState(cbAsciiDisplay))
+            Type ioGUI;
+            TextBox portTextBox;
+            CheckBox ioCheckBox;
+            string id;
+
+            CheckBox cb = (CheckBox)sender;
+
+            if (cb.Name.Equals("cbHexkeyboard"))
+            {
+                ioGUI = typeof(IOHexKeyboardUI);
+                portTextBox = tbHexKeyBoard;
+                ioCheckBox = cbHexkeyboard;
+                id = IOHexKeyboardUI.DeviceID;
+            }
+            else if (cb.Name.Equals("cbAsciiDisplay"))
+            {
+                ioGUI = typeof(Display_GUI);
+                portTextBox = tbAsciiDisp;
+                ioCheckBox = cbAsciiDisplay;
+                id = Display_GUI.DeviceID;
+            }
+            else if (cb.Name.Equals("cb7Segment"))
+            {
+                ioGUI = typeof(SevenSegmentWindow);
+                portTextBox = tb7Seg;
+                ioCheckBox = cb7Segment;
+                id = SevenSegmentWindow.DeviceID;
+            }
+            else if (cb.Name.Equals("cbTrafficLight"))
+            {
+                ioGUI = typeof(IOBinSemaforoUI);
+                portTextBox = tbTrafficLight;
+                ioCheckBox = cbTrafficLight;
+                id = IOBinSemaforoUI.DeviceID;
+            }
+            else
+            {
+                _ = MessageBox.Show("Invalid IO");
+                return;
+            }
+
+            if (!ValidIDEState(ioCheckBox))
             {
                 return;
             }
 
-            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            if (_ioDevicesWindows.TryGetValue(id, out Window window))
             {
                 window.Close();
-                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
+                _ioDevicesWindows.Remove(id);
             }
 
-            Display_GUI display_GUI = new Display_GUI(microProcessor.IoManager);
-
-            display_GUI.Activate();
-
-            display_GUI.Show();
-
-            _ioDevicesWindows.Add(Display_GUI.DeviceID, display_GUI);
-        }
-
-        private void Unchecked_IOAsciiDisplay(object sender, RoutedEventArgs e)
-        {
-            if (_ioDevicesWindows.TryGetValue(Display_GUI.DeviceID, out Window window))
+            if (IsValidPort(portTextBox.Text, out ushort port))
             {
-                _ioDevicesWindows.Remove(Display_GUI.DeviceID);
-                window.Close();
+                try
+                {
+                    Window ioWindow = (Window)Activator
+                            .CreateInstance(ioGUI, new object[] { microProcessor.IoManager, port });
+                    
+                    ioWindow.Activate();
+
+                    ioWindow.Show();
+
+                    _ioDevicesWindows.Add(id, ioWindow);
+
+                    portTextBox.IsEnabled = false;
+                }
+                catch(TargetInvocationException errr)
+                {
+                    // error message
+                    MessageBox.Show(errr.InnerException.Message, "Error assigning port.");
+                    portTextBox.IsEnabled = true;
+                    ioCheckBox.IsChecked = false;
+                }
+                catch (Exception err)
+                {
+                    // error message
+                    MessageBox.Show(err.Message, "Error assigning port.");
+                    portTextBox.IsEnabled = true;
+                    ioCheckBox.IsChecked = false;
+
+                } 
+
+            }
+            else if (portTextBox.Text.Length == 0)
+            {
+                // no port selected
+                MessageBox.Show("Select a port before activating the I/O Device.", "Invalid Port");
+
+                ioCheckBox.IsChecked = false;
+            }
+            else
+            {
+                // no port selected
+                MessageBox.Show("Tried to connect I/O device to invalid port.", "Invalid Port");
+
+                ioCheckBox.IsChecked = false;
             }
         }
 
-        private void Checked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        private void DisconnectIO(object sender, RoutedEventArgs e)
         {
-            if (!ValidIDEState(cbHexkeyboard))
+            TextBox portTextBox;
+            string id;
+
+            CheckBox cb = (CheckBox)sender;
+
+            if (cb.Name.Equals("cbHexkeyboard"))
             {
+                portTextBox = tbHexKeyBoard;
+                id = IOHexKeyboardUI.DeviceID;
+            }
+            else if (cb.Name.Equals("cbAsciiDisplay"))
+            {
+                portTextBox = tbAsciiDisp;
+                id = Display_GUI.DeviceID;
+            }
+            else if (cb.Name.Equals("cb7Segment"))
+            {
+                portTextBox = tb7Seg;
+                id = SevenSegmentWindow.DeviceID;
+            }
+            else if (cb.Name.Equals("cbTrafficLight"))
+            {
+                portTextBox = tbTrafficLight;
+                id = IOBinSemaforoUI.DeviceID;
+            }
+            else
+            {
+                _ = MessageBox.Show("Invalid IO");
                 return;
             }
 
-            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
+            if (_ioDevicesWindows.TryGetValue(id, out Window window))
             {
+                _ioDevicesWindows.Remove(id);
                 window.Close();
-                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
             }
 
-            IOHexKeyboardUI hexKeyboardUI = new IOHexKeyboardUI(microProcessor.IoManager);
-
-            hexKeyboardUI.Activate();
-
-            hexKeyboardUI.Show();
-
-            _ioDevicesWindows.Add(IOHexKeyboardUI.DeviceID, hexKeyboardUI);
+            portTextBox.IsEnabled = true;
         }
 
-        private void Unchecked_IOHexaKeyBoard(object sender, RoutedEventArgs e)
+        private void SetToUpperCase(object sender, TextChangedEventArgs e)
         {
-            if (_ioDevicesWindows.TryGetValue(IOHexKeyboardUI.DeviceID, out Window window))
-            {
-                _ioDevicesWindows.Remove(IOHexKeyboardUI.DeviceID);
-                window.Close();
-            }
-        }
-        private void Checked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
-        {
-            if (!ValidIDEState(cb7Segment))
-            {
-                return;
-            }
-
-            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
-            {
-                window.Close();
-                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
-            }
-
-            SevenSegmentWindow sevenSegmentDisplay = new SevenSegmentWindow(microProcessor.IoManager);
-
-            sevenSegmentDisplay.Activate();
-
-            sevenSegmentDisplay.Show();
-
-            _ioDevicesWindows.Add(SevenSegmentDisplay.DeviceID, sevenSegmentDisplay);
-        }
-
-        private void Unchecked_IO7SegmentDisplay(object sender, RoutedEventArgs e)
-        {
-            if (_ioDevicesWindows.TryGetValue(SevenSegmentDisplay.DeviceID, out Window window))
-            {
-                _ioDevicesWindows.Remove(SevenSegmentDisplay.DeviceID);
-                window.Close();
-            }
-        }
-
-        private void cbTrafficLight_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!ValidIDEState(cbTrafficLight))
-            {
-                return;
-            }
-
-            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
-            {
-                window.Close();
-                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
-            }
-
-            IOBinSemaforoUI semaforo = new IOBinSemaforoUI(microProcessor.IoManager);
-
-            semaforo.Activate();
-
-            semaforo.Show();
-
-            _ioDevicesWindows.Add(IOBinSemaforoUI.DeviceID, semaforo);
-        }
-
-        private void cbTrafficLight_Unhecked(object sender, RoutedEventArgs e)
-        {
-            if (_ioDevicesWindows.TryGetValue(IOBinSemaforoUI.DeviceID, out Window window))
-            {
-                _ioDevicesWindows.Remove(IOBinSemaforoUI.DeviceID);
-                window.Close();
-            }
+            TextBox tb = (TextBox)sender;
+            int index = tb.CaretIndex;
+            tb.Text = tb.Text.ToUpper();
+            tb.CaretIndex = index;
         }
 
         private void SetIOs()
         {
-            Checked_IOHexaKeyBoard(null, null);
-            cbTrafficLight_Checked(null, null);
-            Checked_IOASCIIDisplay(null, null);
-            Checked_IO7SegmentDisplay(null, null);
+            ConnectIO(cbHexkeyboard, null);
+            ConnectIO(cbTrafficLight, null);
+            ConnectIO(cbAsciiDisplay, null);
+            ConnectIO(cb7Segment, null);
         }
 
 
@@ -685,6 +719,16 @@ namespace Simulator_UI
             }
 
             return true;
+        }
+
+        private bool IsValidPort(string targetPort, out ushort port)
+        {
+            if (ushort.TryParse(targetPort, System.Globalization.NumberStyles.HexNumber, null, out port))
+            {
+                return !microProcessor.IoManager.IsUsedPort(port);
+            }
+
+            return false;
         }
 
         protected override void OnClosed(EventArgs e)

@@ -112,7 +112,6 @@ namespace Simulator_UI
     }
     public partial class SevenSegmentDisplay : UserControl
     {
-        public readonly static string DeviceID = "S8ds83";
         public SevenSegmentDisplayModel Model;
         public SevenSegmentDisplay()
         {

@@ -8,17 +8,17 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
     {
         private readonly Queue<string> _buffer = new Queue<string>();
 
-        public short IOPortLength => 1;
+        public ushort IOPortLength => 1;
 
         public bool HasData => _buffer.Count > 0;
 
         public byte BufferSize => (byte)_buffer.Count;
 
-        public short IOPort { get; }
+        public ushort IOPort { get; }
 
         public string DeviceName => "IO Hexadecimal Keyboard";
 
-        public IOHexKeyboard(short ioPort)
+        public IOHexKeyboard(ushort ioPort)
         {
             IOPort = ioPort;
         }

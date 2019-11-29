@@ -76,9 +76,9 @@ namespace Assembler.Microprocessor
         /// <param name="contentInHex">Contents to write in Hexadecimal</param>
         public void WriteToMemory(int decimalAddress, string contentInHex)
         {
-            if (_ioManager.IsUsedPort((short)decimalAddress))
+            if (_ioManager.IsUsedPort((ushort)decimalAddress))
             {
-                _ioManager.WriteToIO((short)decimalAddress, contentInHex);
+                _ioManager.WriteToIO((ushort)decimalAddress, contentInHex);
             }
             else
             {
@@ -93,9 +93,9 @@ namespace Assembler.Microprocessor
         /// <returns></returns>
         public string ReadFromMemory(int decimalAddress)
         {
-            if (_ioManager.IsUsedPort((short)decimalAddress))
+            if (_ioManager.IsUsedPort((ushort)decimalAddress))
             {
-                return _ioManager.ReadFromIO((short)decimalAddress);
+                return _ioManager.ReadFromIO((ushort)decimalAddress);
             }
             return _virtualMemory.GetContentsInHex(decimalAddress: decimalAddress);
         }
