@@ -11,18 +11,18 @@ namespace Assembler.Core.Microprocessor
         /// Dictionary that maps the ports to their corresponding DeviceId. Used to identify the 
         /// requiered IODevice to access
         /// </summary>
-        private readonly Dictionary<short, short> _portsAndDevices = new Dictionary<short, short>();
+        private readonly Dictionary<ushort, ushort> _portsAndDevices = new Dictionary<ushort, ushort>();
 
         /// <summary>
         /// Dictionary that maps the DeviceId to its corresponding IODevice object.
         /// </summary>
-        private readonly Dictionary<short, IIODevice> _devicesAndIds = new Dictionary<short, IIODevice>();
+        private readonly Dictionary<ushort, IIODevice> _devicesAndIds = new Dictionary<ushort, IIODevice>();
 
         /// <summary>
         /// Initial generatate DeviceId. It will increament every time a new IODevice is added.
         /// No two IODevice's will have the same DeviceId
         /// </summary>
-        private short _deviceId = 0;
+        private ushort _deviceId = 0;
 
         /// <summary>
         /// The last port available for the hardware. 
@@ -50,10 +50,16 @@ namespace Assembler.Core.Microprocessor
         /// <param name="port">Assigned port for the IODevice</param>
         /// <param name="device">IODevice instance</param>
         /// <returns>True if port was assigned successfully, false if por was previously assigned</returns>
-        public bool AddIODevice(short port, IIODevice device)
+        public bool AddIODevice(ushort port, IIODevice device)
         {
             // validate port validity
             IsValidPort(port, device);
+
+            // is used
+            if (IsUsedPort(port, device))
+            {
+                throw new Exception($"IO Device requires {device.IOPortLength} ports. The selected port does not meet the device requirements.");
+            }
 
             // verify if port was previously assiged to another I/O device
             if (_portsAndDevices.ContainsKey(port))
@@ -65,9 +71,9 @@ namespace Assembler.Core.Microprocessor
             _devicesAndIds.Add(_deviceId, device);
 
             // reserve all the required ports for the I/O device, even more that one
-            for (short i = 0; i < device.IOPortLength; i++)
+            for (short i = 0; i < device.IOPortLength; i++) 
             {
-                _portsAndDevices.Add((short)(port + i), _deviceId);
+                _portsAndDevices.Add((ushort)(port + i), _deviceId);
             }
 
             // increment DeviceId
@@ -81,9 +87,9 @@ namespace Assembler.Core.Microprocessor
         /// </summary>
         /// <param name="port">port of the device</param>
         /// <returns>True if successfull, false if port is not assigned to an I/O device or otherwise</returns>
-        public bool RemoveIODevice(short port)
+        public bool RemoveIODevice(ushort port)
         {
-            if (_portsAndDevices.TryGetValue(port, out short deviceId))
+            if (_portsAndDevices.TryGetValue(port, out ushort deviceId))
             {
                 // get IODevice instance
                 IIODevice device = _devicesAndIds[deviceId];
@@ -94,7 +100,7 @@ namespace Assembler.Core.Microprocessor
                 // remove all the assigned ports
                 for (short i = 0; i < device.IOPortLength; i++)
                 {
-                    _portsAndDevices.Remove((short)(port + i));
+                    _portsAndDevices.Remove((ushort)(port + i));
                 }
 
                 return true;
@@ -109,11 +115,11 @@ namespace Assembler.Core.Microprocessor
         /// </summary>
         /// <param name="port">Port to read from</param>
         /// <returns>Data in hexadecimal representation, null if the port is not assigned to an I/O device</returns>
-        public string ReadFromIO(short port)
+        public string ReadFromIO(ushort port)
         {
             IsValidPort(port, null);
 
-            if (_portsAndDevices.TryGetValue(port, out short deviceId))
+            if (_portsAndDevices.TryGetValue(port, out ushort deviceId))
             {
                 return _devicesAndIds[deviceId].ReadFromPort(port);
             }
@@ -127,11 +133,11 @@ namespace Assembler.Core.Microprocessor
         /// <param name="port">Port to write data</param>
         /// <param name="contentInHex">Data in Hexadecimal format</param>
         /// <returns>True if success, false write was not a success or if the port is not assigned to an I/O device</returns>
-        public bool WriteToIO(short port, string contentInHex)
+        public bool WriteToIO(ushort port, string contentInHex)
         {
             IsValidPort(port, null);
 
-            if (_portsAndDevices.TryGetValue(port, out short deviceId))
+            if (_portsAndDevices.TryGetValue(port, out ushort deviceId))
             {
                 // return IODevice result
                 return _devicesAndIds[deviceId].WriteInPort(port, contentInHex);
@@ -146,9 +152,27 @@ namespace Assembler.Core.Microprocessor
         /// </summary>
         /// <param name="port">Port to verify</param>
         /// <returns>Returns true if port is already assigned, false if not</returns>
-        public bool IsUsedPort(short port)
+        public bool IsUsedPort(ushort port)
         {
             return _portsAndDevices.ContainsKey(port);
+        }
+
+        /// <summary>
+        /// Verify if port is assigned.
+        /// </summary>
+        /// <param name="port">Port to verify</param>
+        /// <returns>Returns true if port is already assigned, false if not</returns>
+        public bool IsUsedPort(ushort port, IIODevice device)
+        {
+            for (ushort i = port; i < device.IOPortLength+port-1; i++)
+            {
+                if (_portsAndDevices.ContainsKey(i))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool ResetIOs()
@@ -177,17 +201,17 @@ namespace Assembler.Core.Microprocessor
         /// </summary>
         /// <param name="port">port to assigned</param>
         /// <param name="device">IODevice object</param>
-        private void IsValidPort(short port, IIODevice device)
+        private void IsValidPort(ushort port, IIODevice device)
         {
             if (port < 0 || port > _maxPort)
             {
                 throw new OverflowException($"Invalid port address: {port} (0x{Convert.ToString(port, 16).PadLeft(3, '0').ToUpper()}), for '{device.DeviceName}'.");
             }
 
-            if (port + device?.IOPortLength >= _maxPort)
+            if (port + device?.IOPortLength - 1> _maxPort)
             {
                 throw new OverflowException($"Invalid port address: {port} (0x{Convert.ToString(port, 16).PadLeft(3, '0').ToUpper()}), for '{device.DeviceName}'. " +
-                    $"This device requires {device.IOPortLength} ports to work properly.");
+                    $"This device requires {device.IOPortLength} port(s) to work properly.");
             }
         }
 
@@ -201,7 +225,7 @@ namespace Assembler.Core.Microprocessor
 
             builder.AppendLine("IOManager[");
 
-            foreach (KeyValuePair<short, IIODevice> pair in _devicesAndIds)
+            foreach (KeyValuePair<ushort, IIODevice> pair in _devicesAndIds)
             {
                 builder.Append("\t");
 

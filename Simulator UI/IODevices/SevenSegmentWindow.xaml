@@ -1,0 +1,24 @@
+﻿<Window x:Class="Simulator_UI.SevenSegmentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simulator_UI"
+        mc:Ignorable="d"
+        Title="SevenSegmentWindow" Height="400" Width="430" WindowStyle="None" ResizeMode="CanMinimize">
+    <Grid Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <local:SevenSegmentDisplay Grid.Row="0" Grid.ColumnSpan="4" x:Name="Display" Margin="20"></local:SevenSegmentDisplay>
+        <Label Content="Port Assigned" HorizontalAlignment="Left" Margin="13,30,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="18" Grid.Row="1" Grid.ColumnSpan="2" Width="129"/>
+        <Label x:Name="portNumber" Content="" HorizontalAlignment="Left" Margin="38,31,0,0" VerticalAlignment="Top" Foreground="White"  FontSize="18" Grid.Row="1" Grid.Column="1"/>
+    </Grid>
+</Window>

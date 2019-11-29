@@ -6,27 +6,27 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
     public class IOSevenSegmentDisplay : IIODevice
 
     {
-        public short IOPort { get; }
+        public ushort IOPort { get; }
 
         public string DeviceName => "IO 7-Segment Display";
 
-        private string _buffer = string.Empty;
+        public ushort IOPortLength => 1;
 
-        public short IOPortLength => 1;
+        public bool HasData => !string.IsNullOrEmpty(Data);
 
-        public bool HasData => !string.IsNullOrEmpty(_buffer);
-        public string Data { get { return _buffer; } }
+        public string Data { get; private set; } = string.Empty;
+        
         public byte BufferSize => 1;
 
         public Action UpdateGui;
 
-        public IOSevenSegmentDisplay(short ioPort)
+        public IOSevenSegmentDisplay(ushort ioPort)
         {
             IOPort = ioPort;
         }
         public bool WriteInPort(int port, string contentInHex)
         {
-            _buffer = UnitConverter.HexToBinary(contentInHex);
+            Data = UnitConverter.HexToBinary(contentInHex);
             UpdateGui?.Invoke();
             return true;
         }
@@ -38,7 +38,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
 
         public bool Reset()
         {
-            _buffer = string.Empty;
+            Data = string.Empty;
             UpdateGui?.Invoke();
             return true;
         }

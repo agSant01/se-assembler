@@ -13,12 +13,12 @@
         /// <summary>
         /// Connection port for the I/O
         /// </summary>
-        public short IOPort { get; }
+        public ushort IOPort { get; }
 
         /// <summary>
         /// Amount of consecutive ports that this I/O device requires to operate
         /// </summary>
-        public short IOPortLength { get; }
+        public ushort IOPortLength { get; }
 
         /// <summary>
         /// Has new data available

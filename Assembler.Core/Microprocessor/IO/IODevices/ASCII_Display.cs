@@ -9,18 +9,18 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
     {
         private readonly bool _debug;
 
-        public short IOPortLength => 8;//bytes
+        public ushort IOPortLength => 8;//bytes
 
         public string[] DisplaySlots = new string[] { "", "", "", "", "", "", "", "" };
 
         public bool HasData { get; private set; }
 
-        public short IOPort { get; }
+        public ushort IOPort { get; }
 
         public Action GotHexData;
         public string DeviceName => "ASCII Display";
 
-        public ASCII_Display(short port)
+        public ASCII_Display(ushort port)
         {
             if (port < 0)
                 //port *= -1;// we flip it to positive
@@ -33,7 +33,7 @@ namespace Assembler.Core.Microprocessor.IO.IODevices
             this._debug = false;
         }
 
-        public ASCII_Display(short port, bool deb)
+        public ASCII_Display(ushort port, bool deb)
         {
             if (port < 0)
                 //port *= -1;// we flip it to positive
