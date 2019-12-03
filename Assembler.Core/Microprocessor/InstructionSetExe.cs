@@ -25,7 +25,7 @@ namespace Assembler.Microprocessor
 
                     if (instructionF2.Ra == 7)
                     {
-                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "0000000");
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111","00000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
                     } 
@@ -44,7 +44,7 @@ namespace Assembler.Microprocessor
 
                     if (instructionF2.Ra == 7)
                     {
-                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "0000000");
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "00000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
                     } 
@@ -107,7 +107,7 @@ namespace Assembler.Microprocessor
 
                     if (instructionF1.Ra == 7)
                     {
-                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","R7", "0000000");
+                        MCInstructionF2 mCInstructionF2 = new MCInstructionF2(0,"00100","111", "00000000");
 
                         operatorFunctions["00100"](mCInstructionF2, micro);
                     } 

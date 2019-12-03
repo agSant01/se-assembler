@@ -103,20 +103,14 @@ namespace Simulator_UI
 
         private void UpdateRegisters()
         {
-            stackPointerBox.IsEnabled = microProcessor.IsOn();
+           if (!microProcessor.IsOn())
+           {
+                stackPointerStart.Text = "000";
+           }
 
-            programCounterBox.IsEnabled = microProcessor.IsOn(); ;
+            stackPointerBox.Text = microProcessor.Micro == null ? "NA" : UnitConverter.U16BitToHex(microProcessor.Micro.StackPointer, defaultWidth: 3);
 
-            conditionalBitBox.IsEnabled = microProcessor.IsOn(); ;
-
-            if (microProcessor.IsOn())
-            {
-                stackPointerStart.Text = "0";
-            }
-
-            stackPointerBox.Text = microProcessor.Micro?.StackPointer.ToString() ?? "NA";
-
-            programCounterBox.Text = microProcessor.Micro?.ProgramCounter.ToString() ?? "NA";
+            programCounterBox.Text = microProcessor.Micro == null ? "NA" : UnitConverter.U16BitToHex(microProcessor.Micro.ProgramCounter, defaultWidth: 3);
 
             conditionalBitBox.Text = (microProcessor.Micro?.ConditionalBit ?? false) ? "1" : "0";
 
@@ -154,6 +148,21 @@ namespace Simulator_UI
             {
                 return;
             }
+
+            try
+            {
+                string hexStackPointer = stackPointerStart.Text.Trim();
+
+                microProcessor.Micro.StackPointer = UnitConverter.HexToU16Bit(hexStackPointer);
+            }
+            catch (Exception)
+            {
+                _ = MessageBox.Show($"Invalid Stack pointer: '0x{cbHexkeyboard}'.\nUsing Microprocessor default Stack Pointer Start: '0x0'", "Invalid Stack Pointer Start");
+                microProcessor.Micro.StackPointer = 0;
+                stackPointerStart.Text = microProcessor.Micro == null ? "000" : UnitConverter.U16BitToHex(microProcessor.Micro.StackPointer, defaultWidth: 3);
+            }
+
+            RefreshGUI();
 
             Task.Run(() =>
             {
@@ -228,14 +237,15 @@ namespace Simulator_UI
             microProcessor.Reset();
            
             try { 
-                string stackPointer = stackPointerStart.Text.Trim();
+                string hexStackPointer = stackPointerStart.Text.Trim();
 
-                microProcessor.Micro.StackPointer = Convert.ToUInt16(stackPointer);
+                microProcessor.Micro.StackPointer = UnitConverter.HexToU16Bit(hexStackPointer);
             }
             catch (Exception)
             {
-                _ = MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
-                stackPointerStart.Text = microProcessor.Micro.StackPointer.ToString();
+                _ = MessageBox.Show($"Invalid Stack pointer: '0x{cbHexkeyboard}'.\nUsing Microprocessor default Stack Pointer Start: '0x0'", "Invalid Stack Pointer Start");
+                microProcessor.Micro.StackPointer = 0;
+                stackPointerStart.Text = microProcessor.Micro == null ? "000" : UnitConverter.U16BitToHex(microProcessor.Micro.StackPointer, defaultWidth: 3);
             }
 
             RefreshGUI();
@@ -291,15 +301,15 @@ namespace Simulator_UI
 
                 try
                 {
-                    string stackPointer = stackPointerStart.Text.Trim();
+                    string hexStackPointer = stackPointerStart.Text.Trim();
 
-                    microProcessor.Micro.StackPointer = Convert.ToUInt16(stackPointer);
+                    microProcessor.Micro.StackPointer = UnitConverter.HexToU16Bit(hexStackPointer);
                 }
-
                 catch (Exception)
                 {
-                    _ = MessageBox.Show("Using Microprocessor default Stack Pointer Start: 0", "Invalid Stack Pointer Start");
-                    stackPointerStart.Text = microProcessor.Micro.StackPointer.ToString();
+                    _ = MessageBox.Show($"Invalid Stack pointer: '0x{cbHexkeyboard}'.\nUsing Microprocessor default Stack Pointer Start: '0x0'", "Invalid Stack Pointer Start");
+                    microProcessor.Micro.StackPointer = 0;
+                    stackPointerStart.Text = microProcessor.Micro == null ? "000" : UnitConverter.U16BitToHex(microProcessor.Micro.StackPointer, defaultWidth: 3);
                 }
 
                 ResetGUI();
