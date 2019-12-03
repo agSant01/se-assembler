@@ -73,5 +73,15 @@ namespace Assembler.Utils
         {
             return Convert.ToString(Convert.ToInt32(hexNumber, 16), 2).PadLeft(defaultWidth, '0');
         }
+
+        public static ushort HexToU16Bit(string hexNumber)
+        {
+            return Convert.ToUInt16(hexNumber, 16);
+        }
+
+        public static string U16BitToHex(ushort decimalNumber, byte defaultWidth = 2)
+        {
+            return Convert.ToString(decimalNumber, 16).ToUpper().PadLeft(defaultWidth, '0');
+        }
     }
 }

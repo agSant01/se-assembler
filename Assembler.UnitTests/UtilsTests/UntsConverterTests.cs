@@ -119,5 +119,50 @@ namespace Assembler.UnitTests.UtilsTests
             Assert.AreEqual(0, result);
 
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException), "Hex '10000' is bigger than 16 bits")]
+        public void HexTo16Base_Fail_Overflow()
+        {
+            string a = "10000";
+            
+            ushort result = UnitConverter.HexToU16Bit(a);
+        }
+
+        [TestMethod]
+        public void HexTo16Base_Success()
+        {
+            string a = "1000";
+
+            ushort expected = (ushort) (1 * Math.Pow(16, 3));
+
+            ushort result = UnitConverter.HexToU16Bit(a);
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void U16bitsToHex_Success()
+        {
+            string expected = "1000";
+
+            ushort a = (ushort)(1 * Math.Pow(16, 3));
+
+            string result = UnitConverter.U16BitToHex(a);
+
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestMethod]
+        public void U16bitsToHex_Success2()
+        {
+            string expected = "F1";
+
+            ushort a = (ushort)(15 * Math.Pow(16, 1) + 1);
+
+            string result = UnitConverter.U16BitToHex(a);
+
+            Assert.AreEqual(expected, result);
+        }
     }
 }

@@ -16,6 +16,9 @@ namespace Assembler.Microprocessor
         /// The size of each register in Bytes
         /// </summary>
         private readonly byte registerByteSize;
+
+        public byte? LastRegisterToBeModified { get; private set; } = null;
+
         public Registers(int numberOfRegisters = 8, byte registerBytes = 1)
         {
             registers = new sbyte[numberOfRegisters];
@@ -54,6 +57,8 @@ namespace Assembler.Microprocessor
             IsValidData(hexadecimalValue);
 
             registers[registerNumber] = UnitConverter.HexToSByte(hexadecimalValue);
+
+            LastRegisterToBeModified = registerNumber;
         }
 
         /// <summary>
