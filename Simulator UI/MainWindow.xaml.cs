@@ -113,7 +113,12 @@ namespace Simulator_UI
                 memoryBox.Items.Add(item);
             }
 
-            memoryBox.SelectedItem = microProcessor.Micro?.LastModifiedMemoryAddress ?? 0;
+            if (!memoryBox.Items.IsEmpty && (microProcessor.Micro?.LastModifiedMemoryAddress / 2 ?? 0) < memoryBox.Items.Count)
+            {
+                object obj = memoryBox.Items[microProcessor.Micro?.LastModifiedMemoryAddress / 2 ?? 0];
+
+                memoryBox.ScrollIntoView(obj);
+            }
         }
 
         private void UpdateRegisters()
