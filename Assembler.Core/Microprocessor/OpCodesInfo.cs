@@ -47,7 +47,7 @@ namespace Assembler.Microprocessor
                 { "11010",  new byte[] { 1, 2 }},
                 { "11011",  new byte[] { 1, 2 }},
                 { "11100",  new byte[] { 1, 2 }},
-                { "11101",  new byte[] { 1, 1 }},
+                { "11101",  new byte[] { 1, 0 }},
                 { "11110",  new byte[] { 3, 1 }},
                 { "11111",  new byte[] { 2, 0 }}
             };

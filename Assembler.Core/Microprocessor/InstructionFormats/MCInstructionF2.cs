@@ -9,7 +9,7 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             OpCode = UnitConverter.BinaryToByte(opCodeBinary);
 
-            this.Ra = UnitConverter.BinaryToByte(Ra);
+            this.Ra = Ra == null ? (byte) 8 : UnitConverter.BinaryToByte(Ra);
 
             AddressParamHex = UnitConverter.BinaryToHex(binaryAddress);
 
@@ -46,8 +46,14 @@ namespace Assembler.Microprocessor.InstructionFormats
                 {
                     return "RETURN";
                 }
-                return $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} R{Ra} {AddressParamHex}";
+
+                string itr = $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))}";
+
+                if (Ra >= 0 && Ra <= 7) itr += $" R{Ra}";
+
+                return itr;
             }
+
             return $"MCInstructionF2[InstructionAddressDecimal: (decimal)'{InstructionAddressDecimal}', opcode:'{OpCode}', Ra:'{Ra}', AddressParamHex:'{AddressParamHex}']";
         }
     }

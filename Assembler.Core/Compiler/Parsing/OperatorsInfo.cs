@@ -47,7 +47,7 @@ namespace Assembler.Parsing
                 { "GRTEQ",      new int[] { 26, 1, 2 } },
                 { "EQ",         new int[] { 27, 1, 2 } },
                 { "NEQ",        new int[] { 28, 1, 2 } },
-                { "NOP",        new int[] { 29, 1, 1 } },
+                { "NOP",        new int[] { 29, 1, 0 } },
                 { "CALL",       new int[] { 30, 3, 1 } },
                 { "RETURN",     new int[] { 31, 2, 0 } }
             };

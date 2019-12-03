@@ -9,9 +9,9 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             OpCode = (byte)UnitConverter.BinaryToInt(opCodeBinary);
 
-            this.Ra = UnitConverter.BinaryToByte(Ra);
-            this.Rb = UnitConverter.BinaryToByte(Rb);
-            this.Rc = UnitConverter.BinaryToByte(Rc);
+            this.Ra = Ra == null || Ra.Length == 0 ? (byte) 8 : UnitConverter.BinaryToByte(Ra);
+            this.Rb = Rb == null ? (byte) 8 : UnitConverter.BinaryToByte(Rb);
+            this.Rc = Rc == null ? (byte) 8 : UnitConverter.BinaryToByte(Rc);
 
             InstructionAddressDecimal = decimalAddress;
         }
@@ -45,11 +45,13 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             if (IMCInstruction.AsmTextPrint)
             {
-                string itr = $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))} R{Ra}";
+                string itr = $"{OpCodesInfo.GetOpName(UnitConverter.ByteToBinary(OpCode, defaultWidth: 5))}";
 
-                if (Rb >= 0) itr += $" R{Rb}";
+                if (Ra >= 0 && Ra <= 7) itr += $" R{Ra}";
+                
+                if (Rb >= 0 && Rb <= 7) itr += $" R{Rb}";
 
-                if (Rc >= 0) itr += $" R{Rc}";
+                if (Rc >= 0 && Rc <= 7) itr += $" R{Rc}";
 
                 return itr;
             }
