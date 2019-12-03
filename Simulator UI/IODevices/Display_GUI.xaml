@@ -1,0 +1,21 @@
+﻿<Window x:Class="Simulator_UI.Display_GUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simulator_UI"
+        mc:Ignorable="d"
+        Title="ASCII Display" Height="220" Width="370" WindowStyle="None" ResizeMode="CanMinimize">
+    <Grid Background="Black">
+        <TextBox x:Name="box_a" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30"  FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="36,55,0,0"/>
+        <TextBox x:Name="box_b" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="74,55,0,0"/>
+        <TextBox x:Name="box_c" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="112,55,0,0" />
+        <TextBox x:Name="box_d" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="150,55,0,0"/>
+        <TextBox x:Name="box_e" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="188,55,0,0"/>
+        <TextBox x:Name="box_f" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="226,55,0,0"/>
+        <TextBox x:Name="box_g" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="30" FontWeight="Bold" Height="45" IsReadOnly="True" IsUndoEnabled="False" Margin="264,55,0,0"/>
+        <TextBox x:Name="box_h" HorizontalContentAlignment="Center" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Width="38" FontSize="30" IsReadOnly="True" Height="45" IsUndoEnabled="False" HorizontalAlignment="Left" Margin="302,55,0,0"/>
+        <Label Content="Port Assigned" HorizontalAlignment="Left" Margin="21,125,0,0" VerticalAlignment="Top" Foreground="White" FontWeight="Bold" FontSize="18" Width="129"/>
+        <Label x:Name="portNumber" Content="" HorizontalAlignment="Left" Margin="154,125,0,0" VerticalAlignment="Top" Foreground="White"  FontSize="18"/>
+    </Grid>
+</Window>

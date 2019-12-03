@@ -1,0 +1,10 @@
+org 0
+jmpaddr start
+valor1 db 0
+start:
+loadim r2, 6B
+store valor1, r2
+fin:
+jmpaddr fin
+
+

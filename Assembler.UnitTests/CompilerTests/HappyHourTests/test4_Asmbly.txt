@@ -1,0 +1,19 @@
+//sprt6Test4B.asm
+//pruebas con condicionales, R0 no es modificable,
+//brinco por registro indirecto
+    org 0
+    JMPADDR start
+mayor db 0
+suma  db 0
+start:
+    LOADIM R0,#03       //R0 <- 00
+    LOADIM R2,#05       //R2 <- 05
+    LOADIM R3,#00       //R3 <- 0
+again:	
+    ADD R3,R3,R2        //R3 <- R3 + R2
+    SUBIM R2,#01        //R2 <- R2 - 1
+    NEQ R2,R0           //IF R2 != 0
+    JCONDADDR again     //Goto again
+    STORE suma,R3
+stay:
+    JMPADDR stay
