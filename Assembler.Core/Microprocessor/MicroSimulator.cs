@@ -64,6 +64,8 @@ namespace Assembler.Microprocessor
 
         public IMCInstruction PreviousInstruction { get; private set; }
 
+        public ushort? LastModifiedMemoryAddress { get; private set; } = null;
+
         public override string ToString()
         {
             return $"Microprocessor[PC={ProgramCounter}, CondBit={(ConditionalBit ? 1 : 0)}]";
@@ -83,6 +85,8 @@ namespace Assembler.Microprocessor
             else
             {
                 _virtualMemory.SetContentInMemory(decimalAddress: decimalAddress, hexContent: contentInHex);
+
+                LastModifiedMemoryAddress = (ushort) decimalAddress;
             }
         }
 

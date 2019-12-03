@@ -95,10 +95,25 @@ namespace Simulator_UI
 
             for (int i = 0; i < lines * 2; i += 2)
             {
-                memoryBox.Items.Add($"{UnitConverter.IntToHex(i, defaultWidth: 3)} : " +
+                ListViewItem item = new ListViewItem
+                {
+                    Content = $"{UnitConverter.IntToHex(i, defaultWidth: 3)} : " +
                     $"{microProcessor.VirtualMemory?.GetContentsInHex(i) ?? "NA"} " +
-                    $"{microProcessor.VirtualMemory?.GetContentsInHex(i + 1) ?? "NA"}");
+                    $"{microProcessor.VirtualMemory?.GetContentsInHex(i + 1) ?? "NA"}",
+                };
+
+                if (i == microProcessor.Micro?.LastModifiedMemoryAddress ||
+                    i + 1 == microProcessor.Micro?.LastModifiedMemoryAddress)
+                {
+                    item.Foreground = Brushes.Black;
+                    item.FontWeight = FontWeights.Bold;
+                    item.Background = Brushes.LightYellow;
+                }
+
+                memoryBox.Items.Add(item);
             }
+
+            memoryBox.SelectedItem = microProcessor.Micro?.LastModifiedMemoryAddress ?? 0;
         }
 
         private void UpdateRegisters()
@@ -120,7 +135,19 @@ namespace Simulator_UI
 
             for (int i = 1; i < 8; i++)
             {
-                registersBox.Items.Add($"R{i}: {microProcessor.Micro?.MicroRegisters.GetRegisterValue((byte)i) ?? "NA"}");
+                ListViewItem item = new ListViewItem
+                {
+                    Content = $"R{i}: {microProcessor.Micro?.MicroRegisters.GetRegisterValue((byte)i) ?? "NA"}",
+                };
+
+                if (i == microProcessor.Micro?.MicroRegisters.LastRegisterToBeModified)
+                {
+                    item.Foreground = Brushes.Black;
+                    item.FontWeight = FontWeights.Bold;
+                    item.Background = Brushes.LightYellow;
+                }
+
+                registersBox.Items.Add(item);
             }
         }
 
