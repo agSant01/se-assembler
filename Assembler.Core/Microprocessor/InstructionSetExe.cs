@@ -556,7 +556,12 @@ namespace Assembler.Microprocessor
                 }},
                 { "11101",     (IMCInstruction instruction, MicroSimulator micro) => {
                     // NOP  {F1} Do nothing
-                    return true; }},
+
+                    micro.ProgramCounter += 2;
+
+                    return true; 
+                
+                }},
                 { "11110",     (IMCInstruction instruction, MicroSimulator micro) => { 
                     // CALL address {F3} 
                     // SP <- SP - 2 
