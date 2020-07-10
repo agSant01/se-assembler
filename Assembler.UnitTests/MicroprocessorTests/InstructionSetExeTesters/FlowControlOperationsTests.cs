@@ -476,6 +476,25 @@ namespace Assembler.UnitTests.MicroprocessorTests.InstructionSetExeTesters
         }
 
         [TestMethod]
+        public void FlowControlOperationsTests_NOP_Success()
+        {
+            //init
+            micro.StackPointer = 100;
+            micro.ProgramCounter = 12;
+
+            string savedAddresInMemory = "FF";
+
+            micro.WriteToMemory(100, savedAddresInMemory);
+            MCInstructionF1 i1 = new MCInstructionF1(31, "11101", null);
+
+            //execute
+            InstructionSetExe.ExecuteInstruction(i1, micro);
+
+            Assert.AreEqual(100, micro.StackPointer);
+            Assert.AreEqual(14, micro.ProgramCounter);
+        }
+
+        [TestMethod]
         public void FlowControlOperationsTests_RETURN_Success()
         {
             //init

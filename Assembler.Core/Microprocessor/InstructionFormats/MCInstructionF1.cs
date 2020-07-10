@@ -9,9 +9,9 @@ namespace Assembler.Microprocessor.InstructionFormats
         {
             OpCode = (byte)UnitConverter.BinaryToInt(opCodeBinary);
 
-            this.Ra = Ra == null || Ra.Length == 0 ? (byte) 8 : UnitConverter.BinaryToByte(Ra);
-            this.Rb = Rb == null ? (byte) 8 : UnitConverter.BinaryToByte(Rb);
-            this.Rc = Rc == null ? (byte) 8 : UnitConverter.BinaryToByte(Rc);
+            this.Ra = Ra == null || Ra.Length == 0 ? (byte) 0 : UnitConverter.BinaryToByte(Ra);
+            this.Rb = Rb == null ? (byte) 0 : UnitConverter.BinaryToByte(Rb);
+            this.Rc = Rc == null ? (byte) 0 : UnitConverter.BinaryToByte(Rc);
 
             InstructionAddressDecimal = decimalAddress;
         }

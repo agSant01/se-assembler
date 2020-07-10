@@ -1,5 +1,4 @@
-﻿//sprt5Test5B.asm
-
+//sprt5Test5B.asm
 //Pruebas dispositivos de I/O
 //Se presume semaforo en address 50
 //			 7-segment en address 60
@@ -13,7 +12,7 @@ semaforo db 0
 sevenseg db 0	
     org 120
 asciidisp1 db 0
-asciidisp2 db 0
+asciidisp2 db
     org 130
 keyb db 0
     org 10   
